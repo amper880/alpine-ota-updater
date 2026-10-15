@@ -1,0 +1,1183 @@
+{
+  "generated": "2026-10-15",
+  "source": "meshcore-dev/MeshCore",
+  "boards": [
+    {
+      "id": "nanog2ultra",
+      "name": "Nano G2 Ultra",
+      "vendor": "B&Q Consulting",
+      "platform": "nrf52",
+      "aliases": [
+        "Nano_G2_Ultra"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "NANO_G2_OTA"
+    },
+    {
+      "id": "stationg2",
+      "name": "Station G2",
+      "vendor": "B&Q Consulting",
+      "platform": "esp32",
+      "aliases": [
+        "Station_G2"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "stationg2logging",
+      "name": "Station G2 (logging)",
+      "vendor": "B&Q Consulting",
+      "platform": "esp32",
+      "aliases": [
+        "Station_G2_logging"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "stationg3esp32logging",
+      "name": "Station G3 (ESP32, logging)",
+      "vendor": "B&Q Consulting",
+      "platform": "esp32",
+      "aliases": [
+        "Station_G3_ESP32_logging"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "stationg3esp32",
+      "name": "Station G3 (ESP32)",
+      "vendor": "B&Q Consulting",
+      "platform": "esp32",
+      "aliases": [
+        "Station_G3_ESP32"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "generice22sx1262",
+      "name": "Generic ESP32 + E22 (SX1262)",
+      "vendor": "DIY",
+      "platform": "esp32",
+      "aliases": [
+        "Generic_E22_sx1262"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "generice22sx1268",
+      "name": "Generic ESP32 + E22 (SX1268)",
+      "vendor": "DIY",
+      "platform": "esp32",
+      "aliases": [
+        "Generic_E22_sx1268"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "promicro",
+      "name": "ProMicro nRF52840 (DIY)",
+      "vendor": "DIY",
+      "platform": "nrf52",
+      "aliases": [
+        "ProMicro"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "ProMicro_OTA"
+    },
+    {
+      "id": "ebyteeoras3",
+      "name": "Ebyte EoRa-S3",
+      "vendor": "Ebyte",
+      "platform": "esp32",
+      "aliases": [
+        "Ebyte_EoRa-S3"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "thinknodem1",
+      "name": "ThinkNode M1",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "nrf52",
+      "aliases": [
+        "ThinkNode_M1"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "THINKNODE_M1_OTA"
+    },
+    {
+      "id": "thinknodem2",
+      "name": "ThinkNode M2",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "esp32",
+      "aliases": [
+        "ThinkNode_M2"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "thinknodem3",
+      "name": "ThinkNode M3",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "nrf52",
+      "aliases": [
+        "ThinkNode_M3"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "THINKNODE_M3_OTA"
+    },
+    {
+      "id": "thinknodem4",
+      "name": "ThinkNode M4",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "nrf52",
+      "aliases": [
+        "ThinkNode_M4"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "THINKNODE_M4_OTA"
+    },
+    {
+      "id": "thinknodem5",
+      "name": "ThinkNode M5",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "esp32",
+      "aliases": [
+        "ThinkNode_M5"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "thinknodem6",
+      "name": "ThinkNode M6",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "nrf52",
+      "aliases": [
+        "ThinkNode_M6"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "THINKNODE_M6_OTA"
+    },
+    {
+      "id": "thinknodem7",
+      "name": "ThinkNode M7",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "esp32",
+      "aliases": [
+        "ThinkNode_M7"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "thinknodem8",
+      "name": "ThinkNode M8",
+      "vendor": "Elecrow ThinkNode",
+      "platform": "nrf52",
+      "aliases": [
+        "ThinkNode_M8"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "THINKNODE_M8_OTA"
+    },
+    {
+      "id": "gat56230smeshkit",
+      "name": "GAT562 30S Mesh Kit",
+      "vendor": "GAT-IoT",
+      "platform": "nrf52",
+      "aliases": [
+        "GAT562_30S_Mesh_Kit"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "GAT562_OTA"
+    },
+    {
+      "id": "gat562meshevbpro",
+      "name": "GAT562 Mesh EVB Pro",
+      "vendor": "GAT-IoT",
+      "platform": "nrf52",
+      "aliases": [
+        "GAT562_Mesh_EVB_Pro"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "GAT562_OTA"
+    },
+    {
+      "id": "gat562meshtrackerpro",
+      "name": "GAT562 Mesh Tracker Pro",
+      "vendor": "GAT-IoT",
+      "platform": "nrf52",
+      "aliases": [
+        "GAT562_Mesh_Tracker_Pro"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "GAT562_OTA"
+    },
+    {
+      "id": "heltece213",
+      "name": "Heltec E213",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_E213"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltece290",
+      "name": "Heltec E290",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_E290"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecct62",
+      "name": "Heltec HT-CT62",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_ct62"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "heltect096",
+      "name": "Heltec Mesh Node T096",
+      "vendor": "Heltec",
+      "platform": "nrf52",
+      "aliases": [
+        "Heltec_t096"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "T096_OTA"
+    },
+    {
+      "id": "heltect114",
+      "name": "Heltec Mesh Node T114",
+      "vendor": "Heltec",
+      "platform": "nrf52",
+      "aliases": [
+        "Heltec_t114"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "T114_OTA"
+    },
+    {
+      "id": "heltect114withoutdisplay",
+      "name": "Heltec Mesh Node T114 (no display)",
+      "vendor": "Heltec",
+      "platform": "nrf52",
+      "aliases": [
+        "Heltec_t114_without_display"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "T114_OTA"
+    },
+    {
+      "id": "heltecmeshsolar",
+      "name": "Heltec MeshSolar",
+      "vendor": "Heltec",
+      "platform": "nrf52",
+      "aliases": [
+        "Heltec_mesh_solar"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "MESH_SOLAR_OTA"
+    },
+    {
+      "id": "heltecrc32",
+      "name": "Heltec RC32",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_rc32"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecrc32withoutdisplay",
+      "name": "Heltec RC32 (no display)",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_rc32_without_display"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltect1",
+      "name": "Heltec T1",
+      "vendor": "Heltec",
+      "platform": "nrf52",
+      "aliases": [
+        "Heltec_t1"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "T1_OTA"
+    },
+    {
+      "id": "heltectowerv2",
+      "name": "Heltec Tower V2",
+      "vendor": "Heltec",
+      "platform": "nrf52",
+      "aliases": [
+        "Heltec_tower_v2"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "TOWER_V2_OTA"
+    },
+    {
+      "id": "heltecv2",
+      "name": "Heltec WiFi LoRa 32 V2",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_v2"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecv3",
+      "name": "Heltec WiFi LoRa 32 V3",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_v3"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecv4",
+      "name": "Heltec WiFi LoRa 32 V4",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_v4"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecv4tft",
+      "name": "Heltec WiFi LoRa 32 V4 (TFT)",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_v4_tft"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecv4expansionkit",
+      "name": "Heltec WiFi LoRa 32 V4 Expansion Kit",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_v4_expansionkit"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "heltecv4r8",
+      "name": "Heltec WiFi LoRa 32 V4 R8",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_v4_r8"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecv4r8tft",
+      "name": "Heltec WiFi LoRa 32 V4 R8 (TFT)",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_v4_r8_tft"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecwirelesspaper",
+      "name": "Heltec Wireless Paper",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_Wireless_Paper"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecwsl3",
+      "name": "Heltec Wireless Stick Lite V3",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_WSL3"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltecwirelesstracker",
+      "name": "Heltec Wireless Tracker",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "Heltec_Wireless_Tracker"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "heltectrackerv2",
+      "name": "Heltec Wireless Tracker V2",
+      "vendor": "Heltec",
+      "platform": "esp32",
+      "aliases": [
+        "heltec_tracker_v2"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "ikokahandheldnrfe2230dbm",
+      "name": "ikoka Handheld nRF (E22, 30 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_handheld_nrf_e22_30dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokananonrf22dbm",
+      "name": "ikoka Nano nRF (22 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_nano_nrf_22dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokananonrf30dbm",
+      "name": "ikoka Nano nRF (30 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_nano_nrf_30dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokananonrf33dbm",
+      "name": "ikoka Nano nRF (33 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_nano_nrf_33dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokasticknrf22dbm",
+      "name": "ikoka Stick nRF (22 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_stick_nrf_22dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokasticknrf30dbm",
+      "name": "ikoka Stick nRF (30 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_stick_nrf_30dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokasticknrf33dbm",
+      "name": "ikoka Stick nRF (33 dBm)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_stick_nrf_33dbm"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "tbeamsx1262",
+      "name": "LILYGO T-Beam (SX1262)",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "Tbeam_SX1262"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "tbeamsx1276",
+      "name": "LILYGO T-Beam (SX1276)",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "Tbeam_SX1276"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "lilygotbeam1w",
+      "name": "LILYGO T-Beam 1W",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "LilyGo_TBeam_1W"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "tbeams3supremesx1262",
+      "name": "LILYGO T-Beam S3 Supreme (SX1262)",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "T_Beam_S3_Supreme_SX1262"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "lilygotdeck",
+      "name": "LILYGO T-Deck",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "LilyGo_TDeck"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "lilygotecho",
+      "name": "LILYGO T-Echo",
+      "vendor": "LILYGO",
+      "platform": "nrf52",
+      "aliases": [
+        "LilyGo_T-Echo"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "TECHO_OTA"
+    },
+    {
+      "id": "lilygotechocard",
+      "name": "LILYGO T-Echo Card",
+      "vendor": "LILYGO",
+      "platform": "nrf52",
+      "aliases": [
+        "LilyGo_T-Echo_Card"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "TECHO_OTA"
+    },
+    {
+      "id": "lilygotecholite",
+      "name": "LILYGO T-Echo Lite",
+      "vendor": "LILYGO",
+      "platform": "nrf52",
+      "aliases": [
+        "LilyGo_T-Echo-Lite"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "TECHO_OTA"
+    },
+    {
+      "id": "lilygotethelitesx1262",
+      "name": "LILYGO T-ETH Elite (SX1262)",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "LilyGo_TETH_Elite_sx1262"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "lilygotimpulseplus",
+      "name": "LILYGO T-Impulse Plus",
+      "vendor": "LILYGO",
+      "platform": "nrf52",
+      "aliases": [
+        "LilyGo_T_Impulse_Plus"
+      ],
+      "roles": [
+        "repeater"
+      ],
+      "bleOtaName": "T-Impulse-Plus_OTA"
+    },
+    {
+      "id": "lilygotlorav2116",
+      "name": "LILYGO T-LoRa V2.1-1.6",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "LilyGo_TLora_V2_1_1_6"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "lilygot3s3sx1262",
+      "name": "LILYGO T3-S3 (SX1262)",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "LilyGo_T3S3_sx1262"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "lilygot3s3sx1276",
+      "name": "LILYGO T3-S3 (SX1276)",
+      "vendor": "LILYGO",
+      "platform": "esp32",
+      "aliases": [
+        "LilyGo_T3S3_sx1276"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "meshadventurersx1262",
+      "name": "MeshAdventurer (SX1262)",
+      "vendor": "MeshAdventurer",
+      "platform": "esp32",
+      "aliases": [
+        "Meshadventurer_sx1262"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "meshadventurersx1268",
+      "name": "MeshAdventurer (SX1268)",
+      "vendor": "MeshAdventurer",
+      "platform": "esp32",
+      "aliases": [
+        "Meshadventurer_sx1268"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "minewsemime25ls01",
+      "name": "Minewsemi ME25LS01",
+      "vendor": "Minewsemi",
+      "platform": "nrf52",
+      "aliases": [
+        "Minewsemi_me25ls01"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "Minewsemi_OTA"
+    },
+    {
+      "id": "muzibaseduo",
+      "name": "muzi works Base Duo",
+      "vendor": "muzi works",
+      "platform": "nrf52",
+      "aliases": [
+        "muzi_base_duo"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "MUZI_BASE_UNO_OTA"
+    },
+    {
+      "id": "muzibaseuno",
+      "name": "muzi works Base Uno",
+      "vendor": "muzi works",
+      "platform": "nrf52",
+      "aliases": [
+        "muzi_base_uno"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "MUZI_BASE_UNO_OTA"
+    },
+    {
+      "id": "r1neo",
+      "name": "muzi works R1 Neo",
+      "vendor": "muzi works",
+      "platform": "nrf52",
+      "aliases": [
+        "R1Neo"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "R1NEO_OTA"
+    },
+    {
+      "id": "keepteenlt1",
+      "name": "Keepteen LT1",
+      "vendor": "Other",
+      "platform": "nrf52",
+      "aliases": [
+        "KeepteenLT1"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "KeepteenLT1_OTA"
+    },
+    {
+      "id": "meshpocket",
+      "name": "Mesh Pocket",
+      "vendor": "Other",
+      "platform": "nrf52",
+      "aliases": [
+        "Mesh_pocket"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "MESH_POCKET_OTA"
+    },
+    {
+      "id": "meshnologyw12",
+      "name": "Meshnology W12",
+      "vendor": "Other",
+      "platform": "esp32",
+      "aliases": [
+        "meshnology_w12"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "meshtrackerx1",
+      "name": "MeshTracker X1",
+      "vendor": "Other",
+      "platform": "nrf52",
+      "aliases": [
+        "MeshTracker_X1"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "X1_OTA"
+    },
+    {
+      "id": "rak3112",
+      "name": "RAK WisBlock 3112",
+      "vendor": "RAKwireless",
+      "platform": "esp32",
+      "aliases": [
+        "RAK_3112"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "rak3401",
+      "name": "RAK WisBlock 3401 (1W)",
+      "vendor": "RAKwireless",
+      "platform": "nrf52",
+      "aliases": [
+        "RAK_3401"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "RAK3401_OTA"
+    },
+    {
+      "id": "rak4631",
+      "name": "RAK WisBlock 4631",
+      "vendor": "RAKwireless",
+      "platform": "nrf52",
+      "aliases": [
+        "RAK_4631"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "RAK4631_OTA"
+    },
+    {
+      "id": "rakwismeshtag",
+      "name": "RAK WisMesh Tag",
+      "vendor": "RAKwireless",
+      "platform": "nrf52",
+      "aliases": [
+        "RAK_WisMesh_Tag"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "WISMESHTAG_OTA"
+    },
+    {
+      "id": "sensecapsolar",
+      "name": "SenseCAP Solar Node P1",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "SenseCap_Solar"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "SENSECAP_SOLAR_OTA"
+    },
+    {
+      "id": "t1000e",
+      "name": "SenseCAP T1000-E",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "t1000e"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "T1000E_OTA"
+    },
+    {
+      "id": "wiotrackerl1",
+      "name": "Wio Tracker L1",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "WioTrackerL1"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "WioTrackerL1_OTA"
+    },
+    {
+      "id": "wiotrackerl11w",
+      "name": "Wio Tracker L1 (1W)",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "WioTrackerL1-1W"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "WioTrackerL1_OTA"
+    },
+    {
+      "id": "wiowm1110",
+      "name": "Wio WM1110 Dev Kit",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "wio_wm1110"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "WM1110_OTA"
+    },
+    {
+      "id": "xiaoc3",
+      "name": "XIAO ESP32-C3",
+      "vendor": "Seeed Studio",
+      "platform": "esp32",
+      "aliases": [
+        "Xiao_C3"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "xiaos3",
+      "name": "XIAO ESP32-S3",
+      "vendor": "Seeed Studio",
+      "platform": "esp32",
+      "aliases": [
+        "Xiao_S3"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "xiaos3wio",
+      "name": "XIAO ESP32-S3 + Wio-SX1262",
+      "vendor": "Seeed Studio",
+      "platform": "esp32",
+      "aliases": [
+        "Xiao_S3_WIO"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    },
+    {
+      "id": "xiaonrf52",
+      "name": "XIAO nRF52840",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "Xiao_nrf52"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "tenstarc3sx1262",
+      "name": "Tenstar ESP32-C3 (SX1262)",
+      "vendor": "Tenstar",
+      "platform": "esp32",
+      "aliases": [
+        "Tenstar_C3_sx1262"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "tenstarc3sx1268",
+      "name": "Tenstar ESP32-C3 (SX1268)",
+      "vendor": "Tenstar",
+      "platform": "esp32",
+      "aliases": [
+        "Tenstar_C3_sx1268"
+      ],
+      "roles": [
+        "repeater"
+      ]
+    },
+    {
+      "id": "waveshares3lr1121",
+      "name": "Waveshare ESP32-S3 (LR1121)",
+      "vendor": "Waveshare",
+      "platform": "esp32",
+      "aliases": [
+        "Waveshare_S3_LR1121"
+      ],
+      "roles": [
+        "repeater",
+        "room-server"
+      ]
+    }
+  ]
+}

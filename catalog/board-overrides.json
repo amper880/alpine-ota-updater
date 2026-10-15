@@ -1,0 +1,227 @@
+{
+  "$comment": "Curated display names and vendors. Keys are lowercase alphanumeric board keys (see boards.json 'id'). Applied by scripts/build-catalog.mjs.",
+  "boards": {
+    "rak4631": {
+      "name": "RAK WisBlock 4631"
+    },
+    "rak3401": {
+      "name": "RAK WisBlock 3401 (1W)"
+    },
+    "rak3112": {
+      "name": "RAK WisBlock 3112"
+    },
+    "rakwismeshtag": {
+      "name": "RAK WisMesh Tag"
+    },
+    "heltect114": {
+      "name": "Heltec Mesh Node T114"
+    },
+    "heltect114withoutdisplay": {
+      "name": "Heltec Mesh Node T114 (no display)"
+    },
+    "heltect096": {
+      "name": "Heltec Mesh Node T096"
+    },
+    "heltect1": {
+      "name": "Heltec T1"
+    },
+    "heltecmeshsolar": {
+      "name": "Heltec MeshSolar"
+    },
+    "heltectowerv2": {
+      "name": "Heltec Tower V2"
+    },
+    "heltecv2": {
+      "name": "Heltec WiFi LoRa 32 V2"
+    },
+    "heltecv3": {
+      "name": "Heltec WiFi LoRa 32 V3"
+    },
+    "heltecv4": {
+      "name": "Heltec WiFi LoRa 32 V4"
+    },
+    "heltecv4tft": {
+      "name": "Heltec WiFi LoRa 32 V4 (TFT)"
+    },
+    "heltecv4r8": {
+      "name": "Heltec WiFi LoRa 32 V4 R8"
+    },
+    "heltecv4r8tft": {
+      "name": "Heltec WiFi LoRa 32 V4 R8 (TFT)"
+    },
+    "heltecv4expansionkit": {
+      "name": "Heltec WiFi LoRa 32 V4 Expansion Kit"
+    },
+    "heltecct62": {
+      "name": "Heltec HT-CT62"
+    },
+    "heltecwsl3": {
+      "name": "Heltec Wireless Stick Lite V3"
+    },
+    "heltectrackerv2": {
+      "name": "Heltec Wireless Tracker V2"
+    },
+    "heltecrc32": {
+      "name": "Heltec RC32"
+    },
+    "heltecrc32withoutdisplay": {
+      "name": "Heltec RC32 (no display)"
+    },
+    "t1000e": {
+      "name": "SenseCAP T1000-E"
+    },
+    "sensecapsolar": {
+      "name": "SenseCAP Solar Node P1"
+    },
+    "wiowm1110": {
+      "name": "Wio WM1110 Dev Kit"
+    },
+    "wiotrackerl1": {
+      "name": "Wio Tracker L1"
+    },
+    "wiotrackerl11w": {
+      "name": "Wio Tracker L1 (1W)"
+    },
+    "xiaonrf52": {
+      "name": "XIAO nRF52840"
+    },
+    "xiaoc3": {
+      "name": "XIAO ESP32-C3"
+    },
+    "xiaos3": {
+      "name": "XIAO ESP32-S3"
+    },
+    "xiaos3wio": {
+      "name": "XIAO ESP32-S3 + Wio-SX1262"
+    },
+    "lilygotecho": {
+      "name": "LILYGO T-Echo"
+    },
+    "lilygotechocard": {
+      "name": "LILYGO T-Echo Card"
+    },
+    "lilygotecholite": {
+      "name": "LILYGO T-Echo Lite"
+    },
+    "lilygotimpulseplus": {
+      "name": "LILYGO T-Impulse Plus"
+    },
+    "lilygot3s3sx1262": {
+      "name": "LILYGO T3-S3 (SX1262)"
+    },
+    "lilygot3s3sx1276": {
+      "name": "LILYGO T3-S3 (SX1276)"
+    },
+    "lilygotbeam1w": {
+      "name": "LILYGO T-Beam 1W"
+    },
+    "lilygotdeck": {
+      "name": "LILYGO T-Deck"
+    },
+    "lilygotethelitesx1262": {
+      "name": "LILYGO T-ETH Elite (SX1262)"
+    },
+    "lilygotlorav2116": {
+      "name": "LILYGO T-LoRa V2.1-1.6"
+    },
+    "tbeamsx1262": {
+      "name": "LILYGO T-Beam (SX1262)"
+    },
+    "tbeamsx1276": {
+      "name": "LILYGO T-Beam (SX1276)"
+    },
+    "tbeams3supremesx1262": {
+      "name": "LILYGO T-Beam S3 Supreme (SX1262)"
+    },
+    "stationg2": {
+      "name": "Station G2"
+    },
+    "stationg2logging": {
+      "name": "Station G2 (logging)"
+    },
+    "stationg3esp32": {
+      "name": "Station G3 (ESP32)"
+    },
+    "stationg3esp32logging": {
+      "name": "Station G3 (ESP32, logging)"
+    },
+    "nanog2ultra": {
+      "name": "Nano G2 Ultra"
+    },
+    "promicro": {
+      "name": "ProMicro nRF52840 (DIY)",
+      "vendor": "DIY"
+    },
+    "generice22sx1262": {
+      "name": "Generic ESP32 + E22 (SX1262)",
+      "vendor": "DIY"
+    },
+    "generice22sx1268": {
+      "name": "Generic ESP32 + E22 (SX1268)",
+      "vendor": "DIY"
+    },
+    "ebyteeoras3": {
+      "name": "Ebyte EoRa-S3"
+    },
+    "minewsemime25ls01": {
+      "name": "Minewsemi ME25LS01"
+    },
+    "r1neo": {
+      "name": "muzi works R1 Neo"
+    },
+    "muzibaseduo": {
+      "name": "muzi works Base Duo"
+    },
+    "muzibaseuno": {
+      "name": "muzi works Base Uno"
+    },
+    "meshpocket": {
+      "name": "Mesh Pocket"
+    },
+    "meshtrackerx1": {
+      "name": "MeshTracker X1"
+    },
+    "keepteenlt1": {
+      "name": "Keepteen LT1"
+    },
+    "meshnologyw12": {
+      "name": "Meshnology W12"
+    },
+    "meshadventurersx1262": {
+      "name": "MeshAdventurer (SX1262)"
+    },
+    "meshadventurersx1268": {
+      "name": "MeshAdventurer (SX1268)"
+    },
+    "tenstarc3sx1262": {
+      "name": "Tenstar ESP32-C3 (SX1262)"
+    },
+    "tenstarc3sx1268": {
+      "name": "Tenstar ESP32-C3 (SX1268)"
+    },
+    "waveshares3lr1121": {
+      "name": "Waveshare ESP32-S3 (LR1121)"
+    },
+    "ikokahandheldnrfe2230dbm": {
+      "name": "ikoka Handheld nRF (E22, 30 dBm)"
+    },
+    "ikokananonrf22dbm": {
+      "name": "ikoka Nano nRF (22 dBm)"
+    },
+    "ikokananonrf30dbm": {
+      "name": "ikoka Nano nRF (30 dBm)"
+    },
+    "ikokananonrf33dbm": {
+      "name": "ikoka Nano nRF (33 dBm)"
+    },
+    "ikokasticknrf22dbm": {
+      "name": "ikoka Stick nRF (22 dBm)"
+    },
+    "ikokasticknrf30dbm": {
+      "name": "ikoka Stick nRF (30 dBm)"
+    },
+    "ikokasticknrf33dbm": {
+      "name": "ikoka Stick nRF (33 dBm)"
+    }
+  }
+}

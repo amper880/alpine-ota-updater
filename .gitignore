@@ -24,3 +24,6 @@ playwright-report/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local dev build
+.dev/

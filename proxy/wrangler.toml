@@ -1,0 +1,14 @@
+# Cloudflare Worker configuration for the Alpine OTA Updater download proxy.
+# Deploy: npm run proxy:deploy   (see docs/DEPLOYMENT.md)
+name = "alpine-ota-proxy"
+main = "src/worker.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Must list every repository in catalog/sources.json.
+ALLOWED_REPOS = "meshcore-dev/MeshCore,IoTThinks/EasySkyMesh,liquidraver/ZephCore"
+# Replace with your GitHub Pages origin, e.g. "https://<user>.github.io". Use "*" only for testing.
+ALLOWED_ORIGINS = "*"
+
+# Optional secret to raise the GitHub API rate limit:
+#   npx wrangler secret put GITHUB_TOKEN --config proxy/wrangler.toml

@@ -1,0 +1,43 @@
+{
+  "$comment": "Firmware sources. See docs/ADDING_A_SOURCE.md for the meaning of each field.",
+  "sources": [
+    {
+      "id": "official",
+      "name": "MeshCore",
+      "description": "Official MeshCore releases.",
+      "repo": "meshcore-dev/MeshCore",
+      "homepage": "https://github.com/meshcore-dev/MeshCore",
+      "roleTags": {
+        "repeater": "^repeater-v",
+        "room-server": "^room-server-v"
+      },
+      "versionPattern": "v?(?<version>\\d+(?:\\.\\d+)+[a-z]?)",
+      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server)-v[^-]+-[0-9a-f]+(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "platforms": ["nrf52", "esp32"]
+    },
+    {
+      "id": "powersaving",
+      "name": "PowerSaving",
+      "description": "MeshCore with power-saving and experimental features by IoTThinks.",
+      "repo": "IoTThinks/EasySkyMesh",
+      "homepage": "https://github.com/IoTThinks/EasySkyMesh",
+      "tagPattern": "^PowerSaving",
+      "versionPattern": "PowerSaving(?<version>[0-9][0-9.]*)",
+      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server)-PowerSaving[0-9.]+(?:-(?<variant>upgrade|freshInstall))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "exclude": ["freshInstall"],
+      "platforms": ["nrf52", "esp32"]
+    },
+    {
+      "id": "zephcore",
+      "name": "ZephCore",
+      "description": "MeshCore-compatible firmware built on Zephyr RTOS by liquidraver.",
+      "repo": "liquidraver/ZephCore",
+      "homepage": "https://github.com/liquidraver/ZephCore",
+      "tagPattern": "-zephcore$",
+      "versionPattern": "^(?<version>[0-9][0-9.]*[a-z]?)",
+      "assetPattern": "^(?<board>.+?)-(?<role>repeater|room_server|roomserver|room-server)-[0-9a-f]{6,}\\.(?<ext>zip|bin)$",
+      "platforms": ["nrf52"],
+      "notes": "ESP32 builds use MCUboot OTA, which is not supported yet."
+    }
+  ]
+}

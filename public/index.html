@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#eef2f3" />
+    <meta name="description" content="Over-the-air firmware updates for MeshCore repeaters and room servers, over Bluetooth or WiFi." />
+    <meta http-equiv="Content-Security-Policy" content="__CSP__" />
+    <title>Alpine OTA Updater</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="stylesheet" href="./__CSS__" />
+    <script>
+      // Apply the saved theme before first paint to avoid a flash.
+      try {
+        var th = JSON.parse(localStorage.getItem('alpine-ota:theme') || '"system"');
+        if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <noscript>Alpine OTA Updater needs JavaScript.</noscript>
+    </div>
+    <script type="module" src="./__JS__"></script>
+  </body>
+</html>
