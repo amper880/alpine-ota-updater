@@ -2,23 +2,32 @@
 
 | | |
 |---|---|
-| **Status** | Approved; M1–M2 in v0.1.0, M3 in v0.2.0 (awaiting hardware test) |
-| **Version** | 0.2 (spec) |
+| **Status** | Approved; native app since v0.3.0 (see §0) |
+| **Version** | 0.3 (spec) |
 | **Author** | Amper |
 | **Date** | 2026-10-15 |
 
 ---
 
+## 0. Change log of this specification
+
+| Version | Change |
+|---|---|
+| 0.1 | Initial draft: installable web app (PWA) on GitHub Pages with a Cloudflare download proxy. |
+| 0.2 | Svelte/Vite replaced by plain TypeScript + esbuild. |
+| 0.3 | **Web app replaced by a native app (Tauri 2) for Windows and Android.** Testing showed that Chromium's Web Bluetooth blocklist forbids the Nordic legacy DFU service (`00001530-…`) that the Adafruit / OTAFIX bootloaders use, so nRF52 updates are impossible from any browser. Native Bluetooth has no such restriction, and native HTTP also removes the CORS proxy and the HTTPS→HTTP problem of the ESP32 upload. iOS is postponed (needs a Mac and an Apple developer account). |
+
+---
+
 ## 1. Overview
 
-Alpine OTA Updater is an installable web application (PWA) that updates the firmware of
-**MeshCore repeater and room server nodes** over the air:
+Alpine OTA Updater is a cross-platform app (Windows and Android; iOS later) that updates the
+firmware of **MeshCore repeater and room server nodes** over the air:
 
 - **nRF52-based nodes** — over **Bluetooth Low Energy (Nordic legacy DFU)**
 - **ESP32-based nodes** — over **WiFi (the node's own OTA access point)**
 
-The user receives a single link. The app runs in Chrome / Edge on desktop, Android phones
-and tablets, and can be installed as a standalone app from the browser.
+Users install it from the release page (Windows installer, Android APK).
 
 ### 1.1 Goals
 
@@ -34,27 +43,21 @@ and tablets, and can be installed as a standalone app from the browser.
 - Putting the node into OTA mode. The user does this with the `start ota` CLI command from
   their own companion app.
 - Companion firmware, USB/serial flashing, bootloader updates.
-- iOS / Safari support (no Web Bluetooth). Firefox is not supported either.
+- iOS and macOS builds (technically possible with Tauri, postponed).
+- A browser version (see §0, 0.3).
 - Pre-release / nightly builds (planned as a later toggle, see §13).
 
 ---
 
 ## 2. Platform constraints
 
-These browser rules shape the architecture. They are listed here so later decisions can be
-traced back to them.
-
 | # | Constraint | Consequence |
 |---|---|---|
-| C1 | Web Bluetooth exists only in Chromium browsers (Chrome, Edge, Opera, Samsung Internet) on desktop and Android. | Unsupported browsers get a clear notice; the WiFi path still works there where possible. |
-| C2 | Web Bluetooth only lets the page pick a device through the **browser's own chooser dialog**. | The SCAN button opens the native chooser, pre-filtered to OTA-mode device names. |
-| C3 | A web page cannot scan for or join WiFi networks. | For ESP32 the app shows a step-by-step guide for joining the `MeshCore-OTA` network manually, then checks reachability itself. |
-| C4 | Web Bluetooth and PWA install require **HTTPS**; the ESP32 OTA server is plain **HTTP** on `192.168.4.1`. | Rely on Chrome's *Local Network Access* mixed-content exemption for private IP literals (with a permission prompt); fall back to a form-based upload (see §6.3). |
-| C5 | GitHub release asset downloads do not send CORS headers. | A small **download proxy** (Cloudflare Worker) fetches assets on the app's behalf. |
-| C6 | On the node's OTA WiFi there is no internet. | App shell is cached by a service worker; firmware files are cached locally **before** the user switches network. |
-| C7 | Phones turn off the screen and throttle background tabs, which can break BLE transfers. | Use the Screen Wake Lock API during flashing; warn the user not to leave the page. |
-
----
+| C1 | Chromium's Web Bluetooth **blocklist** contains the Nordic legacy DFU service `00001530-1212-efde-1523-785feabcd123`. | No browser can update nRF52 nodes → native app (Tauri) with native Bluetooth (`tauri-plugin-blec`: btleplug on Windows, Kotlin backend on Android). |
+| C2 | Apps cannot join a WiFi network without extra platform permissions; joining the node's AP manually is simple and reliable. | For ESP32 the app shows a step-by-step guide for joining `MeshCore-OTA`, then checks reachability itself. |
+| C3 | On the node's OTA WiFi there is no internet. Android may route traffic over mobile data instead of a WiFi without internet. | Firmware is downloaded **before** switching networks. Android: bind requests to the WiFi network (verified in M4). |
+| C4 | Phones turn off the screen during long transfers. | Keep the screen on during an update (M5); warn the user not to leave the app. |
+| C5 | Unauthenticated GitHub API: 60 requests per hour per IP. | Release lists are cached for 10 minutes and kept for offline use. |
 
 ## 3. Glossary
 
@@ -84,17 +87,18 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 
 ### 4.1 nRF52 (BLE) path
 
-1. User has run `start ota` on the node; it now advertises as `<BOARD>_OTA`
-   (e.g. `RAK4631_OTA`, `T114_OTA`).
-2. **SCAN** → native chooser filtered to the known `*_OTA` names and the bootloader name
-   (`AdaDFU`). A "show all devices" option disables the filter.
-3. App connects, writes the *buttonless* "enter bootloader" command to the DFU control point;
-   the node reboots into the bootloader.
-4. App reconnects to the bootloader (automatically if the same device object is reachable,
-   otherwise via a second chooser prompt — "Connect to bootloader").
+1. The user runs `start ota` on the node; it now advertises as `<BOARD>_OTA`
+   (e.g. `RAK4631_OTA`, `T114_OTA`). A node already in bootloader mode (`AdaDFU` or
+   `<BOARD>_DFU` with the OTAFIX bootloader) works too.
+2. **SCAN** → the app scans for 12 s and lists nodes in update mode inside the app
+   (application mode or bootloader). "Show all Bluetooth devices" disables the filter.
+3. The user selects a node; the name is checked against the selected device type (§4.3).
+4. **Start update:** if the node runs the application, the app writes the buttonless
+   "enter bootloader" command, waits for the disconnect, rescans and connects to the
+   bootloader (same address, else `<BOARD>_DFU`, else the strongest bootloader).
 5. Legacy DFU transfer with progress, speed and ETA.
-6. Bootloader validates and boots the new firmware. App shows success and a hint to check
-   `ver` from the companion app.
+6. The bootloader validates and boots the new firmware. The app shows success and a hint to
+   check `ver` from the companion app.
 
 ### 4.2 ESP32 (WiFi) path
 
@@ -155,9 +159,9 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 
 ### 5.4 Scan & connect (FR-4)
 
-- FR-4.1 BLE: see §4.1. WiFi: see §4.2.
-- FR-4.2 The found node is shown with name, platform and (if known) detected board.
-- FR-4.3 Clear error messages for: Bluetooth off, permission denied, chooser cancelled,
+- FR-4.1 BLE: in-app scan list (see §4.1). WiFi: see §4.2.
+- FR-4.2 Each found node shows name, mode (update mode / bootloader) and signal strength.
+- FR-4.3 Clear error messages for: Bluetooth off, permission denied, node not found,
   node not reachable, wrong network.
 
 ### 5.5 Flash (FR-5)
@@ -165,7 +169,7 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 - FR-5.1 Progress bar with percentage, transferred bytes, speed and ETA.
 - FR-5.2 Cancel button (with a warning that the node may stay in bootloader/OTA mode — which
   is recoverable by retrying).
-- FR-5.3 Screen Wake Lock held during transfer.
+- FR-5.3 The screen stays on during the transfer (M5).
 - FR-5.4 Detailed log panel (collapsed by default), copyable for bug reports.
 
 ### 5.6 General (FR-6)
@@ -173,7 +177,8 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 - FR-6.1 Theme: Light / Dark / System.
 - FR-6.2 Language: English / Hungarian, auto-detected from the browser, switchable; new
   languages added by dropping a JSON file into `src/i18n/locales/` (see §9.3).
-- FR-6.3 Installable PWA; works offline except for listing/downloading firmware.
+- FR-6.3 Installers for Windows (NSIS/MSI) and Android (APK); works offline except for
+  listing/downloading firmware.
 - FR-6.4 App version shown in the footer / About dialog, with a link to the changelog.
 
 ---
@@ -185,32 +190,28 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 MeshCore's nRF52 firmware (`NRF52Board::startOTAUpdate`) starts BLE advertising under
 `<BOARD>_OTA` and exposes the Adafruit `BLEDfu` service (Nordic **legacy** DFU, buttonless).
 The bootloader is the Adafruit nRF52 bootloader (or the OTAFIX fork), which implements the
-legacy DFU protocol.
+legacy DFU protocol and advertises as `AdaDFU` or `<BOARD>_DFU`.
 
 | Item | UUID |
 |---|---|
 | Legacy DFU service | `00001530-1212-efde-1523-785feabcd123` |
 | DFU Control Point | `00001531-1212-efde-1523-785feabcd123` |
 | DFU Packet | `00001532-1212-efde-1523-785feabcd123` |
-| DFU Version | `00001534-1212-efde-1523-785feabcd123` |
+| DFU Version | `00001534-1212-efde-1523-785feabcd123` (`0x0001` = application mode) |
 
-Sequence (implemented in `src/lib/dfu/legacy-dfu.ts`, own implementation, no external lib):
+Sequence (`src/lib/dfu/legacy-dfu.ts`, own implementation, transport-agnostic):
 
 1. Read DFU Version → if application mode, write `START_DFU (0x01) + APPLICATION (0x04)` to
-   the control point; device reboots into the bootloader.
-2. Reconnect; enable control point notifications.
+   the control point; the node reboots into the bootloader (`src/lib/ble/flash-ble.ts`).
+2. Rescan, connect to the bootloader, enable control point notifications.
 3. `START_DFU` + image sizes (softdevice, bootloader, application) on the packet char.
 4. `INIT_DFU_PARAMS (0x02)` start → send `.dat` init packet → `INIT_DFU_PARAMS` complete.
-5. `PACKET_RECEIPT_NOTIF_REQ (0x08)` with N packets (default 8, tunable).
+5. `PACKET_RECEIPT_NOTIF_REQ (0x08)` with N packets (default 8, adjustable under Advanced).
 6. `RECEIVE_FIRMWARE_IMAGE (0x03)` → stream the `.bin` in 20-byte packets, waiting for
    receipt notifications.
 7. `VALIDATE (0x04)` → `ACTIVATE_AND_RESET (0x05)`.
 
-The `.zip` DFU package is unpacked in the browser (`fflate`) using `manifest.json`.
-
-Known risks: some boards need specific settings (e.g. lower PRN, slower pacing) — exposed
-under "Advanced" and tuned during device testing. Some devices change BLE address in
-bootloader mode, hence the second-chooser fallback.
+The `.zip` DFU package is unpacked with a small built-in ZIP reader (`DecompressionStream`).
 
 ### 6.2 ESP32 — AsyncElegantOTA over WiFi
 
@@ -226,22 +227,12 @@ MeshCore's ESP32 firmware (`ESP32Board::startOTAUpdate`) opens an **open** soft 
 
 The app computes the MD5 locally (`spark-md5`) before upload.
 
-### 6.3 ESP32 upload strategy (HTTPS → HTTP)
+### 6.3 ESP32 upload (M4)
 
-1. **Primary — direct fetch.** `fetch('http://192.168.4.1/update', { method: 'POST',
-   body: formData, targetAddressSpace: 'local' })`. Chrome treats private IP literals as
-   local-network requests: it shows a one-time *Local Network Access* permission prompt and
-   exempts the request from mixed-content blocking. The response is readable (`ACAO: *`).
-   Upload progress: XHR if permitted by the exemption, otherwise an estimated progress bar.
-2. **Fallback — form post.** If (1) is blocked, the app builds a hidden HTML form targeting
-   `http://192.168.4.1/update` in a new tab, attaches the cached file programmatically, and
-   submits it. Chrome shows a "form is not secure" interstitial that the user confirms once.
-3. **Last resort — manual.** The app offers "Save firmware file" and opens
-   `http://192.168.4.1/update`, where the user picks the file.
-
-The exact behaviour of (1) on desktop Chrome and Android Chrome is validated in milestone M4.
-
----
+The app computes the MD5, then posts `multipart/form-data` (`MD5`, then `firmware`) to
+`http://192.168.4.1/update` through the native HTTP plugin, which has no CORS or
+mixed-content limits. Progress is estimated from the upload size and elapsed time. On Android
+the request must use the WiFi network even though it has no internet (verified in M4).
 
 ## 7. Catalog (extensibility)
 
@@ -324,52 +315,39 @@ path (RP2040, STM32, `.uf2`/`.hex`-only) are excluded.
 ## 8. Architecture
 
 ```
-            ┌──────────────────────────── Browser (Chrome / Edge) ──────────────────────────┐
-            │  Alpine OTA Updater PWA (static files from GitHub Pages)                       │
-            │                                                                                │
-            │  UI (TypeScript) ── i18n ── theme                                              │
-            │   │                                                                            │
-            │   ├─ catalog service ── api.github.com (release lists, via proxy cache) ───────┼──┐
-            │   ├─ firmware cache (IndexedDB) ◄── download via proxy ────────────────────────┼──┤
-            │   ├─ BLE DFU engine (Web Bluetooth) ───────────────► nRF52 node / bootloader   │  │
-            │   └─ WiFi OTA engine (fetch / form) ──── http://192.168.4.1 ► ESP32 node       │  │
-            │  Service worker: offline app shell                                             │  │
-            └────────────────────────────────────────────────────────────────────────────────┘  │
-                                                                                                │
-            ┌──────────── Cloudflare Worker "alpine-ota-proxy" ────────────┐                    │
-            │  GET /releases?repo=…   → cached GitHub API response (10 min) │ ◄─────────────────┘
-            │  GET /asset?url=…       → streams a release asset, adds CORS  │
-            │  Allow-list: repos from sources.json, github.com hosts only   │
-            └───────────────────────────────────────────────────────────────┘
+┌──────────────────────────── Tauri app (Windows / Android) ───────────────────────────┐
+│  Web view: UI in TypeScript (src/) ── i18n ── theme                                   │
+│   ├─ catalog + release listing ───── native HTTP ─────► api.github.com               │
+│   ├─ firmware library (IndexedDB) ◄─ native HTTP ─────── github.com release assets   │
+│   ├─ legacy DFU engine ───────────── tauri-plugin-blec ► nRF52 node / bootloader     │
+│   └─ ESP32 uploader (M4) ─────────── native HTTP ─────► http://192.168.4.1/update    │
+│  Rust shell (src-tauri/): registers tauri-plugin-http and tauri-plugin-blec          │
+└──────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+All logic stays in TypeScript and is unit-tested with `node:test`; the Rust part only hosts the
+web view and the plugins.
 
 ### 8.1 Tech stack
 
 | Concern | Choice | Why |
 |---|---|---|
-| Language | TypeScript (strict) | Type safety for protocol code |
-| UI | Plain DOM with a small `h()` helper and an observable store — no framework | Zero runtime dependencies, tiny bundle, nothing to keep up to date |
-| Build | esbuild (`scripts/build.mjs`) | Fast, single small dependency, static output for any web server |
-| PWA | Hand-written service worker + web manifest | Offline shell, install prompt, update notification |
+| App shell | Tauri 2 (Rust) | One code base for Windows, Android (and later iOS/macOS); small installers |
+| Bluetooth | `tauri-plugin-blec` (btleplug / Android Kotlin backend) | Native BLE, no browser blocklist |
+| HTTP | `tauri-plugin-http` | No CORS → no proxy; plain HTTP to the ESP32 |
+| UI | Plain TypeScript, small `h()` helper and observable store | Zero UI framework, tiny bundle |
+| Build | esbuild (front-end), Cargo/Gradle via Tauri CLI | Fast, few dependencies |
 | Storage | IndexedDB (thin own wrapper) | Large binary blobs, survives restarts |
-| ZIP (M3) | Native `DecompressionStream` + minimal ZIP reader | No dependency for DFU packages |
-| MD5 (M4) | Small own implementation | Required by ElegantOTA |
-| Proxy | Cloudflare Worker (free tier) | No server to run; can move to own server later |
-| Tests | `node:test` (Node 22 runs TypeScript natively) | No test framework dependency; DFU protocol tested against a mock GATT |
+| ZIP / MD5 | Own small implementations | No dependency |
+| Tests | `node:test` (Node 22 runs TypeScript natively) | DFU protocol tested against a simulated bootloader |
+| CI | GitHub Actions: tests on Linux, installers on Windows and Linux (Android) | No local Rust/Android toolchain needed |
 
-*Change from spec 0.1:* Svelte/Vite/Workbox were replaced by plain TypeScript + esbuild to
-keep the app dependency-free; the UI is small enough that a framework adds more than it saves.
+### 8.2 Distribution
 
-### 8.2 Hosting
-
-- **App:** GitHub Pages, deployed by a GitHub Actions workflow on every tag/push to `main`
-  (`https://<user>.github.io/alpine-ota-updater/`). The build is plain static files, so it can
-  later be copied to the own server unchanged (only the base path and proxy URL are configured
-  via environment variables (`ALPINE_PROXY_URL`).
-- **Proxy:** Cloudflare Worker in `proxy/`, deployed with `wrangler`. Its URL is configured
-  with `ALPINE_PROXY_URL` at build time. A Node/PHP equivalent can be added later for the own server.
-
----
+- Every push to `main` builds the Windows installer and the Android APK (workflow artifacts).
+- A tag `vX.Y.Z` additionally publishes them as a GitHub Release.
+- Android APKs are signed with a key stored in repository secrets (see `docs/BUILDING.md`).
+- Windows builds are unsigned for now (SmartScreen shows a warning on first start).
 
 ## 9. UI / UX
 
@@ -400,11 +378,12 @@ themes; all actions keyboard-accessible; motion reduced when `prefers-reduced-mo
 
 | Area | Requirement |
 |---|---|
-| Performance | First load < 300 kB gzipped; instant start when installed |
+| Performance | UI bundle < 300 kB; app starts in under 2 s |
 | Reliability | Flash never starts without a fully verified cached file |
 | Privacy | No analytics, no accounts; only GitHub and the node are contacted |
-| Security | Proxy only serves assets from allow-listed repos; strict CSP |
-| Compatibility | Chrome/Edge ≥ 142 desktop & Android; graceful notice elsewhere |
+| Security | HTTP plugin limited to GitHub and 192.168.4.1; strict CSP |
+| Permissions | Bluetooth (scan/connect), network; nothing else |
+| Compatibility | Windows 10/11 (WebView2), Android 7+ (API 24) |
 
 ---
 
@@ -412,61 +391,62 @@ themes; all actions keyboard-accessible; motion reduced when `prefers-reduced-mo
 
 ```
 alpine-ota-updater/
-├─ src/
+├─ src/                # UI and logic (TypeScript)
+│  ├─ app/             # state store and actions (state.ts, flash.ts)
 │  ├─ lib/
-│  │  ├─ catalog/      # sources, boards, GitHub release parsing
-│  │  ├─ cache/        # IndexedDB firmware library
-│  │  ├─ dfu/          # BLE legacy DFU engine
-│  │  └─ wifi/         # ESP32 ElegantOTA uploader
-│  ├─ app/             # state store and actions
+│  │  ├─ catalog/      # sources, boards, release asset matching
+│  │  ├─ cache/        # IndexedDB firmware library, downloads
+│  │  ├─ github/       # release lists
+│  │  ├─ net/          # HTTP (native plugin)
+│  │  ├─ ble/          # native BLE, device recognition, BLE update flow
+│  │  ├─ dfu/          # legacy DFU protocol, DFU package parser
+│  │  └─ util/         # formatting, storage, ZIP
 │  ├─ ui/              # DOM rendering (header, steps, library, side panel)
 │  ├─ i18n/            # locale files + loader
-│  ├─ styles/          # CSS (design tokens, light/dark)
-│  ├─ sw.ts            # service worker
-│  └─ main.ts
+│  └─ styles/          # CSS (design tokens, light/dark)
+├─ src-tauri/          # Rust shell, tauri.conf.json, capabilities, icon source
 ├─ catalog/            # sources.json, boards.json, board-overrides.json
-├─ proxy/              # Cloudflare Worker
-├─ scripts/            # build-catalog.mjs, release helpers
-├─ public/             # icons, manifest assets
-├─ tests/
-├─ docs/               # SPEC, DEVELOPMENT, USER_GUIDE, DEPLOYMENT, TRANSLATING, ADDING_A_SOURCE
-├─ .github/workflows/  # ci.yml, deploy.yml
+├─ public/             # index.html, static assets
+├─ scripts/            # front-end build, dev server, catalog generator
+├─ tests/              # unit tests
+├─ docs/               # SPEC, BUILDING, DEVELOPMENT, USER_GUIDE, TRANSLATING, ADDING_A_SOURCE
+├─ .github/workflows/  # ci.yml (tests), build.yml (installers, releases)
 ├─ CHANGELOG.md
 ├─ LICENSE (MIT)
 └─ README.md
 ```
-
----
 
 ## 12. Versioning & release process
 
 - **Semantic Versioning** (`MAJOR.MINOR.PATCH`); pre-1.0 while in development.
 - **Conventional Commits** (`feat:`, `fix:`, `docs:`, `chore:` …).
 - **CHANGELOG.md** in *Keep a Changelog* format, updated in each release.
-- Releases are git tags `vX.Y.Z`; the version is injected into the app at build time.
+- Releases are git tags `vX.Y.Z`; `package.json` holds the version, which Tauri and the UI
+  read at build time.
 - Branching: `main` is always deployable; features on short-lived branches once on GitHub.
 
 ---
 
 ## 13. Milestones
 
-| M | Content | Exit criterion |
+| M | Content | Status |
 |---|---|---|
-| M0 | Repo, spec, tooling, CI | This document approved |
-| M1 | App shell, theme, i18n, catalog + release listing, proxy | Lists real releases for any board |
-| M2 | Firmware download + library (cache) | Files reusable offline |
-| M3 | BLE legacy DFU | Successful update on a real nRF52 node |
-| M4 | WiFi OTA (all three strategies) | Successful update on a real ESP32 node (desktop + Android) |
-| M5 | Polish, docs, PWA install, v1.0.0 | User guide complete, tagged release |
-| Later | Pre-release toggle, own-server deployment, more sources | — |
-
----
+| M0 | Repo, spec, tooling, CI | done (v0.1.0) |
+| M1 | App shell, theme, i18n, catalog + release listing | done (v0.1.0) |
+| M2 | Firmware download + library (cache) | done (v0.1.0) |
+| M3 | BLE legacy DFU | protocol done (v0.2.0); native app v0.3.0 awaiting hardware test |
+| M3a | Native app (Tauri), Windows + Android builds in CI | v0.3.0 |
+| M4 | WiFi OTA for ESP32 | next |
+| M5 | Polish (keep screen on, signed releases), v1.0.0 | — |
+| Later | iOS/macOS, pre-release toggle, more sources | — |
 
 ## 14. Open points / risks
 
-1. **LNA behaviour on Android Chrome** for `192.168.4.1` — verified in M4; fallbacks exist.
-2. **Bootloader re-connect** after buttonless jump may need a second chooser on some boards.
-3. **ZephCore** compatibility (nRF52 DFU zip, ESP32 MCUboot OTA) — verified in M3/M4.
-4. **GitHub API rate limit** (60 req/h per IP unauthenticated) — mitigated by Worker caching;
-   a GitHub token can be added to the Worker as a secret if needed.
-5. Board naming differs between sources — handled by `aliases` in `boards.json`.
+1. **Windows Bluetooth stack:** GATT caching and the bootloader's different handles may need
+   tuning; verified with a Heltec T114 in M3a.
+2. **IPC throughput:** every 20-byte DFU packet is one call from the web view to Rust. If the
+   transfer is too slow, the packet loop moves into a Rust command.
+3. **Android WiFi without internet** for the ESP32 upload (M4).
+4. **ZephCore** compatibility (nRF52 DFU zip, ESP32 MCUboot OTA).
+5. **Plugin versions:** `tauri-plugin-blec` is young; the app uses only its stable subset
+   (single connected device).

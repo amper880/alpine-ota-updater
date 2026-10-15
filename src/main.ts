@@ -3,8 +3,8 @@
  */
 import { detectLocale, setLocale, t } from './i18n/index.ts';
 import { refreshCached, refreshFirmwareList, store, type Theme } from './app/state.ts';
-import { APP_VERSION, IS_DEV, REPO_URL } from './lib/config.ts';
-import { h, icon } from './ui/dom.ts';
+import { APP_VERSION, REPO_URL } from './lib/config.ts';
+import { h } from './ui/dom.ts';
 import { renderHeader } from './ui/header.ts';
 import { renderSteps } from './ui/steps/index.ts';
 import { renderAside } from './ui/aside.ts';
@@ -35,57 +35,6 @@ function renderFooter(root: HTMLElement): void {
   );
 }
 
-function renderUpdateToast(root: HTMLElement, onReload: () => void): void {
-  store.select(
-    (s) => [s.updateReady, s.locale],
-    ([ready]) =>
-      root.replaceChildren(
-        ...(ready
-          ? [
-              h(
-                'div',
-                { class: 'toast', role: 'status' },
-                icon('refresh', 18),
-                h('span', null, t('update.ready')),
-                h('button', { type: 'button', class: 'btn small primary', onclick: onReload }, t('update.reload')),
-              ),
-            ]
-          : []),
-      ),
-  );
-}
-
-function registerServiceWorker(): () => void {
-  let waiting: ServiceWorker | null = null;
-  if (IS_DEV || !('serviceWorker' in navigator)) return () => location.reload();
-  navigator.serviceWorker
-    .register('./sw.js')
-    .then((reg) => {
-      const track = (w: ServiceWorker | null) => {
-        if (!w) return;
-        w.addEventListener('statechange', () => {
-          if (w.state === 'installed' && navigator.serviceWorker.controller) {
-            waiting = w;
-            store.set({ updateReady: true });
-          }
-        });
-      };
-      if (reg.waiting && navigator.serviceWorker.controller) {
-        waiting = reg.waiting;
-        store.set({ updateReady: true });
-      }
-      reg.addEventListener('updatefound', () => track(reg.installing));
-    })
-    .catch(() => undefined);
-  let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
-    reloading = true;
-    location.reload();
-  });
-  return () => waiting?.postMessage('skipWaiting');
-}
-
 function start(): void {
   const initial = store.get();
   const loc = detectLocale(initial.locale || undefined);
@@ -100,7 +49,6 @@ function start(): void {
   const steps = h('div', { class: 'trail' });
   const aside = h('aside', { class: 'side', 'aria-label': t('summary.title') });
   const footer = h('footer', { class: 'footer' });
-  const toast = h('div', { class: 'toast-host', 'aria-live': 'polite' });
   const dialog = h('dialog', { class: 'dialog' });
 
   app.replaceChildren(
@@ -113,7 +61,6 @@ function start(): void {
       aside,
     ),
     footer,
-    toast,
     dialog,
   );
   // Intro text depends on locale.
@@ -131,8 +78,6 @@ function start(): void {
   renderAside(aside);
   renderLibrary(dialog);
   renderFooter(footer);
-  const reload = registerServiceWorker();
-  renderUpdateToast(toast, reload);
 
   void refreshCached();
   if (initial.boardId && initial.sourceId) void refreshFirmwareList();

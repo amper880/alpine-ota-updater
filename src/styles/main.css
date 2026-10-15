@@ -989,6 +989,51 @@ select {
   gap: 12px;
 }
 
+/* ------------------------------------------------------------------ step 4: device scan */
+
+.device-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.device-item {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: transparent;
+  cursor: pointer;
+}
+.device-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.device-item > .icon {
+  color: var(--ble);
+}
+.device-name {
+  font-weight: 650;
+}
+.device-rssi {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-size: var(--fs-0);
+  font-variant-numeric: tabular-nums;
+}
+.check.inline {
+  margin-top: 0;
+  font-weight: 500;
+  font-size: var(--fs-1);
+}
+
 /* ------------------------------------------------------------------ step 5: update */
 
 .chip.warn {
@@ -1258,7 +1303,7 @@ select {
   padding-top: 14px;
 }
 
-/* ------------------------------------------------------------------ footer, toast */
+/* ------------------------------------------------------------------ footer */
 
 .footer {
   border-top: 1px solid var(--line);
@@ -1278,27 +1323,6 @@ select {
   color: var(--ink-2);
 }
 
-.toast-host {
-  position: fixed;
-  left: 16px;
-  right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 20;
-}
-.toast {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 10px 10px 16px;
-  border-radius: var(--radius-m);
-  background: var(--ink);
-  color: var(--bg);
-  box-shadow: var(--shadow);
-}
 
 @media (max-width: 640px) {
   .lib-label,

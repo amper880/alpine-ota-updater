@@ -31,6 +31,7 @@ export interface DownloadState {
 }
 
 import type { DeviceMatch } from '../lib/catalog/match.ts';
+import type { DeviceKind, ScannedDevice } from '../lib/ble/candidates.ts';
 export type { DeviceMatch };
 
 /** The node picked in step 4 (the BluetoothDevice object itself lives in app/flash.ts). */
@@ -40,10 +41,21 @@ export interface PickedDevice {
   match: DeviceMatch;
   /** Boards that advertise this OTA name (for mismatch messages). */
   knownAs: string[];
+  /** Application in OTA mode or bootloader already in DFU mode. */
+  kind: DeviceKind;
+}
+
+export interface ScanState {
+  status: 'idle' | 'scanning';
+  devices: ScannedDevice[];
+  /** Show every Bluetooth device, not only nodes in update mode. */
+  showAll: boolean;
+  error?: string;
+  errorDetail?: string;
 }
 
 export type FlashPhase = 'idle' | 'running' | 'done' | 'error' | 'cancelled';
-export type FlashStage = 'preparing' | 'connecting' | 'entering-bootloader' | 'reconnecting' | 'pick-bootloader' | 'transferring' | 'finishing';
+export type FlashStage = 'preparing' | 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing';
 
 export interface FlashState {
   phase: FlashPhase;
@@ -71,9 +83,8 @@ export interface AppState {
   cached: Record<string, CachedFirmwareMeta>;
   downloads: Record<string, DownloadState>;
   libraryOpen: boolean;
-  updateReady: boolean;
   device?: PickedDevice;
-  scanError?: string;
+  scan: ScanState;
   flash: FlashState;
 }
 
@@ -90,9 +101,8 @@ export const store = createStore<AppState>({
   cached: {},
   downloads: {},
   libraryOpen: false,
-  updateReady: false,
   device: undefined,
-  scanError: undefined,
+  scan: { status: 'idle', devices: [], showAll: false },
   flash: IDLE_FLASH,
 });
 
@@ -180,7 +190,7 @@ export function useFirmware(key: string): void {
 
 let listAbort: AbortController | undefined;
 
-export async function refreshFirmwareList(): Promise<void> {
+export async function refreshFirmwareList(force = false): Promise<void> {
   const s = store.get();
   const board = boardById(s.boardId);
   const source = sourceById(s.sourceId);
@@ -194,7 +204,7 @@ export async function refreshFirmwareList(): Promise<void> {
   listAbort = ctrl;
   store.set({ releases: { status: 'loading', requestKey, options: [] } });
   try {
-    const { releases, offlineSince } = await loadReleases(source.repo, ctrl.signal);
+    const { releases, offlineSince } = await loadReleases(source.repo, { signal: ctrl.signal, force });
     if (ctrl.signal.aborted) return;
     const options = findFirmware(source, releases, board, s.role);
     store.set({ releases: { status: 'ok', requestKey, options, offlineSince } });

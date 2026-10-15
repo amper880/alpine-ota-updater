@@ -10,7 +10,7 @@ import {
   useFirmware,
 } from '../../app/state.ts';
 import type { FirmwareOption } from '../../lib/catalog/types.ts';
-import { PROXY_URL } from '../../lib/config.ts';
+import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes, formatDate } from '../../lib/util/format.ts';
 
 function progressBar(key: string): HTMLElement {
@@ -56,7 +56,7 @@ function row(fw: FirmwareOption, latest: boolean): HTMLElement {
   } else {
     action = h(
       'button',
-      { type: 'button', class: 'btn small primary', disabled: !PROXY_URL, onclick: () => void startDownload(fw) },
+      { type: 'button', class: 'btn small primary', disabled: !isNativeApp(), onclick: () => void startDownload(fw) },
       icon('download', 16),
       t('firmware.download'),
     );
@@ -118,7 +118,7 @@ export function firmwareBody(): HTMLElement {
       { class: 'callout error' },
       icon('alert'),
       h('div', null, h('p', null, t('firmware.loadError')), h('p', { class: 'fineprint' }, r.error ?? '')),
-      h('button', { type: 'button', class: 'btn small', onclick: () => void refreshFirmwareList() }, icon('refresh', 16), t('common.retry')),
+      h('button', { type: 'button', class: 'btn small', onclick: () => void refreshFirmwareList(true) }, icon('refresh', 16), t('common.retry')),
     );
   } else if (r.options.length === 0) {
     content = h('p', { class: 'empty' }, t('firmware.none', { source: src?.name ?? '' }));
@@ -131,7 +131,7 @@ export function firmwareBody(): HTMLElement {
     r.offlineSince
       ? h('p', { class: 'callout info' }, icon('info'), t('firmware.offline', { date: formatDate(r.offlineSince, locale()) }))
       : null,
-    !PROXY_URL ? h('p', { class: 'callout warn' }, icon('alert'), t('firmware.noProxy')) : null,
+    !isNativeApp() ? h('p', { class: 'callout warn' }, icon('alert'), t('firmware.appOnly')) : null,
     content,
     src?.notes ? h('p', { class: 'fineprint' }, src.notes) : null,
   );

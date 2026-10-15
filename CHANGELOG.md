@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-15
+
+### Changed
+
+- **The project is now a native app (Tauri 2) for Windows and Android instead of a web app.**
+  Chromium's Web Bluetooth blocklist forbids the Nordic legacy DFU service used by the nRF52
+  bootloaders, so Bluetooth updates cannot work in any browser.
+- Bluetooth scanning happens inside the app: nodes in update mode are listed with their mode
+  (update mode / bootloader) and signal strength; a node already in bootloader mode
+  (`<BOARD>_DFU`, `AdaDFU`) can be updated directly.
+- After switching the node into the bootloader, the app rescans and connects to it
+  automatically (same address, matching `<BOARD>_DFU` name, or strongest bootloader).
+- Release lists and firmware files are fetched directly from GitHub through the native HTTP
+  plugin; release lists are cached for 10 minutes.
+
+### Added
+
+- `src-tauri/` Rust shell with `tauri-plugin-blec` (Bluetooth) and `tauri-plugin-http`.
+- GitHub Actions workflow building the Windows installer (NSIS, MSI) and a signed Android
+  APK; tags publish a GitHub Release.
+- `docs/BUILDING.md`: getting installers, Android signing key, local builds.
+
+### Removed
+
+- Web deployment: GitHub Pages workflow, Cloudflare Worker download proxy, service worker and
+  web manifest, Web Bluetooth code.
+
 ## [0.2.0] - 2026-10-15
 
 ### Added
@@ -46,6 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation: specification, user guide, development, deployment, adding a source,
   translating.
 
-[Unreleased]: https://github.com/OWNER/alpine-ota-updater/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/OWNER/alpine-ota-updater/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/OWNER/alpine-ota-updater/releases/tag/v0.1.0
+[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/amper880/alpine-ota-updater/releases/tag/v0.1.0

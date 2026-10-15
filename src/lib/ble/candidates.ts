@@ -1,0 +1,48 @@
+/**
+ * Pure helpers for recognising nodes in update mode among scanned Bluetooth devices.
+ */
+import { DFU_SERVICE } from '../dfu/legacy-dfu.ts';
+
+export interface ScannedDevice {
+  address: string;
+  name: string;
+  rssi: number;
+  services: string[];
+}
+
+export type DeviceKind = 'app-ota' | 'bootloader' | 'other';
+
+/** Name the Adafruit bootloader advertises by default. */
+export const BOOTLOADER_NAME = 'AdaDFU';
+
+/**
+ * - app-ota:    MeshCore application after `start ota` ("<BOARD>_OTA")
+ * - bootloader: Adafruit / OTAFIX bootloader in DFU mode ("AdaDFU", "<BOARD>_DFU", or the DFU service)
+ */
+export function classify(d: Pick<ScannedDevice, 'name' | 'services'>): DeviceKind {
+  const name = d.name ?? '';
+  if (/_OTA$/i.test(name)) return 'app-ota';
+  if (name.startsWith(BOOTLOADER_NAME) || /_DFU$/i.test(name)) return 'bootloader';
+  if (d.services.some((s) => s.toLowerCase() === DFU_SERVICE)) return 'bootloader';
+  return 'other';
+}
+
+/** "T114_OTA" / "T114_DFU" → "T114". */
+export function baseName(name: string): string {
+  return name.replace(/_(OTA|DFU)$/i, '');
+}
+
+/**
+ * Chooses the bootloader to connect to after the node restarted into DFU mode.
+ * Prefers the same address, then a "<BOARD>_DFU" name matching the node, then the strongest
+ * bootloader signal. Returns undefined when nothing suitable is visible.
+ */
+export function pickBootloader(devices: ScannedDevice[], previous: { address: string; name: string }): ScannedDevice | undefined {
+  const boots = devices.filter((d) => classify(d) === 'bootloader');
+  const same = boots.find((d) => d.address === previous.address);
+  if (same) return same;
+  const base = baseName(previous.name).toLowerCase();
+  const named = boots.find((d) => baseName(d.name).toLowerCase() === base);
+  if (named) return named;
+  return [...boots].sort((a, b) => b.rssi - a.rssi)[0];
+}

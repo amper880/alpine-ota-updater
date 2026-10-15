@@ -1,0 +1,101 @@
+/**
+ * Native Bluetooth Low Energy access through tauri-plugin-blec (btleplug on Windows/iOS/macOS,
+ * a Kotlin backend on Android). Unlike Web Bluetooth there is no blocklist, so the Nordic
+ * legacy DFU service can be used.
+ */
+import * as blec from '@mnlphlp/plugin-blec';
+import { DFU_CONTROL_POINT, DFU_PACKET, DFU_SERVICE, DFU_VERSION, type DfuTransport } from '../dfu/legacy-dfu.ts';
+import type { ScannedDevice } from './candidates.ts';
+
+export type BleErrorCode = 'permission' | 'adapter-off';
+
+export class BleError extends Error {
+  readonly code: BleErrorCode;
+  constructor(code: BleErrorCode, message: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
+/** Asks for Bluetooth permissions (Android) and checks that the adapter is on. */
+export async function ensureBluetooth(): Promise<void> {
+  if (!(await blec.checkPermissions(true))) throw new BleError('permission', 'Bluetooth permission denied');
+  const state = await blec.getAdapterState().catch(() => 'Unknown' as const);
+  if (state === 'Off') throw new BleError('adapter-off', 'Bluetooth is turned off');
+}
+
+/** Scans for `timeoutMs`; `onDevices` receives the full list each time it changes. */
+export async function scan(onDevices: (devices: ScannedDevice[]) => void, timeoutMs: number): Promise<void> {
+  await blec.startScan((devices) => {
+    onDevices(
+      devices.map((d) => ({
+        address: d.address,
+        name: d.name ?? '',
+        rssi: d.rssi,
+        services: (d.services ?? []).map((s) => s.toLowerCase()),
+      })),
+    );
+  }, timeoutMs);
+}
+
+export async function stopScan(): Promise<void> {
+  await blec.stopScan().catch(() => undefined);
+}
+
+export interface NodeConnection {
+  address: string;
+  /** DFU Version characteristic; 0x0001 = application (buttonless), otherwise bootloader. */
+  readVersion(): Promise<number | undefined>;
+  /** Writes to the control point without waiting for a DFU response (buttonless jump). */
+  writeControlRaw(data: Uint8Array): Promise<void>;
+  transport(): DfuTransport;
+  disconnect(): Promise<void>;
+  /** Resolves when the device disconnects. */
+  disconnected: Promise<void>;
+}
+
+const toArray = (d: Uint8Array) => Array.from(d);
+
+/**
+ * Connects to one node. Only one node is connected at a time, so the module-level functions
+ * of the plugin (which address "the connected device") are used; they exist in all plugin
+ * versions this app supports.
+ */
+export async function connectNode(address: string): Promise<NodeConnection> {
+  await blec.disconnect().catch(() => undefined);
+  let markDisconnected!: () => void;
+  const disconnected = new Promise<void>((r) => (markDisconnected = r));
+  await blec.connect(address, () => markDisconnected());
+  let subscribed = false;
+  return {
+    address,
+    disconnected,
+    async readVersion() {
+      try {
+        const v = await blec.read(DFU_VERSION, DFU_SERVICE);
+        if (v.length >= 2) return v[0] | (v[1] << 8);
+        return v[0];
+      } catch {
+        return undefined;
+      }
+    },
+    async writeControlRaw(data) {
+      await blec.send(DFU_CONTROL_POINT, toArray(data), 'withResponse', DFU_SERVICE);
+    },
+    transport(): DfuTransport {
+      return {
+        async startNotifications(onNotify) {
+          if (subscribed) await blec.unsubscribe(DFU_CONTROL_POINT, DFU_SERVICE).catch(() => undefined);
+          await blec.subscribe(DFU_CONTROL_POINT, DFU_SERVICE, (data) => onNotify(new DataView(Uint8Array.from(data).buffer)));
+          subscribed = true;
+        },
+        writeControl: (d) => blec.send(DFU_CONTROL_POINT, toArray(d), 'withResponse', DFU_SERVICE),
+        writePacket: (d) => blec.send(DFU_PACKET, toArray(d), 'withoutResponse', DFU_SERVICE),
+      };
+    },
+    async disconnect() {
+      if (subscribed) await blec.unsubscribe(DFU_CONTROL_POINT, DFU_SERVICE).catch(() => undefined);
+      await blec.disconnect().catch(() => undefined);
+    },
+  };
+}

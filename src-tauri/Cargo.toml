@@ -1,0 +1,29 @@
+[package]
+name = "alpine-ota-updater"
+version = "0.3.0"
+description = "Over-the-air firmware updater for MeshCore repeaters and room servers"
+authors = ["Amper"]
+license = "MIT"
+edition = "2021"
+rust-version = "1.80"
+
+[lib]
+# The `_lib` suffix keeps the library name distinct from the binary (needed on Windows).
+name = "alpine_ota_updater_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-http = "2"
+tauri-plugin-blec = ">=0.17, <0.19"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

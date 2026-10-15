@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Alpine OTA Updater",
+  "version": "../package.json",
+  "identifier": "com.ampersworld.alpineota",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Alpine OTA Updater",
+        "width": 1120,
+        "height": 820,
+        "minWidth": 360,
+        "minHeight": 560
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "publisher": "Amper",
+    "copyright": "© 2026 Amper. MIT License.",
+    "category": "Utility",
+    "shortDescription": "MeshCore OTA firmware updater",
+    "longDescription": "Updates MeshCore repeater and room server nodes over Bluetooth (nRF52) or WiFi (ESP32).",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    },
+    "android": {
+      "minSdkVersion": 24
+    }
+  }
+}

@@ -1,8 +1,7 @@
-import { h, icon } from './dom.ts';
+import { h } from './dom.ts';
 import { locale, t } from '../i18n/index.ts';
 import { selectedBoard, selectedFirmware, selectedSource, store } from '../app/state.ts';
 import { formatBytes } from '../lib/util/format.ts';
-import { hasWebBluetooth } from './steps/connect.ts';
 
 function item(label: string, value: Node | string | null): HTMLElement {
   return h('div', { class: 'sum-item' }, h('dt', null, label), h('dd', null, value ?? h('span', { class: 'muted' }, '—')));
@@ -37,18 +36,6 @@ export function renderAside(root: HTMLElement): void {
           { class: 'panel quiet' },
           h('h2', { class: 'panel-title' }, t('library.title')),
           h('p', null, cachedCount ? t('library.summary', { count: cachedCount, size: formatBytes(cachedBytes, locale()) }) : t('library.empty')),
-        ),
-        h(
-          'div',
-          { class: 'panel quiet' },
-          h('h2', { class: 'panel-title' }, t('support.title')),
-          h(
-            'ul',
-            { class: 'support' },
-            h('li', { class: hasWebBluetooth() ? 'ok' : 'no' }, icon(hasWebBluetooth() ? 'check' : 'x', 16), t('support.bluetooth')),
-            h('li', { class: 'ok' }, icon('check', 16), t('support.wifi')),
-          ),
-          !hasWebBluetooth() ? h('p', { class: 'fineprint' }, t('support.bluetoothHint')) : null,
         ),
       );
     },

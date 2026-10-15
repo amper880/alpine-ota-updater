@@ -2,11 +2,12 @@
  * Downloads a firmware file through the proxy, verifies it and stores it in IndexedDB.
  */
 import type { FirmwareOption } from '../catalog/types.ts';
-import { PROXY_URL } from '../config.ts';
+import { httpFetch } from '../net/http.ts';
+import { isNativeApp } from '../platform.ts';
 import { toHex } from '../util/format.ts';
 import { putFirmware, type CachedFirmware } from './db.ts';
 
-export type DownloadErrorCode = 'no-proxy' | 'network' | 'http' | 'size' | 'checksum' | 'storage' | 'aborted';
+export type DownloadErrorCode = 'unsupported' | 'network' | 'http' | 'size' | 'checksum' | 'storage' | 'aborted';
 
 export class DownloadError extends Error {
   readonly code: DownloadErrorCode;
@@ -17,8 +18,7 @@ export class DownloadError extends Error {
 }
 
 export function assetUrl(fw: FirmwareOption): string {
-  const q = new URLSearchParams({ repo: fw.repo, tag: fw.tag, name: fw.asset.name });
-  return `${PROXY_URL}/asset?${q}`;
+  return `https://github.com/${fw.repo}/releases/download/${encodeURIComponent(fw.tag)}/${encodeURIComponent(fw.asset.name)}`;
 }
 
 export async function downloadFirmware(
@@ -26,11 +26,12 @@ export async function downloadFirmware(
   onProgress: (received: number, total: number) => void,
   signal?: AbortSignal,
 ): Promise<CachedFirmware> {
-  if (!PROXY_URL) throw new DownloadError('no-proxy', 'Download proxy is not configured');
+  // Browsers block cross-origin release downloads (no CORS); only the app can download.
+  if (!isNativeApp()) throw new DownloadError('unsupported', 'Downloads need the installed app');
 
   let res: Response;
   try {
-    res = await fetch(assetUrl(fw), { signal });
+    res = await httpFetch(assetUrl(fw), { signal });
   } catch (err) {
     if ((err as Error).name === 'AbortError') throw new DownloadError('aborted', 'Download cancelled');
     throw new DownloadError('network', (err as Error).message);

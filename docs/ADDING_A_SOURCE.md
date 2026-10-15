@@ -7,12 +7,10 @@ release assets.
 ## Steps
 
 1. Add an entry to `catalog/sources.json` (fields below).
-2. Add the repository (`owner/name`) to `ALLOWED_REPOS` in `proxy/wrangler.toml` and redeploy
-   the proxy (`npm run proxy:deploy`). The proxy refuses repositories that are not listed.
-3. Optional: add a translated description as `sourceDesc.<id>` to every file in
+2. Optional: add a translated description as `sourceDesc.<id>` to every file in
    `src/i18n/locales/`. Without it, the English `description` from the JSON is shown.
-4. Add a test case to `tests/match.test.ts` with a few real asset names from the source.
-5. `npm run check`, commit, push.
+3. Add a test case to `tests/match.test.ts` with a few real asset names from the source.
+4. `npm run check`, commit, push.
 
 ## Fields
 

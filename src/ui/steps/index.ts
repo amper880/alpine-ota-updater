@@ -115,7 +115,9 @@ export function renderSteps(root: HTMLElement): void {
         .map(([k, d]) => `${k}:${d.error ?? ''}`)
         .join('|'),
       s.device,
-      s.scanError,
+      s.scan.error,
+      s.scan.status,
+      s.scan.showAll,
       s.flash.phase,
       s.flash.stage,
       s.flash.log.length,

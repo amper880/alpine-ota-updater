@@ -126,8 +126,11 @@ export type DeviceMatch = 'match' | 'mismatch' | 'unknown';
  * - unknown: e.g. the bootloader ("AdaDFU"), which does not reveal the board
  */
 export function matchBleName(boards: Board[], name: string, expected: string | undefined): { match: DeviceMatch; knownAs: string[] } {
-  const knownAs = boards.filter((b) => b.bleOtaName === name).map((b) => b.name);
-  if (expected && name === expected) return { match: 'match', knownAs };
+  // The OTAFIX bootloader advertises "<BOARD>_DFU" for the app's "<BOARD>_OTA".
+  const base = (n: string) => n.replace(/_(OTA|DFU)$/i, '').toLowerCase();
+  const isNodeName = /_(OTA|DFU)$/i.test(name);
+  const knownAs = isNodeName ? boards.filter((b) => b.bleOtaName && base(b.bleOtaName) === base(name)).map((b) => b.name) : [];
+  if (expected && isNodeName && base(name) === base(expected)) return { match: 'match', knownAs };
   if (knownAs.length > 0) return { match: 'mismatch', knownAs };
   return { match: 'unknown', knownAs };
 }

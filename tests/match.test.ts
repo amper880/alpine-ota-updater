@@ -119,4 +119,6 @@ test('BLE name matching', () => {
   assert.equal(m.match, 'mismatch');
   assert.ok(m.knownAs.includes(board('rak4631').name));
   assert.equal(matchBleName(boards, 'AdaDFU', t114.bleOtaName).match, 'unknown');
+  assert.equal(matchBleName(boards, 'T114_DFU', t114.bleOtaName).match, 'match');
+  assert.equal(matchBleName(boards, 'RAK4631_DFU', t114.bleOtaName).match, 'mismatch');
 });

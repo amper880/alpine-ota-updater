@@ -1,12 +1,11 @@
-import { h, icon } from '../dom.ts';
+import { h, icon, mount } from '../dom.ts';
 import { locale, t } from '../../i18n/index.ts';
 import { selectedBoard, selectedFirmware, sourceById, store, type PickedDevice } from '../../app/state.ts';
-import { cancelFlash, forgetDevice, pickBootloaderNow, resetFlash, scanBle, startFlash } from '../../app/flash.ts';
-import { hasWebBluetooth } from '../../lib/dfu/web-bluetooth.ts';
+import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
+import { classify, type ScannedDevice } from '../../lib/ble/candidates.ts';
+import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes } from '../../lib/util/format.ts';
 import { loadPref, savePref } from '../../lib/util/storage.ts';
-
-export { hasWebBluetooth };
 
 function steps(prefix: string, count: number, params?: Record<string, string>): HTMLElement {
   const items: HTMLElement[] = [];
@@ -20,6 +19,11 @@ export function matchChip(d: PickedDevice): HTMLElement {
   return h('span', { class: cls }, icon(d.match === 'match' ? 'check' : 'alert', 14), t(`device.match.${d.match}`));
 }
 
+function kindChip(kind: string): HTMLElement | null {
+  if (kind === 'other') return null;
+  return h('span', { class: 'chip' }, t(`device.kind.${kind}`));
+}
+
 // ---------------------------------------------------------------- step 4
 
 export function connectBody(): HTMLElement {
@@ -28,23 +32,84 @@ export function connectBody(): HTMLElement {
   return board.platform === 'nrf52' ? bleConnectBody(board.bleOtaName ?? '…_OTA') : wifiConnectBody();
 }
 
+/** Device list region; re-rendered on its own while scanning. */
+let deviceListEl: HTMLElement | undefined;
+
+function renderDeviceList(): void {
+  if (!deviceListEl) return;
+  const { scan } = store.get();
+  const visible = scan.showAll ? scan.devices : scan.devices.filter((d) => classify(d) !== 'other');
+  if (visible.length === 0) {
+    mount(
+      deviceListEl,
+      scan.status === 'scanning'
+        ? h('p', { class: 'loading' }, h('span', { class: 'spinner', 'aria-hidden': 'true' }), t('connect.searching'))
+        : scan.devices.length > 0 || scan.error === undefined
+          ? h('p', { class: 'empty' }, scan.devices.length > 0 ? t('connect.noneInUpdateMode') : t('connect.pressScan'))
+          : null,
+    );
+    return;
+  }
+  mount(
+    deviceListEl,
+    h(
+      'ul',
+      { class: 'device-list' },
+      visible.map((d: ScannedDevice) =>
+        h(
+          'li',
+          null,
+          h(
+            'button',
+            { type: 'button', class: 'device-item', onclick: () => selectDevice(d) },
+            icon('bluetooth', 18),
+            h('span', { class: 'device-name' }, d.name || t('connect.unnamed')),
+            kindChip(classify(d)),
+            h('span', { class: 'device-rssi' }, `${d.rssi} dBm`),
+          ),
+        ),
+      ),
+    ),
+    scan.status === 'scanning' ? h('p', { class: 'loading' }, h('span', { class: 'spinner', 'aria-hidden': 'true' }), t('connect.searching')) : null,
+  );
+}
+
+let listSubscribed = false;
+
 function bleConnectBody(otaName: string): HTMLElement {
   const s = store.get();
-  const supported = hasWebBluetooth();
+  const native = isNativeApp();
+  if (!listSubscribed) {
+    listSubscribed = true;
+    store.select((st) => [st.scan.devices, st.scan.status, st.scan.showAll, st.locale], renderDeviceList);
+  }
+  deviceListEl = h('div', { class: 'device-region', 'aria-live': 'polite' });
+  renderDeviceList();
+  const scanning = s.scan.status === 'scanning';
+  const err = s.scan.error;
   return h(
     'div',
     { class: 'step-content' },
-    !supported ? h('p', { class: 'callout warn' }, icon('alert'), t('connect.noBluetooth')) : null,
+    !native ? h('p', { class: 'callout warn' }, icon('alert'), t('connect.appOnly')) : null,
     h('h4', { class: 'field-label' }, t('connect.ble.title')),
     steps('connect.ble.step', 3, { name: otaName }),
-    s.scanError ? h('p', { class: 'callout error' }, icon('alert'), h('div', null, t('connect.scanError'), h('p', { class: 'fineprint' }, s.scanError))) : null,
+    err && err !== 'app-only'
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`)), s.scan.errorDetail ? h('p', { class: 'fineprint' }, s.scan.errorDetail) : null))
+      : null,
     h(
       'div',
       { class: 'actions' },
-      h('button', { type: 'button', class: 'btn primary', disabled: !supported, onclick: () => void scanBle(false) }, icon('bluetooth', 18), t('connect.scan')),
-      h('button', { type: 'button', class: 'link', disabled: !supported, onclick: () => void scanBle(true) }, t('connect.showAll')),
+      scanning
+        ? h('button', { type: 'button', class: 'btn', onclick: () => void stopBleScan() }, t('connect.stop'))
+        : h('button', { type: 'button', class: 'btn primary', disabled: !native, onclick: () => void startBleScan() }, icon('bluetooth', 18), t('connect.scan')),
+      h(
+        'label',
+        { class: 'check inline' },
+        h('input', { type: 'checkbox', checked: s.scan.showAll, onchange: (e: Event) => setShowAll((e.target as HTMLInputElement).checked) }),
+        t('connect.showAll'),
+      ),
     ),
-    h('p', { class: 'fineprint' }, t('connect.ble.chooserHint')),
+    deviceListEl,
   );
 }
 
@@ -157,15 +222,6 @@ export function flashBody(): HTMLElement {
       'div',
       { class: 'step-content' },
       summary,
-      f.stage === 'pick-bootloader'
-        ? h(
-            'div',
-            { class: 'callout warn' },
-            icon('bluetooth'),
-            h('div', null, h('p', null, t('flash.pickBootloader')), h('p', { class: 'fineprint' }, t('flash.pickBootloaderHint'))),
-            h('button', { type: 'button', class: 'btn small primary', onclick: () => void pickBootloaderNow() }, t('flash.selectBootloader')),
-          )
-        : null,
       h(
         'div',
         { class: 'flash-progress' },
@@ -259,7 +315,7 @@ export function flashBody(): HTMLElement {
         icon('download', 18),
         f.phase === 'idle' ? t('flash.start') : t('flash.retry'),
       ),
-      h('button', { type: 'button', class: 'link', onclick: () => void scanBle(false) }, t('flash.otherDevice')),
+      h('button', { type: 'button', class: 'link', onclick: forgetDevice }, t('flash.otherDevice')),
       f.phase !== 'idle' ? h('button', { type: 'button', class: 'link', onclick: resetFlash }, t('common.dismiss')) : null,
     ),
     h(
