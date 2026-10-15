@@ -14,10 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bluetooth connection: one automatic retry after a short rescan, with timing in the log.
+- Bluetooth connection: up to three attempts, each retry after a fresh scan for the node;
+  timing and visible devices are logged.
 - CI: pinned the Linux runners to Ubuntu 24.04 and moved to Node 24 based action versions.
 - CI: the Android job uses the SDK preinstalled on the runner instead of
   `android-actions/setup-android`, which failed installing the removed `tools` package.
+
+### Added
+
+- Native log file with Bluetooth details (`%LOCALAPPDATA%\com.ampersworld.alpineota\logs` on
+  Windows) for troubleshooting.
 
 ## [0.3.0] - 2026-10-15
 

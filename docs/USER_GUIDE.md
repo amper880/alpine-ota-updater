@@ -62,4 +62,5 @@ Delete files you no longer need there.
 | The release list does not load | Check the internet connection. If you were online before, the last list is shown offline. |
 | Download fails | Try again; the file is verified and never stored if it is incomplete. |
 | The node is not in the list | Send `start ota` again (OTA mode ends when the node restarts); move closer; on Windows, remove the node from *Settings → Bluetooth & devices* if it was paired before. |
+| The node cannot be connected | Copy the log from *Details*. On Windows also send the newest file from `%LOCALAPPDATA%\com.ampersworld.alpineota\logs` (paste the path into Explorer's address bar). |
 | The update stops or fails repeatedly | Open *Advanced* and set *Packets per confirmation* to 4 or 1, then try again. Copy the log from *Details* when reporting a problem. |

@@ -37,39 +37,59 @@ async function findBootloader(previous: { address: string; name: string }, ms: n
   return found;
 }
 
-/** Rescans briefly until the device is visible again (it may have changed address). */
-async function rediscover(device: { address: string; name: string }, ms: number): Promise<string | undefined> {
+/**
+ * Scans until the device is advertising (it may have changed address). Connecting right after a
+ * fresh advertisement is more reliable on Windows.
+ */
+async function rediscover(
+  device: { address: string; name: string },
+  ms: number,
+  log: (m: string) => void,
+): Promise<string | undefined> {
   let address: string | undefined;
-  await scan((devices) => {
-    const hit = devices.find((d) => d.address === device.address) ?? devices.find((d) => d.name && d.name === device.name);
-    if (hit) {
-      address = hit.address;
-      void stopScan();
-    }
-  }, ms).catch(() => undefined);
+  let seen: string[] = [];
+  try {
+    await scan((devices) => {
+      seen = devices.map((d) => `${d.name || '?'} ${d.address} ${d.rssi} dBm`);
+      const hit = devices.find((d) => d.address === device.address) ?? devices.find((d) => d.name && d.name === device.name);
+      if (hit && !address) {
+        address = hit.address;
+        void stopScan();
+      }
+    }, ms);
+  } catch (err) {
+    log(`Scan failed: ${errorMessage(err)}`);
+  }
+  if (!address) log(`Not seen during ${ms / 1000} s scan. Visible: ${seen.join('; ') || 'nothing'}`);
   return address;
 }
 
-/** Connects; on failure rescans once and retries, logging the platform's error text. */
+const CONNECT_ATTEMPTS = 3;
+
+/** Connects, rescanning before each retry; logs the platform's error text and timing. */
 async function connectWithRetry(device: { address: string; name: string }, log: (m: string) => void): Promise<NodeConnection> {
-  log(`Connecting to ${device.name} (${device.address})`);
-  const started = Date.now();
-  try {
-    const c = await connectNode(device.address);
-    log(`Connected in ${((Date.now() - started) / 1000).toFixed(1)} s`);
-    return c;
-  } catch (err) {
-    log(`Connect failed after ${((Date.now() - started) / 1000).toFixed(1)} s: ${errorMessage(err)}`);
+  let address = device.address;
+  let lastError = '';
+  for (let attempt = 1; attempt <= CONNECT_ATTEMPTS; attempt++) {
+    if (attempt > 1) {
+      log(`Scanning for ${device.name} before retry ${attempt}/${CONNECT_ATTEMPTS}`);
+      const found = await rediscover({ address, name: device.name }, 8000, log);
+      if (!found) continue;
+      address = found;
+    }
+    log(`Connecting to ${device.name} (${address}), attempt ${attempt}/${CONNECT_ATTEMPTS}`);
+    const started = Date.now();
+    try {
+      const c = await connectNode(address);
+      log(`Connected in ${((Date.now() - started) / 1000).toFixed(1)} s`);
+      return c;
+    } catch (err) {
+      lastError = errorMessage(err);
+      log(`Connect failed after ${((Date.now() - started) / 1000).toFixed(1)} s: ${lastError}`);
+      await sleep(1000);
+    }
   }
-  log('Scanning again before retrying');
-  const address = await rediscover(device, 6000);
-  if (!address) throw new Error(`${device.name} is no longer visible. Put it into update mode again and rescan.`);
-  log(`Retrying connection to ${address}`);
-  try {
-    return await connectNode(address);
-  } catch (err) {
-    throw new Error(`Could not connect to ${device.name}: ${errorMessage(err)}`);
-  }
+  throw new Error(`Could not connect to ${device.name}${lastError ? `: ${lastError}` : ''}`);
 }
 
 export async function flashOverNativeBle(
@@ -113,7 +133,7 @@ export async function flashOverNativeBle(
       const boot = await findBootloader(device, 20000, log);
       if (!boot) throw new DfuError('transport', 'The bootloader did not appear. Restart the node into DFU mode and scan again.');
       log(`Bootloader found: ${boot.name || '(no name)'} (${boot.address})`);
-      conn = await connectNode(boot.address);
+      conn = await connectWithRetry({ address: boot.address, name: boot.name }, log);
     }
 
     abortCheck();
