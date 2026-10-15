@@ -6,6 +6,7 @@
 import * as blec from '@mnlphlp/plugin-blec';
 import { DFU_CONTROL_POINT, DFU_PACKET, DFU_SERVICE, DFU_VERSION, type DfuTransport } from '../dfu/legacy-dfu.ts';
 import type { ScannedDevice } from './candidates.ts';
+import { errorMessage } from '../util/errors.ts';
 
 export type BleErrorCode = 'permission' | 'adapter-off';
 
@@ -65,7 +66,11 @@ export async function connectNode(address: string): Promise<NodeConnection> {
   await blec.disconnect().catch(() => undefined);
   let markDisconnected!: () => void;
   const disconnected = new Promise<void>((r) => (markDisconnected = r));
-  await blec.connect(address, () => markDisconnected());
+  try {
+    await blec.connect(address, () => markDisconnected());
+  } catch (err) {
+    throw new Error(errorMessage(err));
+  }
   let subscribed = false;
   return {
     address,

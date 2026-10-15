@@ -6,6 +6,7 @@ import { httpFetch } from '../net/http.ts';
 import { isNativeApp } from '../platform.ts';
 import { toHex } from '../util/format.ts';
 import { putFirmware, type CachedFirmware } from './db.ts';
+import { errorMessage } from '../util/errors.ts';
 
 export type DownloadErrorCode = 'unsupported' | 'network' | 'http' | 'size' | 'checksum' | 'storage' | 'aborted';
 
@@ -34,7 +35,7 @@ export async function downloadFirmware(
     res = await httpFetch(assetUrl(fw), { signal });
   } catch (err) {
     if ((err as Error).name === 'AbortError') throw new DownloadError('aborted', 'Download cancelled');
-    throw new DownloadError('network', (err as Error).message);
+    throw new DownloadError('network', errorMessage(err));
   }
   if (!res.ok || !res.body) throw new DownloadError('http', `HTTP ${res.status}`);
 
@@ -52,7 +53,7 @@ export async function downloadFirmware(
     }
   } catch (err) {
     if ((err as Error).name === 'AbortError') throw new DownloadError('aborted', 'Download cancelled');
-    throw new DownloadError('network', (err as Error).message);
+    throw new DownloadError('network', errorMessage(err));
   }
 
   if (fw.asset.size && received !== fw.asset.size) {
@@ -81,7 +82,7 @@ export async function downloadFirmware(
   try {
     await putFirmware(record);
   } catch (err) {
-    throw new DownloadError('storage', (err as Error).message);
+    throw new DownloadError('storage', errorMessage(err));
   }
   return record;
 }

@@ -10,6 +10,7 @@ import { classify, type ScannedDevice } from '../lib/ble/candidates.ts';
 import { BleError, ensureBluetooth, scan, stopScan } from '../lib/ble/native.ts';
 import { flashOverNativeBle } from '../lib/ble/flash-ble.ts';
 import { isNativeApp } from '../lib/platform.ts';
+import { errorMessage } from '../lib/util/errors.ts';
 
 const SCAN_MS = 12000;
 let flashAbort: AbortController | undefined;
@@ -30,7 +31,7 @@ export async function startBleScan(): Promise<void> {
     store.set((s) => ({ scan: { ...s.scan, status: 'idle' } }));
   } catch (err) {
     const code = err instanceof BleError ? err.code : 'failed';
-    store.set((s) => ({ scan: { ...s.scan, status: 'idle', error: code, errorDetail: (err as Error).message } }));
+    store.set((s) => ({ scan: { ...s.scan, status: 'idle', error: code, errorDetail: errorMessage(err) } }));
   }
 }
 
@@ -90,9 +91,9 @@ export async function startFlash(prn: number): Promise<void> {
     store.set((st) => ({ flash: { ...st.flash, phase: 'done', stage: undefined } }));
   } catch (err) {
     const aborted = err instanceof DfuError && err.code === 'aborted';
-    log(aborted ? 'Cancelled' : `Error: ${(err as Error).message}`);
+    log(aborted ? 'Cancelled' : `Error: ${errorMessage(err)}`);
     store.set((st) => ({
-      flash: { ...st.flash, phase: aborted ? 'cancelled' : 'error', stage: undefined, error: (err as Error).message },
+      flash: { ...st.flash, phase: aborted ? 'cancelled' : 'error', stage: undefined, error: errorMessage(err) },
     }));
   } finally {
     flashAbort = undefined;

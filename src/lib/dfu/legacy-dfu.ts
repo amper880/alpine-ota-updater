@@ -9,6 +9,8 @@
  * Nordic-Semiconductor/Android-DFU-Library LegacyDfuImpl.
  */
 
+import { errorMessage } from '../util/errors.ts';
+
 export const DFU_SERVICE = '00001530-1212-efde-1523-785feabcd123';
 export const DFU_CONTROL_POINT = '00001531-1212-efde-1523-785feabcd123';
 export const DFU_PACKET = '00001532-1212-efde-1523-785feabcd123';
@@ -155,7 +157,7 @@ export async function runLegacyDfu(
     try {
       await transport.writeControl(new Uint8Array(bytes));
     } catch (err) {
-      throw new DfuError('transport', `Control point write failed: ${(err as Error).message}`);
+      throw new DfuError('transport', `Control point write failed: ${errorMessage(err)}`);
     }
   };
 
@@ -163,7 +165,7 @@ export async function runLegacyDfu(
     try {
       await transport.writePacket(bytes);
     } catch (err) {
-      throw new DfuError('transport', `Packet write failed: ${(err as Error).message}`);
+      throw new DfuError('transport', `Packet write failed: ${errorMessage(err)}`);
     }
   };
 

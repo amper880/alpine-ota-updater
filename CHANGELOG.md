@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Bluetooth errors from the native plugin were shown as "undefined"; the real error text is
+  now logged.
+
+### Changed
+
+- Bluetooth connection: one automatic retry after a short rescan, with timing in the log.
+- CI: pinned the Linux runners to Ubuntu 24.04 and moved to Node 24 based action versions.
+
 ## [0.3.0] - 2026-10-15
 
 ### Changed

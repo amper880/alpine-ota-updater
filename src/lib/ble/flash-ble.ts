@@ -5,6 +5,7 @@
 import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, runLegacyDfu } from '../dfu/legacy-dfu.ts';
 import { pickBootloader, type ScannedDevice } from './candidates.ts';
 import { connectNode, scan, stopScan, type NodeConnection } from './native.ts';
+import { errorMessage } from '../util/errors.ts';
 
 export type BleStage = 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing';
 
@@ -31,9 +32,44 @@ async function findBootloader(previous: { address: string; name: string }, ms: n
     found = pickBootloader(devices, previous);
     if (found) void stopScan();
   }, ms);
-  await done.catch((e) => log(`Scan error: ${(e as Error).message}`));
+  await done.catch((e) => log(`Scan error: ${errorMessage(e)}`));
   if (!found) log(`No bootloader seen; visible: ${latest.map((d) => d.name || d.address).join(', ') || 'none'}`);
   return found;
+}
+
+/** Rescans briefly until the device is visible again (it may have changed address). */
+async function rediscover(device: { address: string; name: string }, ms: number): Promise<string | undefined> {
+  let address: string | undefined;
+  await scan((devices) => {
+    const hit = devices.find((d) => d.address === device.address) ?? devices.find((d) => d.name && d.name === device.name);
+    if (hit) {
+      address = hit.address;
+      void stopScan();
+    }
+  }, ms).catch(() => undefined);
+  return address;
+}
+
+/** Connects; on failure rescans once and retries, logging the platform's error text. */
+async function connectWithRetry(device: { address: string; name: string }, log: (m: string) => void): Promise<NodeConnection> {
+  log(`Connecting to ${device.name} (${device.address})`);
+  const started = Date.now();
+  try {
+    const c = await connectNode(device.address);
+    log(`Connected in ${((Date.now() - started) / 1000).toFixed(1)} s`);
+    return c;
+  } catch (err) {
+    log(`Connect failed after ${((Date.now() - started) / 1000).toFixed(1)} s: ${errorMessage(err)}`);
+  }
+  log('Scanning again before retrying');
+  const address = await rediscover(device, 6000);
+  if (!address) throw new Error(`${device.name} is no longer visible. Put it into update mode again and rescan.`);
+  log(`Retrying connection to ${address}`);
+  try {
+    return await connectNode(address);
+  } catch (err) {
+    throw new Error(`Could not connect to ${device.name}: ${errorMessage(err)}`);
+  }
 }
 
 export async function flashOverNativeBle(
@@ -49,8 +85,8 @@ export async function flashOverNativeBle(
   };
 
   stage('connecting');
-  log(`Connecting to ${device.name} (${device.address})`);
-  let conn: NodeConnection = await connectNode(device.address);
+  let conn: NodeConnection = await connectWithRetry(device, log);
+  log('Reading DFU version');
   const version = await conn.readVersion();
   log(`Connected; DFU version ${version === undefined ? 'unknown' : '0x' + version.toString(16).padStart(4, '0')}`);
 
@@ -62,7 +98,7 @@ export async function flashOverNativeBle(
       try {
         await conn.writeControlRaw(new Uint8Array([Op.StartDfu, IMAGE_APPLICATION]));
       } catch (err) {
-        log(`Jump command: ${(err as Error).message} (expected if the node reset immediately)`);
+        log(`Jump command: ${errorMessage(err)} (expected if the node reset immediately)`);
       }
       const gone = await timeout(conn.disconnected.then(() => true), 8000);
       if (gone === undefined) {

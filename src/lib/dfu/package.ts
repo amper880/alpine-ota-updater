@@ -7,6 +7,7 @@
  *   <app>.dat      init packet
  */
 import { readZip } from '../util/zip.ts';
+import { errorMessage } from '../util/errors.ts';
 
 export interface DfuPackage {
   /** Application image. */
@@ -29,7 +30,7 @@ export async function parseDfuPackage(zip: Uint8Array): Promise<DfuPackage> {
   try {
     files = await readZip(zip);
   } catch (err) {
-    throw new DfuPackageError(`Not a valid DFU package: ${(err as Error).message}`);
+    throw new DfuPackageError(`Not a valid DFU package: ${errorMessage(err)}`);
   }
   const manifestBytes = files.get('manifest.json');
   if (!manifestBytes) throw new DfuPackageError('manifest.json missing from DFU package');

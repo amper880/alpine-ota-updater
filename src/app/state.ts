@@ -32,6 +32,7 @@ export interface DownloadState {
 
 import type { DeviceMatch } from '../lib/catalog/match.ts';
 import type { DeviceKind, ScannedDevice } from '../lib/ble/candidates.ts';
+import { errorMessage } from '../lib/util/errors.ts';
 export type { DeviceMatch };
 
 /** The node picked in step 4 (the BluetoothDevice object itself lives in app/flash.ts). */
@@ -210,7 +211,7 @@ export async function refreshFirmwareList(force = false): Promise<void> {
     store.set({ releases: { status: 'ok', requestKey, options, offlineSince } });
   } catch (err) {
     if (ctrl.signal.aborted) return;
-    store.set({ releases: { status: 'error', requestKey, options: [], error: (err as Error).message } });
+    store.set({ releases: { status: 'error', requestKey, options: [], error: errorMessage(err) } });
   }
 }
 
