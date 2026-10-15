@@ -11,9 +11,9 @@ browser.
 - Works on phone, tablet and desktop; installable as an app; light / dark theme; English and
   Hungarian
 
-> **Status: v0.1.0.** Device selection, firmware listing, download and the offline firmware
-> library work. Bluetooth and WiFi flashing are next (milestones M3 and M4 in the
-> [specification](docs/SPEC.md#13-milestones)).
+> **Status: v0.2.0.** Device selection, firmware download, the offline firmware library and
+> Bluetooth updates of nRF52 nodes are implemented. WiFi updates of ESP32 nodes are next
+> (milestone M4 in the [specification](docs/SPEC.md#13-milestones)).
 
 ## Requirements
 

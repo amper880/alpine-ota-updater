@@ -989,6 +989,135 @@ select {
   gap: 12px;
 }
 
+/* ------------------------------------------------------------------ step 5: update */
+
+.chip.warn {
+  color: var(--glow);
+  border-color: color-mix(in srgb, var(--glow) 45%, transparent);
+  background: transparent;
+}
+
+.flash-summary {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.flash-summary dt {
+  font-size: var(--fs-0);
+  color: var(--ink-3);
+}
+.flash-summary dd {
+  margin: 2px 0 0;
+  font-weight: 650;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.flash-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-m);
+  background: var(--surface-2);
+}
+.flash-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.flash-stage {
+  font-weight: 600;
+}
+.flash-pct {
+  font-size: var(--fs-4);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.progress.big {
+  height: 10px;
+  border-radius: 5px;
+}
+.flash-stats {
+  white-space: pre-wrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.result {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: var(--radius-m);
+}
+.result.ok {
+  background: var(--accent-soft);
+}
+.result.ok > .icon {
+  color: var(--ok);
+}
+.result h4 {
+  font-size: var(--fs-3);
+  margin-bottom: 4px;
+}
+
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.log summary,
+.advanced summary {
+  cursor: pointer;
+  color: var(--ink-2);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  width: fit-content;
+}
+.log-body {
+  margin: 8px 0;
+  padding: 12px;
+  max-height: 260px;
+  overflow: auto;
+  border-radius: var(--radius-s);
+  background: var(--surface-2);
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.advanced .field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 6px;
+  font-size: var(--fs-1);
+}
+.advanced input {
+  width: 80px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-s);
+  background: var(--surface);
+}
+.link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ------------------------------------------------------------------ side panel */
 
 /* On narrow screens the step summaries already show the selection. */

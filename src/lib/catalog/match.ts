@@ -116,3 +116,18 @@ export function findFirmware(
 export function sourceSupportsPlatform(source: SourceConfig, platform: Platform): boolean {
   return source.platforms.includes(platform);
 }
+
+export type DeviceMatch = 'match' | 'mismatch' | 'unknown';
+
+/**
+ * Compares the name a node advertises in OTA mode with the selected board.
+ * - match: the name is the board's `<BOARD>_OTA` name
+ * - mismatch: the name belongs to other boards
+ * - unknown: e.g. the bootloader ("AdaDFU"), which does not reveal the board
+ */
+export function matchBleName(boards: Board[], name: string, expected: string | undefined): { match: DeviceMatch; knownAs: string[] } {
+  const knownAs = boards.filter((b) => b.bleOtaName === name).map((b) => b.name);
+  if (expected && name === expected) return { match: 'match', knownAs };
+  if (knownAs.length > 0) return { match: 'mismatch', knownAs };
+  return { match: 'unknown', knownAs };
+}

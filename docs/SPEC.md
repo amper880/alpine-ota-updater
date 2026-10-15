@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Approved; M1–M2 implemented in v0.1.0 |
+| **Status** | Approved; M1–M2 in v0.1.0, M3 in v0.2.0 (awaiting hardware test) |
 | **Version** | 0.2 (spec) |
 | **Author** | Amper |
 | **Date** | 2026-10-15 |

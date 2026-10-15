@@ -29,12 +29,14 @@ src/
 ├─ main.ts               entry point: theme, language, layout, service worker registration
 ├─ app/
 │  ├─ store.ts           tiny observable store (select + subscribe)
-│  └─ state.ts           application state and all actions (select board, download, …)
+│  ├─ state.ts           application state and actions (select board, download, …)
+│  └─ flash.ts           Bluetooth scan and update actions
 ├─ lib/                  logic without DOM access (unit-tested)
 │  ├─ catalog/           types + matching of release assets to board/role (match.ts)
 │  ├─ github/            release list loading (proxy → GitHub API → offline copy)
 │  ├─ cache/             IndexedDB firmware library, download + verification
-│  ├─ util/              formatting, safe localStorage
+│  ├─ dfu/               Nordic legacy DFU protocol, DFU package parser, Web Bluetooth glue
+│  ├─ util/              formatting, safe localStorage, ZIP reader
 │  └─ config.ts          build-time constants
 ├─ ui/                   DOM rendering
 │  ├─ dom.ts             h() element helper and inline SVG icons
@@ -42,6 +44,7 @@ src/
 │  └─ steps/             the five steps of the update flow
 ├─ i18n/                 t() + locales/*.json
 ├─ styles/main.css       design tokens (light/dark) and all styles
+├─ types/                Web Bluetooth type declarations
 └─ sw.ts                 service worker (offline app shell)
 catalog/                 boards.json (generated), board-overrides.json, sources.json
 proxy/                   Cloudflare Worker (download proxy)
@@ -80,3 +83,10 @@ typing (the device search box) are created once and reused.
 2. Bump `version` in `package.json` (shown in the app footer).
 3. Commit: `chore(release): vX.Y.Z`, then tag: `git tag vX.Y.Z`.
 4. Push the commit and the tag (GitHub Desktop: *Repository → Push*, tags are pushed with it).
+
+## Testing the Bluetooth update without hardware
+
+`tests/dfu.test.ts` runs the DFU protocol against a simulated bootloader. For the full UI
+flow, a mock of `navigator.bluetooth` that simulates a node in application mode and the
+bootloader can be injected with Playwright's `addInitScript`; real hardware is still needed to
+validate timing and Windows/Android Bluetooth stacks.

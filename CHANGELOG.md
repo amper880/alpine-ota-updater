@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-15
+
+### Added
+
+- Bluetooth updates for nRF52 nodes (Nordic legacy DFU, Adafruit / OTAFIX bootloader):
+  device scan via the browser chooser filtered to `<BOARD>_OTA` names, automatic switch from
+  the application into the bootloader, reconnection (with a manual bootloader pick as
+  fallback), firmware transfer with packet receipt flow control, validation and activation.
+- Update step with progress, speed and remaining time, cancel, detailed log with copy button,
+  and an advanced setting for packets per confirmation.
+- Device check: warns when the node's Bluetooth name does not match the selected device type
+  and only continues after explicit confirmation.
+- Screen wake lock and leave-page warning while an update is running.
+- ZIP reader based on the native `DecompressionStream` (no dependency) and DFU package parser.
+- Unit tests for the DFU protocol against a simulated bootloader and for package parsing.
+
 ## [0.1.0] - 2026-10-15
 
 ### Added
@@ -30,5 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation: specification, user guide, development, deployment, adding a source,
   translating.
 
-[Unreleased]: https://github.com/OWNER/alpine-ota-updater/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/OWNER/alpine-ota-updater/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/OWNER/alpine-ota-updater/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/OWNER/alpine-ota-updater/releases/tag/v0.1.0

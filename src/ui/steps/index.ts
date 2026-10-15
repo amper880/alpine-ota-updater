@@ -8,7 +8,7 @@ import { openStep, progressStep, reopenStep, selectedBoard, selectedFirmware, se
 import { boardBody, platformBadge } from './board.ts';
 import { sourceBody } from './source.ts';
 import { firmwareBody, updateProgressBars } from './firmware.ts';
-import { connectBody, flashBody } from './connect.ts';
+import { connectBody, flashBody, matchChip, updateFlashProgress } from './connect.ts';
 
 interface StepDef {
   n: number;
@@ -47,7 +47,12 @@ function defs(): StepDef[] {
       },
       body: firmwareBody,
     },
-    { n: 4, title: t('step.connect'), summary: () => null, body: connectBody },
+    {
+      n: 4,
+      title: t('step.connect'),
+      summary: () => (s.device ? [s.device.name, matchChip(s.device)] : null),
+      body: connectBody,
+    },
     { n: 5, title: t('step.flash'), summary: () => null, body: flashBody },
   ];
 }
@@ -79,7 +84,7 @@ function renderTrail(root: HTMLElement): void {
               d.title,
             ),
             summary ? h('div', { class: 'step-summary' }, ...summary) : null,
-            state === 'done' && !isOpen
+            state === 'done' && !isOpen && s.flash.phase !== 'running'
               ? h('button', { type: 'button', class: 'link change', onclick: () => reopenStep(d.n) }, t('common.change'))
               : null,
             state === 'done' && isOpen && s.openStep !== undefined
@@ -92,6 +97,7 @@ function renderTrail(root: HTMLElement): void {
     }),
   );
   updateProgressBars();
+  updateFlashProgress();
 }
 
 export function renderSteps(root: HTMLElement): void {
@@ -108,8 +114,14 @@ export function renderSteps(root: HTMLElement): void {
       Object.entries(s.downloads)
         .map(([k, d]) => `${k}:${d.error ?? ''}`)
         .join('|'),
+      s.device,
+      s.scanError,
+      s.flash.phase,
+      s.flash.stage,
+      s.flash.log.length,
     ],
     () => renderTrail(root),
   );
   store.select((s) => s.downloads, updateProgressBars);
+  store.select((s) => [s.flash.sent, s.flash.total], updateFlashProgress);
 }

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findFirmware, parseAsset, versionOf } from '../src/lib/catalog/match.ts';
+import { findFirmware, matchBleName, parseAsset, versionOf } from '../src/lib/catalog/match.ts';
 import type { Board, Release, SourceConfig } from '../src/lib/catalog/types.ts';
 import sourcesJson from '../catalog/sources.json' with { type: 'json' };
 import boardsJson from '../catalog/boards.json' with { type: 'json' };
@@ -110,4 +110,13 @@ test('versionOf falls back to the tag', () => {
 test('catalog: every nRF52 board has a BLE OTA name', () => {
   const missing = boards.filter((b) => b.platform === 'nrf52' && !b.bleOtaName).map((b) => b.id);
   assert.deepEqual(missing, []);
+});
+
+test('BLE name matching', () => {
+  const t114 = board('heltect114');
+  assert.equal(matchBleName(boards, 'T114_OTA', t114.bleOtaName).match, 'match');
+  const m = matchBleName(boards, 'RAK4631_OTA', t114.bleOtaName);
+  assert.equal(m.match, 'mismatch');
+  assert.ok(m.knownAs.includes(board('rak4631').name));
+  assert.equal(matchBleName(boards, 'AdaDFU', t114.bleOtaName).match, 'unknown');
 });

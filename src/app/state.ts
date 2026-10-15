@@ -30,6 +30,33 @@ export interface DownloadState {
   error?: string;
 }
 
+import type { DeviceMatch } from '../lib/catalog/match.ts';
+export type { DeviceMatch };
+
+/** The node picked in step 4 (the BluetoothDevice object itself lives in app/flash.ts). */
+export interface PickedDevice {
+  id: string;
+  name: string;
+  match: DeviceMatch;
+  /** Boards that advertise this OTA name (for mismatch messages). */
+  knownAs: string[];
+}
+
+export type FlashPhase = 'idle' | 'running' | 'done' | 'error' | 'cancelled';
+export type FlashStage = 'preparing' | 'connecting' | 'entering-bootloader' | 'reconnecting' | 'pick-bootloader' | 'transferring' | 'finishing';
+
+export interface FlashState {
+  phase: FlashPhase;
+  stage?: FlashStage;
+  sent: number;
+  total: number;
+  startedAt?: number;
+  error?: string;
+  log: string[];
+}
+
+export const IDLE_FLASH: FlashState = { phase: 'idle', sent: 0, total: 0, log: [] };
+
 export interface AppState {
   theme: Theme;
   locale: string;
@@ -45,6 +72,9 @@ export interface AppState {
   downloads: Record<string, DownloadState>;
   libraryOpen: boolean;
   updateReady: boolean;
+  device?: PickedDevice;
+  scanError?: string;
+  flash: FlashState;
 }
 
 export const store = createStore<AppState>({
@@ -61,6 +91,9 @@ export const store = createStore<AppState>({
   downloads: {},
   libraryOpen: false,
   updateReady: false,
+  device: undefined,
+  scanError: undefined,
+  flash: IDLE_FLASH,
 });
 
 export const boardById = (id?: string): Board | undefined => BOARDS.find((b) => b.id === id);
@@ -82,7 +115,8 @@ export function progressStep(s: AppState): number {
   if (!boardById(s.boardId)) return 1;
   if (!sourceById(s.sourceId)) return 2;
   if (!s.firmwareKey || !s.cached[s.firmwareKey]) return 3;
-  return 4;
+  if (!s.device) return 4;
+  return 5;
 }
 
 export function openStep(s: AppState): number {
@@ -122,24 +156,26 @@ export function selectBoard(id: string): void {
     firmwareKey: undefined,
     openStep: undefined,
     boardQuery: '',
+    device: undefined,
+    flash: IDLE_FLASH,
   });
   void refreshFirmwareList();
 }
 
 export function selectRole(role: Role): void {
   savePref('role', role);
-  store.set({ role, firmwareKey: undefined });
+  store.set({ role, firmwareKey: undefined, device: undefined, flash: IDLE_FLASH });
   void refreshFirmwareList();
 }
 
 export function selectSource(id: string): void {
   savePref('source', id);
-  store.set({ sourceId: id, firmwareKey: undefined, openStep: undefined });
+  store.set({ sourceId: id, firmwareKey: undefined, openStep: undefined, device: undefined, flash: IDLE_FLASH });
   void refreshFirmwareList();
 }
 
 export function useFirmware(key: string): void {
-  store.set({ firmwareKey: key, openStep: undefined });
+  store.set({ firmwareKey: key, openStep: undefined, flash: IDLE_FLASH });
 }
 
 let listAbort: AbortController | undefined;
