@@ -62,10 +62,14 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: android-actions/setup-android@v3
+      # The Ubuntu runner image ships the Android SDK (ANDROID_HOME) with cmdline-tools;
+      # only the exact platform, build-tools and NDK versions are added here.
       - name: Install Android SDK packages
         run: |
-          sdkmanager "platforms;android-34" "build-tools;${BUILD_TOOLS}" "ndk;${NDK_VERSION}"
+          SDKMANAGER=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -n 1)
+          echo "Using $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" --install "platforms;android-34" "build-tools;${BUILD_TOOLS}" "ndk;${NDK_VERSION}"
           echo "NDK_HOME=$ANDROID_HOME/ndk/${NDK_VERSION}" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
         with:

@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bluetooth connection: one automatic retry after a short rescan, with timing in the log.
 - CI: pinned the Linux runners to Ubuntu 24.04 and moved to Node 24 based action versions.
+- CI: the Android job uses the SDK preinstalled on the runner instead of
+  `android-actions/setup-android`, which failed installing the removed `tools` package.
 
 ## [0.3.0] - 2026-10-15
 
