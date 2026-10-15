@@ -2,7 +2,7 @@
  * Complete Bluetooth update of an nRF52 node:
  * connect → (application mode: buttonless jump, rescan, reconnect to the bootloader) → DFU.
  */
-import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, runLegacyDfu } from '../dfu/legacy-dfu.ts';
+import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, packetSizeForMtu, runLegacyDfu } from '../dfu/legacy-dfu.ts';
 import { pickBootloader, type ScannedDevice } from './candidates.ts';
 import { connectNode, scan, stopScan, type NodeConnection } from './native.ts';
 import { errorMessage } from '../util/errors.ts';
@@ -11,6 +11,8 @@ export type BleStage = 'connecting' | 'entering-bootloader' | 'reconnecting' | '
 
 export interface BleFlashOptions {
   prn?: number;
+  /** Force 20-byte packets (for bootloaders that reject larger writes). */
+  compatPackets?: boolean;
   signal?: AbortSignal;
   onStage?: (stage: BleStage) => void;
   onProgress?: (sent: number, total: number) => void;
@@ -65,6 +67,19 @@ async function rediscover(
 }
 
 const CONNECT_ATTEMPTS = 3;
+
+
+/** The MTU is negotiated right after connecting; wait briefly for it to settle. */
+async function choosePacketSize(conn: NodeConnection, log: (m: string) => void): Promise<number> {
+  let mtu = await conn.mtu();
+  for (let i = 0; i < 10 && (!mtu || mtu <= 23); i++) {
+    await sleep(150);
+    mtu = await conn.mtu();
+  }
+  const size = packetSizeForMtu(mtu);
+  log(`MTU ${mtu ?? 'unknown'} → ${size}-byte packets`);
+  return size;
+}
 
 /** Connects, rescanning before each retry; logs the platform's error text and timing. */
 async function connectWithRetry(device: { address: string; name: string }, log: (m: string) => void): Promise<NodeConnection> {
@@ -155,13 +170,18 @@ export async function flashOverNativeBle(
     }
 
     abortCheck();
+    const packetSize = opts.compatPackets ? 20 : await choosePacketSize(conn, log);
     stage('transferring');
+    const t0 = Date.now();
     await runLegacyDfu(conn.transport(), firmware, initPacket, {
       prn: opts.prn,
+      packetSize,
       signal: opts.signal,
       onProgress: opts.onProgress,
       onLog: log,
     });
+    const secs = (Date.now() - t0) / 1000;
+    log(`Transferred ${firmware.length} bytes in ${secs.toFixed(1)} s (${(firmware.length / 1000 / secs).toFixed(1)} kB/s)`);
   } finally {
     stage('finishing');
     await sleep(500);

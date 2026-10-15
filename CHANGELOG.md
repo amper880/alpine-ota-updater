@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Faster Bluetooth updates: DFU packets now use the negotiated MTU (up to 244 bytes instead of
+  20); Android requests the largest MTU. *Advanced → Compatibility mode* falls back to
+  20-byte packets. The log shows the packet size and the transfer speed.
 - Native log file with Bluetooth details (`%LOCALAPPDATA%\com.ampersworld.alpineota\logs` on
   Windows) for troubleshooting.
 

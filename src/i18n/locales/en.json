@@ -131,5 +131,7 @@
   "connect.stop": "Stop",
   "connect.error.permission": "Bluetooth permission was denied. Allow it in the system settings and try again.",
   "connect.error.adapter-off": "Bluetooth is turned off. Turn it on and try again.",
-  "connect.error.failed": "Scanning failed."
+  "connect.error.failed": "Scanning failed.",
+  "flash.compat": "Compatibility mode (20-byte packets)",
+  "flash.compatHint": "Use if the update fails right after it starts. Much slower."
 }

@@ -19,7 +19,17 @@ export class BleError extends Error {
 }
 
 /** Asks for Bluetooth permissions (Android) and checks that the adapter is on. */
+let androidMtuRequested = false;
+
 export async function ensureBluetooth(): Promise<void> {
+  if (!androidMtuRequested) {
+    androidMtuRequested = true;
+    // Ask Android for the largest MTU so DFU packets can be up to 244 bytes (no-op elsewhere;
+    // older plugin versions lack the call).
+    await Promise.resolve()
+      .then(() => (blec as { setAndroidMtu?: (m: number) => Promise<void> }).setAndroidMtu?.(247))
+      .catch(() => undefined);
+  }
   if (!(await blec.checkPermissions(true))) throw new BleError('permission', 'Bluetooth permission denied');
   const state = await blec.getAdapterState().catch(() => 'Unknown' as const);
   if (state === 'Off') throw new BleError('adapter-off', 'Bluetooth is turned off');
@@ -68,6 +78,8 @@ export interface NodeConnection {
   address: string;
   /** DFU Version characteristic; 0x0001 = application (buttonless), otherwise bootloader. */
   readVersion(): Promise<number | undefined>;
+  /** Negotiated ATT MTU, if the platform reports it. */
+  mtu(): Promise<number | undefined>;
   /** Enables control point notifications (the buttonless service rejects writes without). */
   enableNotifications(): Promise<void>;
   /** Writes to the control point without waiting for a DFU response (buttonless jump). */
@@ -103,6 +115,13 @@ export async function connectNode(address: string): Promise<NodeConnection> {
         const v = await blec.read(DFU_VERSION, DFU_SERVICE);
         if (v.length >= 2) return v[0] | (v[1] << 8);
         return v[0];
+      } catch {
+        return undefined;
+      }
+    },
+    async mtu() {
+      try {
+        return await blec.getMtu();
       } catch {
         return undefined;
       }

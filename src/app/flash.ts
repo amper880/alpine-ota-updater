@@ -64,7 +64,7 @@ function setStage(stage: FlashStage): void {
   store.set((s) => ({ flash: { ...s.flash, stage } }));
 }
 
-export async function startFlash(prn: number): Promise<void> {
+export async function startFlash(prn: number, compatPackets = false): Promise<void> {
   const s = store.get();
   if (!s.device || !s.firmwareKey || s.flash.phase === 'running') return;
   flashAbort = new AbortController();
@@ -78,6 +78,7 @@ export async function startFlash(prn: number): Promise<void> {
     let lastProgress = 0;
     await flashOverNativeBle({ address: s.device.id, name: s.device.name }, pkg.firmware, pkg.initPacket, {
       prn,
+      compatPackets,
       signal: flashAbort.signal,
       onLog: log,
       onStage: (stage) => setStage(stage),

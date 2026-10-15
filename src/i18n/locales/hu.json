@@ -131,5 +131,7 @@
   "connect.stop": "Leállítás",
   "connect.error.permission": "A Bluetooth-engedélyt elutasítottad. Engedélyezd a rendszerbeállításokban, és próbáld újra.",
   "connect.error.adapter-off": "A Bluetooth ki van kapcsolva. Kapcsold be, és próbáld újra.",
-  "connect.error.failed": "A keresés nem sikerült."
+  "connect.error.failed": "A keresés nem sikerült.",
+  "flash.compat": "Kompatibilis mód (20 bájtos csomagok)",
+  "flash.compatHint": "Akkor kapcsold be, ha a frissítés rögtön az indulás után hibára fut. Jóval lassabb."
 }

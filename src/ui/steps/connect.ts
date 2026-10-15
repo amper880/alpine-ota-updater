@@ -310,7 +310,7 @@ export function flashBody(): HTMLElement {
           type: 'button',
           class: 'btn primary start-flash',
           disabled: needsConfirm && confirmedFor !== device.id,
-          onclick: () => void startFlash(loadPref<number>('prn', 8)),
+          onclick: () => void startFlash(loadPref<number>('prn', 8), loadPref<boolean>('compatPackets', false)),
         },
         icon('download', 18),
         f.phase === 'idle' ? t('flash.start') : t('flash.retry'),
@@ -338,6 +338,17 @@ export function flashBody(): HTMLElement {
         }),
       ),
       h('p', { class: 'fineprint' }, t('flash.prnHint')),
+      h(
+        'label',
+        { class: 'check inline' },
+        h('input', {
+          type: 'checkbox',
+          checked: loadPref<boolean>('compatPackets', false),
+          onchange: (e: Event) => savePref('compatPackets', (e.target as HTMLInputElement).checked),
+        }),
+        t('flash.compat'),
+      ),
+      h('p', { class: 'fineprint' }, t('flash.compatHint')),
     ),
     logPanel(),
   );

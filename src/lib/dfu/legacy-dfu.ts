@@ -30,6 +30,12 @@ export const Op = {
 } as const;
 type OpCode = (typeof Op)[keyof typeof Op];
 
+/** Largest DFU packet: MTU minus the 3-byte ATT header, at most 244 (LE data length limit). */
+export function packetSizeForMtu(mtu: number | undefined): number {
+  if (!mtu || mtu <= 23) return 20;
+  return Math.min(244, mtu - 3);
+}
+
 /** Image type for START_DFU. */
 export const IMAGE_APPLICATION = 0x04;
 

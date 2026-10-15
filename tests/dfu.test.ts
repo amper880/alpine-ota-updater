@@ -7,6 +7,8 @@ interface SimOptions {
   silentAfterStart?: boolean;
   /** Corrupt the byte count reported in receipts. */
   badReceipt?: boolean;
+  /** Largest packet accepted (MTU - 3). */
+  maxPacket?: number;
 }
 
 /** Simulated Adafruit legacy DFU bootloader. */
@@ -67,7 +69,7 @@ class SimBootloader implements DfuTransport {
   }
 
   async writePacket(d: Uint8Array) {
-    assert.ok(d.length <= 20, 'packets must fit the default MTU');
+    assert.ok(d.length <= (this.opts.maxPacket ?? 20), 'packets must fit the MTU');
     if (this.state === 'sizes') {
       const v = new DataView(d.buffer, d.byteOffset, d.byteLength);
       assert.equal(d.length, 12);
@@ -152,4 +154,20 @@ test('can be cancelled during the transfer', async () => {
   await assert.rejects(run, (e: unknown) => e instanceof DfuError && e.code === 'aborted');
   assert.ok(sim.image.length < firmware.length);
   assert.ok(!sim.activated);
+});
+
+test('uses large packets when the MTU allows', async () => {
+  const sim = new SimBootloader({ maxPacket: 244 });
+  let writes = 0;
+  const counting: DfuTransport = {
+    startNotifications: (cb) => sim.startNotifications(cb),
+    writeControl: (d) => sim.writeControl(d),
+    writePacket: (d) => {
+      writes++;
+      return sim.writePacket(d);
+    },
+  };
+  await runLegacyDfu(counting, firmware, init, { prn: 8, packetSize: 244 });
+  assert.deepEqual(new Uint8Array(sim.image), firmware);
+  assert.ok(writes < firmware.length / 200, `expected few large writes, got ${writes}`);
 });
