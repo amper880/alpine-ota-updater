@@ -116,6 +116,11 @@ export async function flashOverNativeBle(
       stage('entering-bootloader');
       log('Node is running the application; switching to the bootloader');
       try {
+        await conn.enableNotifications();
+      } catch (err) {
+        log(`Enabling notifications failed: ${errorMessage(err)}`);
+      }
+      try {
         await conn.writeControlRaw(new Uint8Array([Op.StartDfu, IMAGE_APPLICATION]));
       } catch (err) {
         log(`Jump command: ${errorMessage(err)} (expected if the node reset immediately)`);
@@ -131,9 +136,22 @@ export async function flashOverNativeBle(
       stage('reconnecting');
       log('Looking for the bootloader');
       const boot = await findBootloader(device, 20000, log);
-      if (!boot) throw new DfuError('transport', 'The bootloader did not appear. Restart the node into DFU mode and scan again.');
-      log(`Bootloader found: ${boot.name || '(no name)'} (${boot.address})`);
-      conn = await connectWithRetry({ address: boot.address, name: boot.name }, log);
+      if (boot) {
+        log(`Bootloader found: ${boot.name || '(no name)'} (${boot.address})`);
+        conn = await connectWithRetry({ address: boot.address, name: boot.name }, log);
+      } else {
+        // Some systems keep showing the old name for the same address; try that address and
+        // check whether the bootloader answers there.
+        log(`Trying the previous address ${device.address}`);
+        const c = await connectWithRetry(device, log);
+        const v = await c.readVersion();
+        if (v === VERSION_APP_MODE) {
+          await c.disconnect();
+          throw new DfuError('transport', 'The node did not switch to the bootloader. Put it into DFU mode manually and scan again.');
+        }
+        log(`Bootloader answers at the same address (DFU version ${v === undefined ? 'unknown' : '0x' + v.toString(16).padStart(4, '0')})`);
+        conn = c;
+      }
     }
 
     abortCheck();

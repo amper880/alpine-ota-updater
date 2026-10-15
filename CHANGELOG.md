@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bluetooth errors from the native plugin were shown as "undefined"; the real error text is
   now logged.
+- Switching the node into the bootloader failed on real hardware with ATT error `0xFD`
+  (notifications not enabled): control point notifications are now enabled before the
+  buttonless jump.
+- Scans ended immediately inside the update flow (the plugin's scan call returns as soon as
+  scanning starts); scans now run for their full time or until stopped.
+- If no bootloader is seen after the jump, the previous address is tried and checked.
 
 ### Changed
 

@@ -25,9 +25,18 @@ export async function ensureBluetooth(): Promise<void> {
   if (state === 'Off') throw new BleError('adapter-off', 'Bluetooth is turned off');
 }
 
-/** Scans for `timeoutMs`; `onDevices` receives the full list each time it changes. */
+let finishActiveScan: (() => void) | undefined;
+
+/**
+ * Scans for `timeoutMs`; `onDevices` receives the full list each time it changes.
+ * The plugin's scan command returns as soon as scanning has started, so this waits for the
+ * timeout (or for `stopScan()`) before resolving.
+ */
 export async function scan(onDevices: (devices: ScannedDevice[]) => void, timeoutMs: number): Promise<void> {
+  finishActiveScan?.();
+  let finished = false;
   await blec.startScan((devices) => {
+    if (finished) return;
     onDevices(
       devices.map((d) => ({
         address: d.address,
@@ -37,9 +46,21 @@ export async function scan(onDevices: (devices: ScannedDevice[]) => void, timeou
       })),
     );
   }, timeoutMs);
+  await new Promise<void>((resolve) => {
+    const done = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      if (finishActiveScan === done) finishActiveScan = undefined;
+      resolve();
+    };
+    const timer = setTimeout(done, timeoutMs);
+    finishActiveScan = done;
+  });
 }
 
 export async function stopScan(): Promise<void> {
+  finishActiveScan?.();
   await blec.stopScan().catch(() => undefined);
 }
 
@@ -47,6 +68,8 @@ export interface NodeConnection {
   address: string;
   /** DFU Version characteristic; 0x0001 = application (buttonless), otherwise bootloader. */
   readVersion(): Promise<number | undefined>;
+  /** Enables control point notifications (the buttonless service rejects writes without). */
+  enableNotifications(): Promise<void>;
   /** Writes to the control point without waiting for a DFU response (buttonless jump). */
   writeControlRaw(data: Uint8Array): Promise<void>;
   transport(): DfuTransport;
@@ -83,6 +106,11 @@ export async function connectNode(address: string): Promise<NodeConnection> {
       } catch {
         return undefined;
       }
+    },
+    async enableNotifications() {
+      if (subscribed) return;
+      await blec.subscribe(DFU_CONTROL_POINT, DFU_SERVICE, () => undefined);
+      subscribed = true;
     },
     async writeControlRaw(data) {
       await blec.send(DFU_CONTROL_POINT, toArray(data), 'withResponse', DFU_SERVICE);
