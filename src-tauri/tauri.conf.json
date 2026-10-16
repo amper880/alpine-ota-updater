@@ -45,7 +45,7 @@
       }
     },
     "android": {
-      "minSdkVersion": 24
+      "minSdkVersion": 26
     }
   }
 }

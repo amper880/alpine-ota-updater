@@ -5,7 +5,7 @@ a cable.
 
 ## What you need
 
-- A Windows 10/11 PC with Bluetooth, or an Android phone/tablet (Android 7 or newer).
+- A Windows 10/11 PC with Bluetooth, or an Android phone/tablet (Android 8 or newer).
 - Admin access to the node from your companion app (to send `start ota`).
 
 ## Installing

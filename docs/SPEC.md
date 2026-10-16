@@ -383,7 +383,7 @@ themes; all actions keyboard-accessible; motion reduced when `prefers-reduced-mo
 | Privacy | No analytics, no accounts; only GitHub and the node are contacted |
 | Security | HTTP plugin limited to GitHub and 192.168.4.1; strict CSP |
 | Permissions | Bluetooth (scan/connect), network; nothing else |
-| Compatibility | Windows 10/11 (WebView2), Android 7+ (API 24) |
+| Compatibility | Windows 10/11 (WebView2), Android 8+ (API 26, required by the Bluetooth plugin) |
 
 ---
 

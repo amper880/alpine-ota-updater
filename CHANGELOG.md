@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Android build: minimum Android version raised to 8.0 (API 26), as required by
+  `tauri-plugin-blec`.
 - Bluetooth errors from the native plugin were shown as "undefined"; the real error text is
   now logged.
 - Switching the node into the bootloader failed on real hardware with ATT error `0xFD`
