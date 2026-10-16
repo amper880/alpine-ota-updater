@@ -37,43 +37,74 @@ export function connectBody(): HTMLElement {
 /** Device list region; re-rendered on its own while scanning. */
 let deviceListEl: HTMLElement | undefined;
 
+const MAC = /^([0-9a-f]{2}[:-]){5}[0-9a-f]{2}$/i;
+
+/** Some platforms report the address as the name when a device advertises none. */
+function displayName(d: ScannedDevice): string | undefined {
+  const n = d.name.trim();
+  return n && n !== d.address && !MAC.test(n) ? n : undefined;
+}
+
+/** Whether nameless devices are listed in "show all" mode (kept across re-renders). */
+let showUnnamed = false;
+
+function deviceRow(d: ScannedDevice): HTMLElement {
+  const name = displayName(d);
+  return h(
+    'li',
+    null,
+    h(
+      'button',
+      { type: 'button', class: 'device-item', onclick: () => selectDevice(d) },
+      icon('bluetooth', 18),
+      h(
+        'span',
+        { class: 'device-text' },
+        h('span', { class: ['device-name', !name && 'muted'] }, name ?? t('connect.unnamed')),
+        h('span', { class: 'device-address' }, d.address),
+      ),
+      kindChip(classify(d)),
+      h('span', { class: 'device-rssi' }, `${d.rssi} dBm`),
+    ),
+  );
+}
+
 function renderDeviceList(): void {
   if (!deviceListEl) return;
   const { scan } = store.get();
-  const visible = scan.showAll ? scan.devices : scan.devices.filter((d) => classify(d) !== 'other');
+  const relevant = scan.devices.filter((d) => classify(d) !== 'other');
+  const others = scan.showAll ? scan.devices.filter((d) => classify(d) === 'other') : [];
+  const named = others.filter((d) => displayName(d));
+  const unnamed = others.filter((d) => !displayName(d));
+  const visible = [...relevant, ...named, ...(showUnnamed ? unnamed : [])];
+  const searching = scan.status === 'scanning' ? h('p', { class: 'loading' }, h('span', { class: 'spinner', 'aria-hidden': 'true' }), t('connect.searching')) : null;
+  const unnamedToggle =
+    unnamed.length > 0
+      ? h(
+          'button',
+          {
+            type: 'button',
+            class: 'link',
+            onclick: () => {
+              showUnnamed = !showUnnamed;
+              renderDeviceList();
+            },
+          },
+          showUnnamed ? t('connect.hideUnnamed') : t('connect.showUnnamed', { count: unnamed.length }),
+        )
+      : null;
   if (visible.length === 0) {
     mount(
       deviceListEl,
-      scan.status === 'scanning'
-        ? h('p', { class: 'loading' }, h('span', { class: 'spinner', 'aria-hidden': 'true' }), t('connect.searching'))
-        : scan.devices.length > 0 || scan.error === undefined
+      searching ??
+        (scan.devices.length > 0 || scan.error === undefined
           ? h('p', { class: 'empty' }, scan.devices.length > 0 ? t('connect.noneInUpdateMode') : t('connect.pressScan'))
-          : null,
+          : null),
+      unnamedToggle,
     );
     return;
   }
-  mount(
-    deviceListEl,
-    h(
-      'ul',
-      { class: 'device-list' },
-      visible.map((d: ScannedDevice) =>
-        h(
-          'li',
-          null,
-          h(
-            'button',
-            { type: 'button', class: 'device-item', onclick: () => selectDevice(d) },
-            icon('bluetooth', 18),
-            h('span', { class: 'device-name' }, d.name || t('connect.unnamed')),
-            kindChip(classify(d)),
-            h('span', { class: 'device-rssi' }, `${d.rssi} dBm`),
-          ),
-        ),
-      ),
-    ),
-    scan.status === 'scanning' ? h('p', { class: 'loading' }, h('span', { class: 'spinner', 'aria-hidden': 'true' }), t('connect.searching')) : null,
-  );
+  mount(deviceListEl, h('ul', { class: 'device-list' }, visible.map(deviceRow)), unnamedToggle, searching);
 }
 
 let listSubscribed = false;

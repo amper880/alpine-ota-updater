@@ -1019,8 +1019,21 @@ select {
 .device-item > .icon {
   color: var(--ble);
 }
+.device-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 .device-name {
   font-weight: 650;
+}
+.device-name.muted {
+  font-weight: 500;
+}
+.device-address {
+  font-size: var(--fs-0);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
 }
 .device-rssi {
   margin-left: auto;

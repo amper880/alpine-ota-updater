@@ -139,5 +139,8 @@
   "flash.unknownWifi": "Az eszköz a saját típusát így adja meg: „{reported}”, ezt nem sikerült a(z) {board} típushoz párosítani. Győződj meg róla, hogy a firmware a hardverhez való.",
   "flash.doneTextWifi": "Az eszköz átvette a(z) {version} firmware-t, és újraindul. Csatlakoztasd vissza ezt a készüléket a szokásos WiFi-hálózatodhoz, majd a companion alkalmazásban a ver paranccsal ellenőrizd a verziót.",
   "flash.elapsed": "{size} feltöltése, eltelt idő: {time}",
-  "flash.stage.uploading": "Feltöltés WiFi-n"
+  "flash.stage.uploading": "Feltöltés WiFi-n",
+  "connect.showUnnamed_one": "{count} név nélküli eszköz mutatása",
+  "connect.showUnnamed_other": "{count} név nélküli eszköz mutatása",
+  "connect.hideUnnamed": "Név nélküli eszközök elrejtése"
 }

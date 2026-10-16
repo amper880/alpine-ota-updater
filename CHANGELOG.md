@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bluetooth: default packets per confirmation raised from 8 to 32 (tested on Windows and
   Android, ~25 % faster).
 - WiFi guide: advice to turn off mobile data on phones during the update.
+- Bluetooth list with *Show all Bluetooth devices*: each entry shows its address under the
+  name (devices with the same name can be told apart); devices that advertise no name are
+  collapsed behind *Show N devices without a name*.
 
 ## [0.3.0] - 2026-10-16
 
