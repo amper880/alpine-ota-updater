@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Source options `otaVariants`, `boardAliases`, `wifiOta` and the `flavor` asset group
   (`docs/ADDING_A_SOURCE.md`).
 - MD5 implementation and multipart builder with unit tests.
+- App icon and installer branding: the Alpine logo is now the Windows app and installer icon,
+  the NSIS/MSI installer header, sidebar and banner images, and the Android launcher icon
+  (adaptive, with a themed monochrome variant). Sources in `assets/brand/`,
+  `src-tauri/icons/` and `src-tauri/installer/`; `npm run brand` regenerates them.
+- Warning before sending ZephCore over Bluetooth: switching from Arduino MeshCore may reset
+  the node's stored settings on ZephCore's first start.
 
 ### Changed
 

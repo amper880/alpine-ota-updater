@@ -142,5 +142,6 @@
   "flash.stage.uploading": "Feltöltés WiFi-n",
   "connect.showUnnamed_one": "{count} név nélküli eszköz mutatása",
   "connect.showUnnamed_other": "{count} név nélküli eszköz mutatása",
-  "connect.hideUnnamed": "Név nélküli eszközök elrejtése"
+  "connect.hideUnnamed": "Név nélküli eszközök elrejtése",
+  "flash.zephcoreFirstBoot": "Ha ezen az eszközön jelenleg Arduino MeshCore fut (hivatalos vagy PowerSaving), a ZephCore az első indításkor újraformázhatja a tárhelyét: az eszköz neve, az admin jelszó, a rádióbeállítások és akár az azonosítója is alaphelyzetbe állhat. Ezt a váltást csak olyan eszközön végezd, amelyhez hozzáférsz és újra be tudod állítani. ZephCore-ról újabb ZephCore-ra frissítve a beállítások megmaradnak."
 }

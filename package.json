@@ -16,13 +16,14 @@
     "test": "node --test \"tests/**/*.test.ts\"",
     "check": "npm run typecheck && npm test && npm run build",
     "catalog": "node scripts/build-catalog.mjs",
-    "icons": "tauri icon src-tauri/icons/source.png",
+    "icons": "tauri icon src-tauri/icons/icon-manifest.json",
     "tauri": "tauri",
     "app:dev": "tauri dev",
     "app:build": "tauri build",
     "android:init": "tauri android init",
     "android:dev": "tauri android dev",
-    "android:build": "tauri android build --apk"
+    "android:build": "tauri android build --apk",
+    "brand": "node scripts/make-brand-assets.mjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

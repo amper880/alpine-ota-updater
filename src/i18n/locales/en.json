@@ -142,5 +142,6 @@
   "flash.stage.uploading": "Uploading over WiFi",
   "connect.showUnnamed_one": "Show {count} device without a name",
   "connect.showUnnamed_other": "Show {count} devices without a name",
-  "connect.hideUnnamed": "Hide devices without a name"
+  "connect.hideUnnamed": "Hide devices without a name",
+  "flash.zephcoreFirstBoot": "If this node currently runs Arduino MeshCore (official or PowerSaving), ZephCore may reformat its storage on the first start: node name, admin password, radio settings and possibly the node identity can be reset. Do this switch only on a node you can reach and reconfigure. Updating ZephCore to a newer ZephCore keeps the settings."
 }

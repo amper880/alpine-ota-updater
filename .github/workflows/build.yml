@@ -78,8 +78,9 @@ jobs:
         with:
           workspaces: src-tauri -> target
       - run: npm install --no-audit --no-fund
-      - run: npm run icons
       - run: npx tauri android init --ci
+      # After init, so the launcher icons are written into the generated Android project.
+      - run: npm run icons
       - run: npx tauri android build --apk --ci --target aarch64 --target armv7
       - name: Sign APK
         env:

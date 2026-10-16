@@ -58,6 +58,16 @@ shown as *Bootloader*) and start the update again.
    and restarts.
 6. Reconnect to your normal WiFi.
 
+### Switching between MeshCore and ZephCore
+
+- **nRF52 (Bluetooth):** the update itself works across families, but on its first start
+  ZephCore checks the stored settings and may **reformat the storage** when it does not
+  recognise them — node name, admin password, radio settings and possibly the identity can be
+  reset. Only switch on a node you can reach and reconfigure. The app shows this warning
+  whenever a ZephCore firmware is sent over Bluetooth.
+- **ESP32 (WiFi):** the two families use different OTA servers and image formats; the app
+  refuses cross-family uploads. Switch once over USB.
+
 ## Firmware library
 
 The **Firmware library** button in the header lists all downloaded files with their size.

@@ -368,6 +368,7 @@ export function flashBody(): HTMLElement {
       : null,
     f.phase === 'cancelled' ? h('p', { class: 'callout info' }, icon('info'), t('flash.cancelled')) : null,
     confirmBox,
+    cached.sourceId === 'zephcore' && !isWifi ? h('div', { class: 'callout warn' }, icon('info'), h('p', null, t('flash.zephcoreFirstBoot'))) : null,
     f.phase === 'idle' ? h('p', { class: 'hint' }, t('flash.before')) : null,
     h(
       'div',

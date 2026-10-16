@@ -90,3 +90,17 @@ then `npm run android:init` once and `npm run android:dev` with a phone connecte
 
 The Android project (`src-tauri/gen/android`) and the icon set are generated during the build
 and are not committed.
+
+## App icon and installer images
+
+| File | Used for |
+|---|---|
+| `assets/brand/logo-mark.svg` | The logo (source of everything below) |
+| `src-tauri/icons/source.png` | Windows app/installer icon, legacy Android icon |
+| `src-tauri/icons/android-{foreground,background,monochrome}.png` | Android adaptive and themed icon |
+| `src-tauri/icons/icon-manifest.json` | Input of `npm run icons` (`tauri icon`) |
+| `src-tauri/installer/nsis-*.bmp`, `wix-*.bmp` | Windows installer header, sidebar and banner images |
+
+After changing the logo: `npm i --no-save sharp && npm run brand`, then commit the outputs.
+CI runs `npm run icons` to generate all platform icon sizes (for Android after
+`tauri android init`, so the launcher icons land in the generated project).
