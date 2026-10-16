@@ -229,10 +229,13 @@ The app computes the MD5 locally (`spark-md5`) before upload.
 
 ### 6.3 ESP32 upload (M4)
 
-The app computes the MD5, then posts `multipart/form-data` (`MD5`, then `firmware`) to
-`http://192.168.4.1/update` through the native HTTP plugin, which has no CORS or
-mixed-content limits. Progress is estimated from the upload size and elapsed time. On Android
-the request must use the WiFi network even though it has no internet (verified in M4).
+*Scan* = `GET http://192.168.4.1/update/identity` (falls back to `GET /`); the reported board
+(`<name> (<board>)`, from `getManufacturerName()`) is fuzzily compared with the selected
+board — no match means "not verifiable" and needs confirmation. *Update* computes the MD5
+(`src/lib/util/md5.ts`) and posts a hand-built `multipart/form-data` body (`MD5`, then
+`firmware`) through the native HTTP plugin (`src/lib/wifi/`). The upload reports no progress,
+so the UI shows elapsed time. On Android, mobile data must be off during the update so traffic
+uses the node's WiFi (binding to the WiFi network natively is a possible later improvement).
 
 ## 7. Catalog (extensibility)
 
@@ -434,9 +437,9 @@ alpine-ota-updater/
 | M0 | Repo, spec, tooling, CI | done (v0.1.0) |
 | M1 | App shell, theme, i18n, catalog + release listing | done (v0.1.0) |
 | M2 | Firmware download + library (cache) | done (v0.1.0) |
-| M3 | BLE legacy DFU | protocol done (v0.2.0); native app v0.3.0 awaiting hardware test |
-| M3a | Native app (Tauri), Windows + Android builds in CI | v0.3.0 |
-| M4 | WiFi OTA for ESP32 | next |
+| M3 | BLE legacy DFU | done (v0.3.0, tested on Heltec T114 from Windows and Android) |
+| M3a | Native app (Tauri), Windows + Android builds in CI | done (v0.3.0) |
+| M4 | WiFi OTA for ESP32 | v0.4.0 (awaiting hardware test) |
 | M5 | Polish (keep screen on, signed releases), v1.0.0 | — |
 | Later | iOS/macOS, pre-release toggle, more sources | — |
 

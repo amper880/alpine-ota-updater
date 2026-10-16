@@ -1087,6 +1087,22 @@ select {
   height: 10px;
   border-radius: 5px;
 }
+.progress.indeterminate {
+  position: relative;
+}
+.progress.indeterminate .progress-fill {
+  position: absolute;
+  width: 35%;
+  animation: progress-slide 1.4s ease-in-out infinite;
+}
+@keyframes progress-slide {
+  from {
+    left: -35%;
+  }
+  to {
+    left: 100%;
+  }
+}
 .flash-stats {
   white-space: pre-wrap;
   font-variant-numeric: tabular-nums;

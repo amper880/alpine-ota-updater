@@ -134,3 +134,15 @@ export function matchBleName(boards: Board[], name: string, expected: string | u
   if (knownAs.length > 0) return { match: 'mismatch', knownAs };
   return { match: 'unknown', knownAs };
 }
+
+/**
+ * Compares the board name an ESP32 node reports over WiFi (e.g. "Heltec V3", from
+ * `getManufacturerName()`) with the selected board. These names are free text, so a
+ * non-matching name only means "not verifiable", never a confirmed mismatch.
+ */
+export function matchWifiBoard(reported: string, board: Board): DeviceMatch {
+  const r = boardKey(reported);
+  if (!r) return 'unknown';
+  const keys = [...boardKeys(board), boardKey(board.name)];
+  return keys.some((k) => k === r || (r.length >= 4 && k.includes(r)) || (k.length >= 4 && r.includes(k))) ? 'match' : 'unknown';
+}

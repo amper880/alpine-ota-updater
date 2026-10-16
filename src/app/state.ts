@@ -42,8 +42,8 @@ export interface PickedDevice {
   match: DeviceMatch;
   /** Boards that advertise this OTA name (for mismatch messages). */
   knownAs: string[];
-  /** Application in OTA mode or bootloader already in DFU mode. */
-  kind: DeviceKind;
+  /** Application in OTA mode, bootloader already in DFU mode, or an ESP32 on WiFi. */
+  kind: DeviceKind | 'wifi';
 }
 
 export interface ScanState {
@@ -56,7 +56,7 @@ export interface ScanState {
 }
 
 export type FlashPhase = 'idle' | 'running' | 'done' | 'error' | 'cancelled';
-export type FlashStage = 'preparing' | 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing';
+export type FlashStage = 'preparing' | 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing' | 'uploading';
 
 export interface FlashState {
   phase: FlashPhase;

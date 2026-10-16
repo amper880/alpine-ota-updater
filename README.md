@@ -10,10 +10,9 @@ Over-the-air firmware updater app for **MeshCore** repeater and room server node
 - Downloaded firmware is verified, kept on the device and reused, even offline
 - Works on phone, tablet and desktop; light / dark theme; English and Hungarian
 
-> **Status: v0.3.0.** The app now runs natively (Tauri 2) because browsers block the
-> Bluetooth service nRF52 bootloaders use. Device selection, firmware download, the offline
-> library and Bluetooth updates are implemented and await testing on hardware; WiFi updates
-> for ESP32 are next. See the [specification](docs/SPEC.md#13-milestones).
+> **Status: v0.4.0.** Bluetooth updates of nRF52 nodes are tested on hardware (Windows and
+> Android); WiFi updates of ESP32 nodes are implemented and await hardware testing.
+> See the [specification](docs/SPEC.md#13-milestones).
 
 ## Download
 

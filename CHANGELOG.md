@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-16
+
+### Added
+
+- WiFi updates for ESP32 nodes (M4): *Scan* finds the node at `http://192.168.4.1`
+  (ElegantOTA identity, e.g. `Rooftop (Heltec V3)`) and compares the reported board with the
+  selected device type; *Start update* uploads the image with its MD5 through the native HTTP
+  plugin and waits for the node's `OK`. Elapsed time is shown during the upload.
+- MD5 implementation and multipart builder with unit tests.
+
+### Changed
+
+- Bluetooth: default packets per confirmation raised from 8 to 32 (tested on Windows and
+  Android, ~25 % faster).
+- WiFi guide: advice to turn off mobile data on phones during the update.
+
 ## [0.3.0] - 2026-10-16
 
 Tested on hardware: Heltec T114 updated over Bluetooth from Windows 11 and an Android tablet.
@@ -83,7 +99,8 @@ Tested on hardware: Heltec T114 updated over Bluetooth from Windows 11 and an An
 - Documentation: specification, user guide, development, deployment, adding a source,
   translating.
 
-[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/amper880/alpine-ota-updater/releases/tag/v0.1.0

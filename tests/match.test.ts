@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findFirmware, matchBleName, parseAsset, versionOf } from '../src/lib/catalog/match.ts';
+import { findFirmware, matchBleName, matchWifiBoard, parseAsset, versionOf } from '../src/lib/catalog/match.ts';
 import type { Board, Release, SourceConfig } from '../src/lib/catalog/types.ts';
 import sourcesJson from '../catalog/sources.json' with { type: 'json' };
 import boardsJson from '../catalog/boards.json' with { type: 'json' };
@@ -121,4 +121,12 @@ test('BLE name matching', () => {
   assert.equal(matchBleName(boards, 'AdaDFU', t114.bleOtaName).match, 'unknown');
   assert.equal(matchBleName(boards, 'T114_DFU', t114.bleOtaName).match, 'match');
   assert.equal(matchBleName(boards, 'RAK4631_DFU', t114.bleOtaName).match, 'mismatch');
+});
+
+test('WiFi board name matching', () => {
+  assert.equal(matchWifiBoard('Heltec V3', board('heltecv3')), 'match');
+  assert.equal(matchWifiBoard('Station G2', board('stationg2')), 'match');
+  assert.equal(matchWifiBoard('Xiao C3', board('xiaoc3')), 'match');
+  assert.equal(matchWifiBoard('Generic ESP32', board('heltecv3')), 'unknown');
+  assert.equal(matchWifiBoard('', board('heltecv3')), 'unknown');
 });

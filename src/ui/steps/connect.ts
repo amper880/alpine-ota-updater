@@ -2,6 +2,8 @@ import { h, icon, mount } from '../dom.ts';
 import { locale, t } from '../../i18n/index.ts';
 import { selectedBoard, selectedFirmware, sourceById, store, type PickedDevice } from '../../app/state.ts';
 import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
+import { cancelWifiFlash, findWifiNode, startWifiFlash } from '../../app/wifi.ts';
+import { OTA_HOST, OTA_SSID } from '../../lib/wifi/elegant-ota.ts';
 import { classify, type ScannedDevice } from '../../lib/ble/candidates.ts';
 import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes } from '../../lib/util/format.ts';
@@ -114,17 +116,30 @@ function bleConnectBody(otaName: string): HTMLElement {
 }
 
 function wifiConnectBody(): HTMLElement {
+  const s = store.get();
+  const native = isNativeApp();
+  const checking = s.scan.status === 'scanning';
+  const err = s.scan.error;
   return h(
     'div',
     { class: 'step-content' },
+    !native ? h('p', { class: 'callout warn' }, icon('alert'), t('connect.appOnlyWifi')) : null,
     h('h4', { class: 'field-label' }, t('connect.wifi.title')),
-    steps('connect.wifi.step', 4, { ssid: 'MeshCore-OTA', url: 'http://192.168.4.1/update' }),
+    steps('connect.wifi.step', 4, { ssid: OTA_SSID, url: `${OTA_HOST}/update` }),
     h('p', { class: 'callout info' }, icon('info'), t('connect.wifi.offlineNote')),
+    err && err !== 'app-only'
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`, { ssid: OTA_SSID })), s.scan.errorDetail ? h('p', { class: 'fineprint' }, s.scan.errorDetail) : null))
+      : null,
     h(
       'div',
       { class: 'actions' },
-      h('button', { type: 'button', class: 'btn primary', disabled: true }, icon('wifi', 18), t('connect.scan')),
-      h('span', { class: 'fineprint' }, t('connect.wifiComingSoon')),
+      h(
+        'button',
+        { type: 'button', class: 'btn primary', disabled: !native || checking, onclick: () => void findWifiNode() },
+        icon('wifi', 18),
+        t('connect.scan'),
+      ),
+      checking ? h('span', { class: 'loading' }, h('span', { class: 'spinner', 'aria-hidden': 'true' }), t('connect.wifi.checking')) : null,
     ),
   );
 }
@@ -146,11 +161,27 @@ function formatDuration(sec: number): string {
   return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : `${s} s`;
 }
 
+let elapsedTimer: ReturnType<typeof setInterval> | undefined;
+
 /** Updates the live progress elements without re-rendering the step. */
 export function updateFlashProgress(): void {
   const f = store.get().flash;
   const root = document.querySelector<HTMLElement>('.flash-progress');
-  if (!root || f.phase !== 'running') return;
+  if (!root || f.phase !== 'running') {
+    if (elapsedTimer) clearInterval(elapsedTimer);
+    elapsedTimer = undefined;
+    return;
+  }
+  if (f.stage === 'uploading') {
+    // The HTTP upload reports no progress; show the elapsed time instead.
+    elapsedTimer ??= setInterval(updateFlashProgress, 1000);
+    const elapsed = f.startedAt ? (Date.now() - f.startedAt) / 1000 : 0;
+    const stats = root.querySelector('.flash-stats');
+    if (stats) stats.textContent = t('flash.elapsed', { time: formatDuration(elapsed), size: formatBytes(f.total, locale()) });
+    const stageEl = root.querySelector('.flash-stage');
+    if (stageEl) stageEl.textContent = stageText(f.stage);
+    return;
+  }
   const pct = f.total ? Math.floor((f.sent / f.total) * 100) : 0;
   const bar = root.querySelector<HTMLElement>('.progress');
   bar?.setAttribute('aria-valuenow', String(pct));
@@ -204,7 +235,8 @@ export function flashBody(): HTMLElement {
   if (confirmedFor !== device.id) confirmedFor = undefined;
 
   const f = s.flash;
-  const prn = loadPref<number>('prn', 8);
+  const isWifi = device.kind === 'wifi';
+  const prn = loadPref<number>('prn', 32);
   const needsConfirm = device.match !== 'match';
   const version = fw?.version ?? cached.version;
   const sourceName = sourceById(cached.sourceId)?.name ?? cached.sourceId;
@@ -218,6 +250,7 @@ export function flashBody(): HTMLElement {
 
   if (f.phase === 'running') {
     const pct = f.total ? Math.floor((f.sent / f.total) * 100) : 0;
+    const indeterminate = isWifi;
     return h(
       'div',
       { class: 'step-content' },
@@ -225,16 +258,18 @@ export function flashBody(): HTMLElement {
       h(
         'div',
         { class: 'flash-progress' },
-        h('div', { class: 'flash-row' }, h('span', { class: 'flash-stage' }, stageText(f.stage)), h('span', { class: 'flash-pct' }, `${pct}%`)),
-        h(
-          'div',
-          { class: 'progress big', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': String(pct) },
-          h('div', { class: 'progress-fill' }),
-        ),
+        h('div', { class: 'flash-row' }, h('span', { class: 'flash-stage' }, stageText(f.stage)), indeterminate ? null : h('span', { class: 'flash-pct' }, `${pct}%`)),
+        indeterminate
+          ? h('div', { class: 'progress big indeterminate', role: 'progressbar', 'aria-busy': 'true' }, h('div', { class: 'progress-fill' }))
+          : h(
+              'div',
+              { class: 'progress big', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': String(pct) },
+              h('div', { class: 'progress-fill' }),
+            ),
         h('p', { class: 'flash-stats fineprint' }),
       ),
       h('p', { class: 'callout info' }, icon('info'), t('flash.keepOpen')),
-      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'btn', onclick: cancelFlash }, t('flash.cancel'))),
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'btn', onclick: isWifi ? cancelWifiFlash : cancelFlash }, t('flash.cancel'))),
       logPanel(),
     );
   }
@@ -247,7 +282,7 @@ export function flashBody(): HTMLElement {
         'div',
         { class: 'result ok' },
         icon('check', 28),
-        h('div', null, h('h4', null, t('flash.doneTitle')), h('p', null, t('flash.doneText', { version }))),
+        h('div', null, h('h4', null, t('flash.doneTitle')), h('p', null, t(isWifi ? 'flash.doneTextWifi' : 'flash.doneText', { version }))),
       ),
       h(
         'div',
@@ -271,7 +306,9 @@ export function flashBody(): HTMLElement {
             null,
             device.match === 'mismatch'
               ? t('flash.mismatch', { name: device.name, boards: device.knownAs.join(', '), board: board.name })
-              : t('flash.unknown', { name: device.name, board: board.name }),
+              : isWifi
+                ? t('flash.unknownWifi', { reported: device.knownAs[0] ?? '?', board: board.name })
+                : t('flash.unknown', { name: device.name, board: board.name }),
           ),
           h(
             'label',
@@ -310,7 +347,7 @@ export function flashBody(): HTMLElement {
           type: 'button',
           class: 'btn primary start-flash',
           disabled: needsConfirm && confirmedFor !== device.id,
-          onclick: () => void startFlash(loadPref<number>('prn', 8), loadPref<boolean>('compatPackets', false)),
+          onclick: () => void (isWifi ? startWifiFlash() : startFlash(loadPref<number>('prn', 32), loadPref<boolean>('compatPackets', false))),
         },
         icon('download', 18),
         f.phase === 'idle' ? t('flash.start') : t('flash.retry'),
@@ -318,7 +355,7 @@ export function flashBody(): HTMLElement {
       h('button', { type: 'button', class: 'link', onclick: forgetDevice }, t('flash.otherDevice')),
       f.phase !== 'idle' ? h('button', { type: 'button', class: 'link', onclick: resetFlash }, t('common.dismiss')) : null,
     ),
-    h(
+    isWifi ? null : h(
       'details',
       { class: 'advanced' },
       h('summary', null, t('flash.advanced')),

@@ -47,8 +47,16 @@ shown as *Bootloader*) and start the update again.
 
 ### WiFi update (ESP32)
 
-Being implemented (next version). The guide in step 4 already shows how to join the node's
-`MeshCore-OTA` network.
+1. Download the firmware first — the node's WiFi has no internet.
+2. Send `start ota` from the companion app. The node opens the open WiFi network
+   **MeshCore-OTA** and replies `Started: http://192.168.4.1/update`.
+3. Connect this device to **MeshCore-OTA**. If it warns that the network has no internet,
+   choose to stay connected. On a phone, turn off mobile data for the duration of the update.
+4. Return to the app and press **Scan**. The node shows up as `<name> (<board>)`; the board is
+   compared with the selected device type.
+5. Press **Start update**. The upload takes a few seconds to a minute; the node answers *OK*
+   and restarts.
+6. Reconnect to your normal WiFi.
 
 ## Firmware library
 
@@ -61,6 +69,7 @@ Delete files you no longer need there.
 |---|---|
 | The release list does not load | Check the internet connection. If you were online before, the last list is shown offline. |
 | Download fails | Try again; the file is verified and never stored if it is incomplete. |
+| *No node answers at 192.168.4.1* | Check that this device is connected to **MeshCore-OTA** and mobile data is off; send `start ota` again if the node restarted. |
 | The node is not in the list | Send `start ota` again (OTA mode ends when the node restarts); move closer; on Windows, remove the node from *Settings → Bluetooth & devices* if it was paired before. |
 | The node cannot be connected | Copy the log from *Details*. On Windows also send the newest file from `%LOCALAPPDATA%\com.ampersworld.alpineota\logs` (paste the path into Explorer's address bar). |
 | The update stops or fails repeatedly | Open *Advanced* and set *Packets per confirmation* to 4 or 1, then try again. Copy the log from *Details* when reporting a problem. |
