@@ -32,6 +32,7 @@ export interface DownloadState {
 
 import type { DeviceMatch } from '../lib/catalog/match.ts';
 import type { DeviceKind, ScannedDevice } from '../lib/ble/candidates.ts';
+import type { OtaKind } from '../lib/wifi/ota-format.ts';
 import { errorMessage } from '../lib/util/errors.ts';
 export type { DeviceMatch };
 
@@ -44,6 +45,8 @@ export interface PickedDevice {
   knownAs: string[];
   /** Application in OTA mode, bootloader already in DFU mode, or an ESP32 on WiFi. */
   kind: DeviceKind | 'wifi';
+  /** WiFi OTA server variant the node runs (ESP32 only). */
+  ota?: OtaKind;
 }
 
 export interface ScanState {

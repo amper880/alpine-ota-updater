@@ -2,8 +2,7 @@ import { h, icon, mount } from '../dom.ts';
 import { locale, t } from '../../i18n/index.ts';
 import { selectedBoard, selectedFirmware, sourceById, store, type PickedDevice } from '../../app/state.ts';
 import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
-import { cancelWifiFlash, findWifiNode, startWifiFlash } from '../../app/wifi.ts';
-import { OTA_HOST, OTA_SSID } from '../../lib/wifi/elegant-ota.ts';
+import { cancelWifiFlash, expectedProfile, findWifiNode, startWifiFlash } from '../../app/wifi.ts';
 import { classify, type ScannedDevice } from '../../lib/ble/candidates.ts';
 import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes } from '../../lib/util/format.ts';
@@ -151,15 +150,16 @@ function wifiConnectBody(): HTMLElement {
   const native = isNativeApp();
   const checking = s.scan.status === 'scanning';
   const err = s.scan.error;
+  const profile = expectedProfile();
   return h(
     'div',
     { class: 'step-content' },
     !native ? h('p', { class: 'callout warn' }, icon('alert'), t('connect.appOnlyWifi')) : null,
     h('h4', { class: 'field-label' }, t('connect.wifi.title')),
-    steps('connect.wifi.step', 4, { ssid: OTA_SSID, url: `${OTA_HOST}/update` }),
+    steps('connect.wifi.step', 4, { ssid: profile.ssid, url: `${profile.host}/update` }),
     h('p', { class: 'callout info' }, icon('info'), t('connect.wifi.offlineNote')),
     err && err !== 'app-only'
-      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`, { ssid: OTA_SSID })), s.scan.errorDetail ? h('p', { class: 'fineprint' }, s.scan.errorDetail) : null))
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`, { ssid: profile.ssid })), s.scan.errorDetail ? h('p', { class: 'fineprint' }, s.scan.errorDetail) : null))
       : null,
     h(
       'div',

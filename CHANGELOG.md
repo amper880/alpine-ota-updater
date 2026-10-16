@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (ElegantOTA identity, e.g. `Rooftop (Heltec V3)`) and compares the reported board with the
   selected device type; *Start update* uploads the image with its MD5 through the native HTTP
   plugin and waits for the node's `OK`. Elapsed time is shown during the upload.
+- ZephCore on ESP32: its MCUboot `…-update.bin` images are listed (Zephyr board names such as
+  `heltec_wifi_lora32_v3` are mapped to the catalog via `boardAliases`), and the app talks
+  to ZephCore's own OTA server (`ZephCore-OTA`, `http://192.168.100.1`, raw `POST /upload`).
+  *Scan* probes both MeshCore and ZephCore addresses; an image of the wrong family is refused
+  with an explanation.
+- Source options `otaVariants`, `boardAliases`, `wifiOta` and the `flavor` asset group
+  (`docs/ADDING_A_SOURCE.md`).
 - MD5 implementation and multipart builder with unit tests.
 
 ### Changed

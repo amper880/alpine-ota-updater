@@ -229,6 +229,17 @@ The app computes the MD5 locally (`spark-md5`) before upload.
 
 ### 6.3 ESP32 upload (M4)
 
+Two OTA servers exist, depending on the firmware the node runs (`src/lib/wifi/ota-format.ts`):
+
+| Firmware | AP / address | Identity | Upload |
+|---|---|---|---|
+| MeshCore, PowerSaving (AsyncElegantOTA) | `MeshCore-OTA`, 192.168.4.1 | `GET /update/identity` → `{"id":"<name> (<board>)"}` | `POST /update`, multipart (`MD5`, `firmware`), ESP-IDF app image (`0xE9`) |
+| ZephCore (Zephyr + MCUboot) | `ZephCore-OTA`, 192.168.100.1 | `GET /identity` → `{"name","board"}` | `POST /upload`, raw MCUboot image (`…-update.bin`, magic `0x96f3b83d`) |
+
+*Scan* probes both addresses at once; the server that answers decides the upload format. An
+image of the other family is refused with an explanation (switching between Arduino MeshCore
+and ZephCore needs a USB flash).
+
 *Scan* = `GET http://192.168.4.1/update/identity` (falls back to `GET /`); the reported board
 (`<name> (<board>)`, from `getManufacturerName()`) is fuzzily compared with the selected
 board — no match means "not verifiable" and needs confirmation. *Update* computes the MD5
@@ -285,10 +296,9 @@ Notes from the current releases (2026-10):
 - **Official** publishes separate tags per role (`repeater-v1.18.0`, `room-server-v1.18.0`).
   nRF52 boards ship `.zip` (DFU) + `.uf2`; ESP32 boards ship `.bin` (OTA) + `-merged.bin`.
 - **PowerSaving** uses one tag per release (`PowerSaving17`); ESP32 OTA file is `-upgrade.bin`.
-- **ZephCore** (Zephyr-based) uses lowercase board ids (`heltec_t114`). Its ESP32 OTA uses
-  MCUboot, not ElegantOTA — **ZephCore ESP32 OTA is out of scope for v1** unless its
-  mechanism proves compatible; ZephCore nRF52 `.zip` compatibility with the legacy DFU
-  bootloader is verified in M3.
+- **ZephCore** (Zephyr-based) uses Zephyr board names (`heltec_wifi_lora32_v3`), mapped with
+  `boardAliases`; its ESP32 OTA images are the MCUboot-signed `…-update.bin` files, uploaded
+  to its own OTA server (§6.3).
 
 ### 7.2 `catalog/boards.json`
 

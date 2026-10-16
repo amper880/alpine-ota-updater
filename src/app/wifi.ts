@@ -1,17 +1,22 @@
 /**
  * Actions for steps 4–5 on ESP32 nodes: find the node on its OTA WiFi and upload the image.
  */
-import { IDLE_FLASH, selectedBoard, store } from './state.ts';
-import { matchWifiBoard } from '../lib/catalog/match.ts';
+import { IDLE_FLASH, SOURCES, selectedBoard, selectedSource, store } from './state.ts';
+import { matchWifiBoard, resolveAlias } from '../lib/catalog/match.ts';
 import { getFirmware } from '../lib/cache/db.ts';
-import { md5Hex } from '../lib/util/md5.ts';
 import { errorMessage } from '../lib/util/errors.ts';
-import { OTA_HOST, probeNode, uploadFirmware } from '../lib/wifi/elegant-ota.ts';
+import { probeNode, uploadFirmware } from '../lib/wifi/ota.ts';
+import { OTA_PROFILES, imageKind, type OtaKind, type OtaProfile } from '../lib/wifi/ota-format.ts';
 import { isNativeApp } from '../lib/platform.ts';
 
 let uploadAbort: AbortController | undefined;
 
-/** "Scan" for ESP32: checks whether a node answers on http://192.168.4.1. */
+/** OTA server variant the selected firmware source runs (for the connection guide). */
+export function expectedProfile(): OtaProfile {
+  return OTA_PROFILES[(selectedSource()?.wifiOta ?? 'meshcore') as OtaKind];
+}
+
+/** "Scan" for ESP32: checks whether a node answers on one of the OTA addresses. */
 export async function findWifiNode(): Promise<void> {
   if (store.get().scan.status === 'scanning') return;
   if (!isNativeApp()) {
@@ -26,15 +31,21 @@ export async function findWifiNode(): Promise<void> {
   }
   const board = selectedBoard();
   const reported = r.identity?.board ?? '';
-  const match = board && reported ? matchWifiBoard(reported, board) : 'unknown';
+  // ZephCore reports Zephyr board names ("heltec_wifi_lora32_v3"); map them like file names.
+  let match: 'match' | 'unknown' = 'unknown';
+  if (board && reported) {
+    const aliased = SOURCES.map((src) => resolveAlias(src, reported));
+    match = aliased.includes(board.id) ? 'match' : matchWifiBoard(reported, board) === 'match' ? 'match' : 'unknown';
+  }
   store.set((s) => ({
     scan: { ...s.scan, status: 'idle' },
     device: {
-      id: OTA_HOST,
-      name: r.identity ? r.identity.id : OTA_HOST.replace('http://', ''),
+      id: r.profile.host,
+      name: r.identity ? r.identity.id : r.profile.host.replace('http://', ''),
       match,
       knownAs: reported ? [reported] : [],
       kind: 'wifi',
+      ota: r.profile.kind,
     },
     flash: IDLE_FLASH,
     openStep: undefined,
@@ -49,19 +60,26 @@ function log(message: string): void {
 export async function startWifiFlash(): Promise<void> {
   const s = store.get();
   if (!s.device || !s.firmwareKey || s.flash.phase === 'running') return;
+  const profile = OTA_PROFILES[s.device.ota ?? 'meshcore'];
   uploadAbort = new AbortController();
   store.set({ flash: { phase: 'running', stage: 'preparing', sent: 0, total: 0, log: [], startedAt: undefined } });
   try {
     const fw = await getFirmware(s.firmwareKey);
     if (!fw) throw new Error('Firmware file not found in the library. Download it again.');
     const image = new Uint8Array(await fw.blob.arrayBuffer());
-    if (image[0] !== 0xe9) log('Warning: the file does not start with the ESP32 image magic byte (0xE9)');
-    const md5 = md5Hex(image);
-    log(`Firmware ${fw.assetName} (${image.length} bytes, MD5 ${md5})`);
-    log(`Uploading to ${OTA_HOST}/update`);
+    const kind = imageKind(image);
+    log(`Firmware ${fw.assetName} (${image.length} bytes, ${kind} image)`);
+    log(`Node runs ${profile.label} OTA at ${profile.host}`);
+    if (kind !== 'unknown' && kind !== profile.image) {
+      const other = Object.values(OTA_PROFILES).find((p) => p.image === kind);
+      throw new Error(
+        `This node runs ${profile.label}, but the selected file is a ${other?.label ?? kind} image. ` +
+          `Choose a ${profile.label} firmware; switching between them needs a USB flash.`,
+      );
+    }
     store.set((st) => ({ flash: { ...st.flash, stage: 'uploading', total: image.length, startedAt: Date.now() } }));
     const t0 = Date.now();
-    await uploadFirmware(image, md5, { signal: uploadAbort.signal });
+    await uploadFirmware(profile, image, { signal: uploadAbort.signal, onLog: log });
     const secs = (Date.now() - t0) / 1000;
     log(`Node answered OK after ${secs.toFixed(1)} s (${(image.length / 1000 / secs).toFixed(1)} kB/s); it restarts now`);
     store.set((st) => ({ flash: { ...st.flash, phase: 'done', stage: undefined, sent: image.length } }));

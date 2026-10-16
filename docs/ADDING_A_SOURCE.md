@@ -27,11 +27,17 @@ release assets.
 | `assetPattern` | yes | Regex matched against asset file names (case-insensitive). Named groups: `board`, `role`, `ext` (required), `merged` (if present the file is skipped), `variant` (informational). |
 | `exclude` | no | List of regexes; matching asset names are ignored. |
 | `platforms` | yes | Which platforms' OTA images are supported: `"nrf52"` (`.zip` DFU packages), `"esp32"` (`.bin` app images). |
+| `otaVariants` | no | Required `variant` group value per platform, e.g. `{ "esp32": "update" }` when only `…-update.bin` files are OTA images. |
+| `boardAliases` | no | Board names in this source's file names that differ from MeshCore's, mapped to `catalog/boards.json` ids, e.g. `{ "heltec_wifi_lora32_v3": "heltecv3" }`. Also used to match the board an ESP32 node reports over WiFi. |
+| `wifiOta` | no | WiFi OTA server the firmware runs on ESP32: `"meshcore"` (ElegantOTA, `MeshCore-OTA`, 192.168.4.1) or `"zephcore"` (`ZephCore-OTA`, 192.168.100.1). Decides the connection guide. Default `"meshcore"`. |
 | `notes` | no | Extra note shown under the firmware list. |
 
 ### How assets are matched
 
 - `role` may be written `repeater`, `room_server`, `roomserver` or `room-server`.
+- An optional `flavor` group (e.g. `noscreen`) is appended to the board name with `_` before
+  the alias lookup, so `heltec_t114-repeater-noscreen-….zip` can map to
+  `heltect114withoutdisplay`.
 - `board` is compared with the board's id and aliases after removing everything except
   letters and digits and lowercasing (`Heltec_t114` = `heltec-t114` = `heltect114`).
   If a source uses a completely different name for a board, add that spelling to the board's

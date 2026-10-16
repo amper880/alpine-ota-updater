@@ -30,6 +30,15 @@ export interface ParsedAsset {
   platform: Platform;
 }
 
+/** Maps a source-specific board name to a catalog board key (lowercase alphanumerics). */
+export function resolveAlias(source: Pick<SourceConfig, 'boardAliases'>, name: string): string {
+  const key = boardKey(name);
+  for (const [alias, id] of Object.entries(source.boardAliases ?? {})) {
+    if (boardKey(alias) === key) return boardKey(id);
+  }
+  return key;
+}
+
 /** Parses an asset file name with the source's pattern. Returns undefined if not an OTA image. */
 export function parseAsset(source: SourceConfig, assetName: string): ParsedAsset | undefined {
   for (const ex of source.exclude ?? []) {
@@ -43,7 +52,10 @@ export function parseAsset(source: SourceConfig, assetName: string): ParsedAsset
   const platform = platformForExt(g.ext.toLowerCase());
   if (!role || !platform) return undefined;
   if (!source.platforms.includes(platform)) return undefined;
-  return { boardKey: boardKey(g.board), role, platform };
+  const requiredVariant = source.otaVariants?.[platform];
+  if (requiredVariant && (g.variant ?? '').toLowerCase() !== requiredVariant.toLowerCase()) return undefined;
+  const name = g.flavor ? `${g.board}_${g.flavor}` : g.board;
+  return { boardKey: resolveAlias(source, name), role, platform };
 }
 
 /** Does this release belong to the role (for sources with per-role tags) and the source? */

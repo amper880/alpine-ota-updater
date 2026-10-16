@@ -41,6 +41,19 @@ export interface SourceConfig {
   exclude?: string[];
   /** Platforms whose OTA images from this source are supported. */
   platforms: Platform[];
+  /**
+   * Required value of the `variant` group per platform, e.g. `{ "esp32": "update" }` when only
+   * "...-update.bin" files are OTA images.
+   */
+  otaVariants?: Partial<Record<Platform, string>>;
+  /**
+   * Board names used in this source's file names that differ from MeshCore's, mapped to board
+   * ids of catalog/boards.json, e.g. `{ "heltec_wifi_lora32_v3": "heltecv3" }`.
+   * A `flavor` group (e.g. "noscreen") is appended with "_" before the lookup.
+   */
+  boardAliases?: Record<string, string>;
+  /** OTA server the firmware runs on ESP32 nodes ("meshcore" ElegantOTA or "zephcore"). */
+  wifiOta?: 'meshcore' | 'zephcore';
   notes?: string;
 }
 

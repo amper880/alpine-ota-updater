@@ -13,7 +13,11 @@
       },
       "versionPattern": "v?(?<version>\\d+(?:\\.\\d+)+[a-z]?)",
       "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server)-v[^-]+-[0-9a-f]+(?<merged>-merged)?\\.(?<ext>zip|bin)$",
-      "platforms": ["nrf52", "esp32"]
+      "platforms": [
+        "nrf52",
+        "esp32"
+      ],
+      "wifiOta": "meshcore"
     },
     {
       "id": "powersaving",
@@ -24,8 +28,14 @@
       "tagPattern": "^PowerSaving",
       "versionPattern": "PowerSaving(?<version>[0-9][0-9.]*)",
       "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server)-PowerSaving[0-9.]+(?:-(?<variant>upgrade|freshInstall))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
-      "exclude": ["freshInstall"],
-      "platforms": ["nrf52", "esp32"]
+      "exclude": [
+        "freshInstall"
+      ],
+      "platforms": [
+        "nrf52",
+        "esp32"
+      ],
+      "wifiOta": "meshcore"
     },
     {
       "id": "zephcore",
@@ -35,9 +45,31 @@
       "homepage": "https://github.com/liquidraver/ZephCore",
       "tagPattern": "-zephcore$",
       "versionPattern": "^(?<version>[0-9][0-9.]*[a-z]?)",
-      "assetPattern": "^(?<board>.+?)-(?<role>repeater|room_server|roomserver|room-server)-[0-9a-f]{6,}\\.(?<ext>zip|bin)$",
-      "platforms": ["nrf52"],
-      "notes": "ESP32 builds use MCUboot OTA, which is not supported yet."
+      "assetPattern": "^(?<board>.+?)(?:-(?:esp32s3-procpu|esp32-procpu|esp32c6-hpcore|esp32c3))?-(?<role>repeater|room_server|roomserver|room-server)(?:-(?<flavor>noscreen))?-[0-9a-f]{6,}(?:-(?<variant>update))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "platforms": [
+        "nrf52",
+        "esp32"
+      ],
+      "otaVariants": {
+        "esp32": "update"
+      },
+      "wifiOta": "zephcore",
+      "boardAliases": {
+        "gat562_30s": "gat56230smeshkit",
+        "heltec_t114_noscreen": "heltect114withoutdisplay",
+        "heltec_wifi_lora32_v3": "heltecv3",
+        "heltec_wifi_lora32_v4": "heltecv4",
+        "heltec_wifi_lora32_v4_r8": "heltecv4r8",
+        "heltec_wireless_tracker_v2": "heltectrackerv2",
+        "ikoka_nano_30dbm": "ikokananonrf30dbm",
+        "lilygo_t3s3": "lilygot3s3sx1262",
+        "muziworks_r1neo": "r1neo",
+        "promicro_sx1262": "promicro",
+        "rak3401_1watt": "rak3401",
+        "xiao_esp32c3": "xiaoc3",
+        "xiao_esp32s3": "xiaos3",
+        "xiao_nrf52840": "xiaonrf52"
+      }
     }
   ]
 }

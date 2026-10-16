@@ -91,12 +91,30 @@ test('powersaving: ESP32 uses -upgrade.bin, freshInstall is excluded', () => {
   assert.equal(nrf[0]?.asset.name, 'GAT562_30S_Mesh_Kit_repeater-PowerSaving17.zip');
 });
 
-test('zephcore: lowercase names match, ESP32 is not offered', () => {
-  const r = rel('1.17.4-zephcore', ['heltec_t114-repeater-eef6a48.zip', 'heltec_v3-repeater-eef6a48.bin']);
-  const nrf = findFirmware(src('zephcore'), [r], board('heltect114'), 'repeater');
-  assert.equal(nrf[0]?.asset.name, 'heltec_t114-repeater-eef6a48.zip');
-  assert.equal(nrf[0]?.version, '1.17.4');
-  assert.equal(findFirmware(src('zephcore'), [r], board('heltecv3'), 'repeater').length, 0);
+test('zephcore: nRF52 zip and ESP32 -update.bin with Zephyr board names', () => {
+  const r = rel('1.18.0-zephcore', [
+    'heltec_t114-repeater-4f63ee2.uf2',
+    'heltec_t114-repeater-4f63ee2.zip',
+    'heltec_t114-repeater-noscreen-4f63ee2.zip',
+    'heltec_wifi_lora32_v3-esp32s3-procpu-repeater-4f63ee2-merged.bin',
+    'heltec_wifi_lora32_v3-esp32s3-procpu-repeater-4f63ee2-update.bin',
+    'heltec_wifi_lora32_v3-esp32s3-procpu-companion-4f63ee2-update.bin',
+    'xiao_esp32c3-repeater-4f63ee2-update.bin',
+    'ttgo_tbeam-esp32-procpu-repeater-4f63ee2.bin',
+  ]);
+  const z = src('zephcore');
+  assert.equal(findFirmware(z, [r], board('heltect114'), 'repeater')[0]?.asset.name, 'heltec_t114-repeater-4f63ee2.zip');
+  assert.equal(findFirmware(z, [r], board('heltect114withoutdisplay'), 'repeater')[0]?.asset.name, 'heltec_t114-repeater-noscreen-4f63ee2.zip');
+  const v3 = findFirmware(z, [r], board('heltecv3'), 'repeater');
+  assert.equal(v3[0]?.asset.name, 'heltec_wifi_lora32_v3-esp32s3-procpu-repeater-4f63ee2-update.bin');
+  assert.equal(v3[0]?.version, '1.18.0');
+  assert.equal(findFirmware(z, [r], board('xiaoc3'), 'repeater')[0]?.asset.name, 'xiao_esp32c3-repeater-4f63ee2-update.bin');
+  // plain .bin without "-update" is not an OTA image for ZephCore
+  assert.equal(findFirmware(z, [r], board('tbeamsx1276'), 'repeater').length, 0);
+});
+
+test('every ZephCore alias points to a catalog board', () => {
+  for (const id of Object.values(src('zephcore').boardAliases ?? {})) board(id);
 });
 
 test('companion images are never parsed as repeater/room server', () => {

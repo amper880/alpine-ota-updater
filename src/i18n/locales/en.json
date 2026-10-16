@@ -135,7 +135,7 @@
   "flash.compatHint": "Use if the update fails right after it starts. Much slower.",
   "connect.appOnlyWifi": "WiFi updates need the installed app.",
   "connect.wifi.checking": "Looking for the node…",
-  "connect.error.unreachable": "No node answers at 192.168.4.1. Check that this device is connected to the {ssid} WiFi and that the node is still in update mode.",
+  "connect.error.unreachable": "No node answers. Check that this device is connected to the {ssid} WiFi and that the node is still in update mode.",
   "flash.unknownWifi": "The node reports its board as “{reported}”, which could not be matched to {board}. Make sure the firmware matches the hardware.",
   "flash.doneTextWifi": "The node accepted firmware {version} and is restarting. Reconnect this device to your normal WiFi, then check the version with the ver command in your companion app.",
   "flash.elapsed": "Uploading {size}, {time} elapsed",
