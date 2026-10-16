@@ -7,36 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+## [0.3.0] - 2026-10-16
 
-- Android build: minimum Android version raised to 8.0 (API 26), as required by
-  `tauri-plugin-blec`.
-- Bluetooth errors from the native plugin were shown as "undefined"; the real error text is
-  now logged.
-- Switching the node into the bootloader failed on real hardware with ATT error `0xFD`
-  (notifications not enabled): control point notifications are now enabled before the
-  buttonless jump.
-- Scans ended immediately inside the update flow (the plugin's scan call returns as soon as
-  scanning starts); scans now run for their full time or until stopped.
-- If no bootloader is seen after the jump, the previous address is tried and checked.
-
-### Changed
-
-- Bluetooth connection: up to three attempts, each retry after a fresh scan for the node;
-  timing and visible devices are logged.
-- CI: pinned the Linux runners to Ubuntu 24.04 and moved to Node 24 based action versions.
-- CI: the Android job uses the SDK preinstalled on the runner instead of
-  `android-actions/setup-android`, which failed installing the removed `tools` package.
-
-### Added
-
-- Faster Bluetooth updates: DFU packets now use the negotiated MTU (up to 244 bytes instead of
-  20); Android requests the largest MTU. *Advanced → Compatibility mode* falls back to
-  20-byte packets. The log shows the packet size and the transfer speed.
-- Native log file with Bluetooth details (`%LOCALAPPDATA%\com.ampersworld.alpineota\logs` on
-  Windows) for troubleshooting.
-
-## [0.3.0] - 2026-10-15
+Tested on hardware: Heltec T114 updated over Bluetooth from Windows 11 and an Android tablet.
 
 ### Changed
 
@@ -46,16 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bluetooth scanning happens inside the app: nodes in update mode are listed with their mode
   (update mode / bootloader) and signal strength; a node already in bootloader mode
   (`<BOARD>_DFU`, `AdaDFU`) can be updated directly.
-- After switching the node into the bootloader, the app rescans and connects to it
-  automatically (same address, matching `<BOARD>_DFU` name, or strongest bootloader).
+- After the buttonless jump (with control point notifications enabled first, as the DFU
+  service requires), the app rescans and connects to the bootloader automatically (same
+  address, matching `<BOARD>_DFU` name, strongest bootloader, or the previous address).
+- Bluetooth connection: up to three attempts, each retry after a fresh scan; errors from the
+  native plugin are shown in full, with timing.
 - Release lists and firmware files are fetched directly from GitHub through the native HTTP
   plugin; release lists are cached for 10 minutes.
+- Minimum Android version: 8.0 (API 26), required by `tauri-plugin-blec`.
 
 ### Added
 
-- `src-tauri/` Rust shell with `tauri-plugin-blec` (Bluetooth) and `tauri-plugin-http`.
+- `src-tauri/` Rust shell with `tauri-plugin-blec` (Bluetooth), `tauri-plugin-http` and
+  `tauri-plugin-log` (native log file, e.g. `%LOCALAPPDATA%\com.ampersworld.alpineota\logs`).
+- DFU packets sized to the negotiated MTU (up to 244 bytes instead of 20, ~4–5× faster);
+  Android requests the largest MTU; *Advanced → Compatibility mode* forces 20-byte packets.
+  The log shows packet size and transfer speed.
 - GitHub Actions workflow building the Windows installer (NSIS, MSI) and a signed Android
-  APK; tags publish a GitHub Release.
+  APK on Ubuntu 24.04 with the preinstalled Android SDK; tags publish a GitHub Release.
 - `docs/BUILDING.md`: getting installers, Android signing key, local builds.
 
 ### Removed
