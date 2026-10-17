@@ -87,13 +87,23 @@ typing (the device search box) are created once and reused.
 - **Versioning:** [SemVer](https://semver.org/). Pre-1.0 while features are being added.
 - **Changelog:** update `CHANGELOG.md` under *Unreleased* with every user-visible change.
 
+## Branches
+
+- `dev` — work in progress. Every push builds the Windows installers and the APK
+  (*Actions → Build apps → run → Artifacts*) without publishing a release.
+- `main` — tested, releasable code. Changes reach it by merging `dev` (or a pull request
+  from `dev`); releases are tagged on `main`.
+
+Other branches can be built on demand with *Actions → Build apps → Run workflow*.
+
 ## Releasing
 
-1. Move the *Unreleased* entries in `CHANGELOG.md` under a new version heading with the date.
-2. Bump `version` in `package.json` (used by the app, the installers and the footer), then
+1. Merge `dev` into `main` and switch to `main`.
+2. Move the *Unreleased* entries in `CHANGELOG.md` under a new version heading with the date.
+3. Bump `version` in `package.json` (used by the app, the installers and the footer), then
    run `npm install` so `package-lock.json` follows.
-3. Commit: `chore(release): vX.Y.Z`, then tag: `git tag vX.Y.Z`.
-4. Push the commit and the tag (GitHub Desktop: *Repository → Push*, tags are pushed with it).
+4. Commit: `chore(release): vX.Y.Z`, then tag: `git tag vX.Y.Z`.
+5. Push the commit and the tag (GitHub Desktop: *Repository → Push*, tags are pushed with it).
    The *Build apps* workflow then publishes a GitHub Release with the installers.
 
 ## Testing the Bluetooth update without hardware

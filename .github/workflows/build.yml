@@ -1,8 +1,8 @@
 # Builds the installers:
 #   - Windows: NSIS setup (.exe) and MSI
 #   - Android: signed APK (arm64 + armv7)
-# Artifacts are attached to every run (Actions → run → Artifacts). Pushing a tag "vX.Y.Z"
-# also creates a GitHub Release with the files.
+# Artifacts are attached to every run (Actions → run → Artifacts). Pushes to "dev" (test
+# builds) and "main" only build; pushing a tag "vX.Y.Z" also creates a GitHub Release.
 #
 # Android signing (optional but recommended, see docs/BUILDING.md): repository secrets
 #   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS
@@ -12,7 +12,7 @@ name: Build apps
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
     tags: ['v*']
   workflow_dispatch:
 
