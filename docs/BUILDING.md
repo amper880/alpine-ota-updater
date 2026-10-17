@@ -5,30 +5,38 @@ Alpine OTA Updater is a [Tauri 2](https://v2.tauri.app/) app. The installers are
 
 ## Getting the installers
 
-1. Push to `main` (GitHub Desktop: *Push origin*).
+1. Push to `dev` or `main` (GitHub Desktop: *Push origin*).
 2. On github.com open the repository → **Actions** → *Build apps* → the latest run.
 3. When it is green (about 15–25 minutes the first time, faster later thanks to caching),
    download the **Artifacts** at the bottom of the run page:
    - `alpine-ota-updater-windows` — `…-setup.exe` (NSIS installer) and `.msi`
+   - `alpine-ota-updater-macos` — `…_universal.dmg` (Apple silicon and Intel)
+   - `alpine-ota-updater-linux` — `.AppImage` (x86_64)
    - `alpine-ota-updater-android` — `alpine-ota-updater-<version>.apk`
 
 Artifacts are kept for 90 days. A failed run shows the error in the job's log.
 
 ### Releases
 
-Pushing a tag `vX.Y.Z` builds both apps and publishes them as a **GitHub Release** with
+Pushing a tag `vX.Y.Z` builds all apps and publishes them as a **GitHub Release** with
 generated release notes. See [DEVELOPMENT.md](DEVELOPMENT.md#releasing) for the steps.
 
 ### GitHub Actions minutes
 
 On a free GitHub account, private repositories get 2,000 build minutes per month (Windows
-runners use the quota faster than Linux). Without a payment method, builds simply stop when
+runners count double and macOS runners ten times). Without a payment method, builds simply stop when
 the quota is used up; public repositories have no limit.
 
 ## Installing
 
 - **Windows:** run the `…-setup.exe`. The installer is not code-signed yet, so SmartScreen
   shows *Windows protected your PC*: choose **More info → Run anyway**.
+- **macOS:** open the `.dmg` and drag the app to *Applications*. The app is only ad-hoc
+  signed (no Apple developer account), so Gatekeeper blocks the first start: **System
+  Settings → Privacy & Security → Open Anyway**. Alternatively, in Terminal:
+  `xattr -dr com.apple.quarantine "/Applications/Alpine OTA Updater.app"`.
+- **Linux:** `chmod +x <file>.AppImage` and run it. Some distributions need FUSE 2 for
+  AppImages (Ubuntu 22.04+: `sudo apt install libfuse2`, 24.04: `libfuse2t64`).
 - **Android:** copy the APK to the phone (or download it there), open it and allow
   *Install unknown apps* for the file manager / browser when asked.
 

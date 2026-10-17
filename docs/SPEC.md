@@ -16,6 +16,7 @@
 | 0.1 | Initial draft: installable web app (PWA) on GitHub Pages with a Cloudflare download proxy. |
 | 0.2 | Svelte/Vite replaced by plain TypeScript + esbuild. |
 | 0.3 | **Web app replaced by a native app (Tauri 2) for Windows and Android.** Testing showed that Chromium's Web Bluetooth blocklist forbids the Nordic legacy DFU service (`00001530-…`) that the Adafruit / OTAFIX bootloaders use, so nRF52 updates are impossible from any browser. Native Bluetooth has no such restriction, and native HTTP also removes the CORS proxy and the HTTPS→HTTP problem of the ESP32 upload. iOS is postponed (needs a Mac and an Apple developer account). |
+| 0.4 | macOS (universal, ad-hoc signed) and Linux (AppImage) builds added; `tauri-plugin-blec` uses btleplug there too (CoreBluetooth / BlueZ). |
 
 ---
 
@@ -53,7 +54,7 @@ Users install it from the release page (Windows installer, Android APK).
 
 | # | Constraint | Consequence |
 |---|---|---|
-| C1 | Chromium's Web Bluetooth **blocklist** contains the Nordic legacy DFU service `00001530-1212-efde-1523-785feabcd123`. | No browser can update nRF52 nodes → native app (Tauri) with native Bluetooth (`tauri-plugin-blec`: btleplug on Windows, Kotlin backend on Android). |
+| C1 | Chromium's Web Bluetooth **blocklist** contains the Nordic legacy DFU service `00001530-1212-efde-1523-785feabcd123`. | No browser can update nRF52 nodes → native app (Tauri) with native Bluetooth (`tauri-plugin-blec`: btleplug on Windows, macOS and Linux, Kotlin backend on Android). |
 | C2 | Apps cannot join a WiFi network without extra platform permissions; joining the node's AP manually is simple and reliable. | For ESP32 the app shows a step-by-step guide for joining `MeshCore-OTA`, then checks reachability itself. |
 | C3 | On the node's OTA WiFi there is no internet. Android may route traffic over mobile data instead of a WiFi without internet. | Firmware is downloaded **before** switching networks. Android: bind requests to the WiFi network (verified in M4). |
 | C4 | Phones turn off the screen during long transfers. | Keep the screen on during an update (M5); warn the user not to leave the app. |
@@ -357,10 +358,12 @@ web view and the plugins.
 
 ### 8.2 Distribution
 
-- Every push to `main` builds the Windows installer and the Android APK (workflow artifacts).
+- Every push to `dev` or `main` builds the Windows installers, the macOS `.dmg`, the Linux
+  `.AppImage` and the Android APK (workflow artifacts).
 - A tag `vX.Y.Z` additionally publishes them as a GitHub Release.
 - Android APKs are signed with a key stored in repository secrets (see `docs/BUILDING.md`).
 - Windows builds are unsigned for now (SmartScreen shows a warning on first start).
+- macOS builds are ad-hoc signed but not notarised (Gatekeeper: *Open Anyway* on first start).
 
 ## 9. UI / UX
 

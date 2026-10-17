@@ -5,7 +5,8 @@ a cable.
 
 ## What you need
 
-- A Windows 10/11 PC with Bluetooth, or an Android phone/tablet (Android 8 or newer).
+- A computer with Bluetooth — Windows 10/11, macOS 10.15 or newer, or a 64-bit Linux
+  desktop with BlueZ — or an Android phone/tablet (Android 8 or newer).
 - Admin access to the node from your companion app (to send `start ota`).
 
 ## Installing
@@ -13,6 +14,14 @@ a cable.
 - **Windows:** run `Alpine OTA Updater_<version>_x64-setup.exe`. If SmartScreen shows
   *Windows protected your PC*, choose **More info → Run anyway** (the installer is not
   code-signed yet).
+- **macOS:** open `Alpine OTA Updater_<version>_universal.dmg` and drag the app into
+  *Applications*. The app is not notarised by Apple, so the first start is blocked: open
+  **System Settings → Privacy & Security**, scroll down and choose **Open Anyway** (older
+  macOS: right-click the app → **Open**). On first scan, allow Bluetooth access; for ESP32
+  updates, also allow *local network* access when asked.
+- **Linux:** make `Alpine OTA Updater_<version>_amd64.AppImage` executable (file manager:
+  *Properties → Allow executing*, or `chmod +x`) and run it. Bluetooth
+  needs the BlueZ service running (`systemctl status bluetooth`); no root rights are needed.
 - **Android:** open `alpine-ota-updater-<version>.apk` on the phone and allow installing
   apps from that source when asked. On first scan, allow the Bluetooth (*Nearby devices*)
   permission.

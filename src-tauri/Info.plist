@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Merged by Tauri into the macOS app's Info.plist. Without these texts macOS refuses
+     Bluetooth access (the app would be terminated on the first scan) and asks for local
+     network access without an explanation (ESP32 OTA at 192.168.4.1 / 192.168.100.1). -->
+<plist version="1.0">
+<dict>
+  <key>NSBluetoothAlwaysUsageDescription</key>
+  <string>Alpine OTA Updater uses Bluetooth to find MeshCore nodes and update their firmware.</string>
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>Alpine OTA Updater connects to the node's own WiFi network to upload ESP32 firmware.</string>
+</dict>
+</plist>

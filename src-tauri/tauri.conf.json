@@ -55,6 +55,10 @@
         "dialogImagePath": "installer/wix-dialog.bmp"
       }
     },
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": "-"
+    },
     "android": {
       "minSdkVersion": 26
     }

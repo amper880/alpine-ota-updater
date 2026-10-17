@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- macOS app (universal `.dmg` for Apple silicon and Intel, ad-hoc signed) and a Linux
+  `.AppImage`, built by CI next to Windows and Android and attached to
+  releases. macOS asks for Bluetooth and local network access (`src-tauri/Info.plist`).
+
 ### Changed
 
 - Footer: the *Source code* link is gone; *Changelog* now always points to the project

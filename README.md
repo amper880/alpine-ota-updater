@@ -1,7 +1,7 @@
 # Alpine OTA Updater
 
 Over-the-air firmware updater app for **MeshCore** repeater and room server nodes, for
-**Windows** and **Android**.
+**Windows**, **macOS**, **Linux** and **Android**.
 
 - **nRF52** nodes are updated over **Bluetooth** (Nordic legacy DFU)
 - **ESP32** nodes are updated over **WiFi** (the node's `MeshCore-OTA` access point)
@@ -11,7 +11,8 @@ Over-the-air firmware updater app for **MeshCore** repeater and room server node
 - Works on phone, tablet and desktop; light / dark theme; English and Hungarian
 
 > **Status: v0.4.0.** Bluetooth updates of nRF52 nodes are tested on hardware (Windows and
-> Android); WiFi updates of ESP32 nodes are implemented and await hardware testing.
+> Android); WiFi updates of ESP32 nodes are implemented and await hardware testing. The macOS
+> and Linux builds are new and not yet tested on hardware.
 > See the [specification](docs/SPEC.md#13-milestones).
 
 ## Download
