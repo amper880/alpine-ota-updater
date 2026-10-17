@@ -1,4 +1,4 @@
-import { h, icon } from '../dom.ts';
+import { extLink, h, icon } from '../dom.ts';
 import { locale, t } from '../../i18n/index.ts';
 import {
   cancelDownload,
@@ -97,7 +97,7 @@ function row(fw: FirmwareOption, latest: boolean): HTMLElement {
             { class: 'notes' },
             h('summary', null, t('firmware.notes')),
             h('div', { class: 'notes-body' }, fw.notes.trim()),
-            h('a', { href: fw.releaseUrl, target: '_blank', rel: 'noopener' }, t('firmware.onGitHub'), ' ', icon('external', 14)),
+            extLink(fw.releaseUrl, t('firmware.onGitHub'), ' ', icon('external', 14)),
           )
         : null,
     ),

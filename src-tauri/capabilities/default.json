@@ -6,6 +6,7 @@
   "permissions": [
     "core:default",
     "blec:default",
+    "opener:default",
     {
       "identifier": "http:default",
       "allow": [

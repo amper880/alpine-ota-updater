@@ -20,6 +20,7 @@ tauri = { version = "2", features = [] }
 tauri-plugin-http = "2"
 tauri-plugin-blec = ">=0.17, <0.19"
 tauri-plugin-log = "2"
+tauri-plugin-opener = "2"
 log = "0.4"
 # Forward the Bluetooth plugin's `tracing` events to the `log` file (diagnostics).
 tracing = { version = "0.1", features = ["log"] }

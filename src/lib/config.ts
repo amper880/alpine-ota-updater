@@ -8,7 +8,7 @@ declare const __DEV__: boolean;
 
 export const APP_VERSION: string = __APP_VERSION__;
 export const BUILD_DATE: string = __BUILD_DATE__;
-/** Source code repository URL (set by CI from the GitHub repository). Empty = hidden. */
-export const REPO_URL: string = __REPO_URL__;
+/** Project repository (changelog link). CI may override it with the building repository. */
+export const REPO_URL: string = (__REPO_URL__ || 'https://github.com/amper880/alpine-ota-updater').replace(/\/+$/, '');
 /** True for development builds. */
 export const IS_DEV: boolean = __DEV__;

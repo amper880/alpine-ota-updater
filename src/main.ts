@@ -4,7 +4,7 @@
 import { detectLocale, setLocale, t } from './i18n/index.ts';
 import { refreshCached, refreshFirmwareList, store, type Theme } from './app/state.ts';
 import { APP_VERSION, REPO_URL } from './lib/config.ts';
-import { h } from './ui/dom.ts';
+import { extLink, h } from './ui/dom.ts';
 import { renderHeader } from './ui/header.ts';
 import { renderSteps } from './ui/steps/index.ts';
 import { renderAside } from './ui/aside.ts';
@@ -27,8 +27,8 @@ function renderFooter(root: HTMLElement): void {
           'div',
           { class: 'footer-inner' },
           h('span', null, t('footer.version', { version: APP_VERSION })),
-          REPO_URL ? h('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, t('footer.source')) : null,
-          REPO_URL ? h('a', { href: `${REPO_URL}/blob/main/CHANGELOG.md`, target: '_blank', rel: 'noopener' }, t('footer.changelog')) : null,
+          extLink(`${REPO_URL}/blob/main/CHANGELOG.md`, t('footer.changelog')),
+          h('span', null, t('footer.author')),
           h('span', null, t('footer.license')),
         ),
       ),

@@ -1,6 +1,7 @@
 /**
  * DOM helpers. `h()` builds elements declaratively without a framework.
  */
+import { openExternal } from '../lib/net/open.ts';
 type Child = Node | string | number | false | null | undefined | Child[];
 type Props = Record<string, unknown> & {
   class?: string | false | null | undefined | (string | false | null | undefined)[];
@@ -84,4 +85,21 @@ export function icon(name: keyof typeof ICONS | string, size = 20): SVGSVGElemen
   svg.classList.add('icon');
   svg.innerHTML = ICONS[name] ?? '';
   return svg;
+}
+
+/** Link to an external web page; opens in the system browser (also inside the app). */
+export function extLink(href: string, ...children: Child[]): HTMLAnchorElement {
+  return h(
+    'a',
+    {
+      href,
+      target: '_blank',
+      rel: 'noopener',
+      onclick: (e: Event) => {
+        e.preventDefault();
+        openExternal(href);
+      },
+    },
+    ...children,
+  );
 }

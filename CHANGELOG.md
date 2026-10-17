@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Footer: the *Source code* link is gone; *Changelog* now always points to the project
+  repository's `CHANGELOG.md`, followed by *Author: Amper & Claude*.
+- The Windows app starts maximised.
+
+### Fixed
+
+- Web links (changelog, release pages on GitHub) open in the system browser via
+  `tauri-plugin-opener`; the app's webview does not open `target="_blank"` links itself.
+
 ## [0.4.0] - 2026-10-16
 
 ### Added

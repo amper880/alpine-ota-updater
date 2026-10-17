@@ -5,6 +5,7 @@
 //! - `tauri-plugin-blec`: Bluetooth Low Energy (no browser blocklist, unlike Web Bluetooth)
 //! - `tauri-plugin-http`: HTTP without CORS / mixed-content limits (GitHub downloads,
 //!   ESP32 OTA upload to http://192.168.4.1)
+//! - `tauri-plugin-opener`: opens web links (changelog, release pages) in the system browser
 //! - `tauri-plugin-log`: writes native logs (including Bluetooth details) to the app's log
 //!   folder, e.g. `%LOCALAPPDATA%\com.ampersworld.alpineota\logs` on Windows
 
@@ -19,6 +20,7 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_blec::init())
         .run(tauri::generate_context!())
         .expect("error while running Alpine OTA Updater");

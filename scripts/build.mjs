@@ -4,7 +4,7 @@
  * (see src-tauri/tauri.conf.json → build.frontendDist).
  *
  * Environment variables:
- *   ALPINE_REPO_URL   Source repository URL shown in the footer (optional)
+ *   ALPINE_REPO_URL   Repository URL for the footer changelog link (optional; defaults to the project repo)
  */
 import { build as esbuild } from 'esbuild';
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
