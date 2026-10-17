@@ -20,7 +20,7 @@ export interface ReleaseState {
   status: 'idle' | 'loading' | 'ok' | 'error';
   requestKey?: string;
   options: FirmwareOption[];
-  error?: string;
+  error?: ErrorInfo;
   offlineSince?: string;
 }
 
@@ -33,7 +33,7 @@ export interface DownloadState {
 import type { DeviceMatch } from '../lib/catalog/match.ts';
 import type { DeviceKind, ScannedDevice } from '../lib/ble/candidates.ts';
 import type { OtaKind } from '../lib/wifi/ota-format.ts';
-import { errorMessage } from '../lib/util/errors.ts';
+import { toErrorInfo, type ErrorInfo } from '../lib/util/errors.ts';
 export type { DeviceMatch };
 
 /** The node picked in step 4 (the BluetoothDevice object itself lives in app/flash.ts). */
@@ -55,7 +55,7 @@ export interface ScanState {
   /** Show every Bluetooth device, not only nodes in update mode. */
   showAll: boolean;
   error?: string;
-  errorDetail?: string;
+  errorDetail?: ErrorInfo;
 }
 
 export type FlashPhase = 'idle' | 'running' | 'done' | 'error' | 'cancelled';
@@ -67,7 +67,7 @@ export interface FlashState {
   sent: number;
   total: number;
   startedAt?: number;
-  error?: string;
+  error?: ErrorInfo;
   log: string[];
 }
 
@@ -214,7 +214,7 @@ export async function refreshFirmwareList(force = false): Promise<void> {
     store.set({ releases: { status: 'ok', requestKey, options, offlineSince } });
   } catch (err) {
     if (ctrl.signal.aborted) return;
-    store.set({ releases: { status: 'error', requestKey, options: [], error: errorMessage(err) } });
+    store.set({ releases: { status: 'error', requestKey, options: [], error: toErrorInfo(err, 'err.unknown') } });
   }
 }
 

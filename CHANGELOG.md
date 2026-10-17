@@ -21,8 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Error messages are fully translated: texts from the operating system or the Bluetooth / HTTP
+  plugins (e.g. *no bluetooth adapters found*) are recognised and shown in the app's
+  language, with the original text folded under *Technical details*.
 - Web links (changelog, release pages on GitHub) open in the system browser via
-  `tauri-plugin-opener`; the app's webview does not open `target="_blank"` links itself.
+  `tauri-plugin-opener` instead of relying on the webview's handling of `target="_blank"`.
 
 ## [0.4.0] - 2026-10-16
 

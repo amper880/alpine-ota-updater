@@ -6,6 +6,7 @@
 import type { Release } from '../catalog/types.ts';
 import { getCachedReleases, putCachedReleases } from '../cache/db.ts';
 import { httpFetch } from '../net/http.ts';
+import { UserError } from '../util/errors.ts';
 
 interface GhRelease {
   tag_name: string;
@@ -47,7 +48,10 @@ export async function loadReleases(repo: string, opts: { signal?: AbortSignal; f
       signal: opts.signal,
       headers: { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
     });
-    if (!res.ok) throw new Error(`GitHub API: HTTP ${res.status}`);
+    if (res.status === 403 || res.status === 429) {
+      throw new UserError('err.github.rateLimit', `GitHub API: HTTP ${res.status} (rate limit)`);
+    }
+    if (!res.ok) throw new UserError('err.http', `GitHub API: HTTP ${res.status}`, { params: { status: res.status } });
     const releases = fromGitHub((await res.json()) as GhRelease[]);
     void putCachedReleases(repo, releases).catch(() => undefined);
     return { releases };

@@ -1,4 +1,5 @@
 import { extLink, h, icon } from '../dom.ts';
+import { errorExplanation } from '../error-view.ts';
 import { locale, t } from '../../i18n/index.ts';
 import {
   cancelDownload,
@@ -117,7 +118,7 @@ export function firmwareBody(): HTMLElement {
       'div',
       { class: 'callout error' },
       icon('alert'),
-      h('div', null, h('p', null, t('firmware.loadError')), h('p', { class: 'fineprint' }, r.error ?? '')),
+      h('div', null, h('p', null, t('firmware.loadError')), ...errorExplanation(r.error)),
       h('button', { type: 'button', class: 'btn small', onclick: () => void refreshFirmwareList(true) }, icon('refresh', 16), t('common.retry')),
     );
   } else if (r.options.length === 0) {

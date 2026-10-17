@@ -3,7 +3,7 @@
  * variants. Requests go through the native HTTP plugin (no CORS / mixed-content limits).
  */
 import { httpFetch } from '../net/http.ts';
-import { errorMessage } from '../util/errors.ts';
+import { UserError, errorMessage } from '../util/errors.ts';
 import { md5Hex } from '../util/md5.ts';
 import { OTA_PROFILES, buildUploadBody, parseIdentity, type NodeIdentity, type OtaProfile } from './ota-format.ts';
 
@@ -90,10 +90,17 @@ export async function uploadFirmware(
     });
     const text = (await res.text().catch(() => '')).trim();
     if (!res.ok || text.toUpperCase() !== 'OK') {
-      throw new Error(`Node answered HTTP ${res.status}${text ? `: ${text}` : ''}`);
+      throw new UserError('err.wifi.rejected', `Node answered HTTP ${res.status}${text ? `: ${text}` : ''}`, {
+        params: { status: res.status },
+        detail: text || undefined,
+      });
     }
   } catch (err) {
-    if ((err as Error).name === 'AbortError') throw new Error(opts.signal?.aborted ? 'Update cancelled' : 'Upload timed out');
+    if ((err as Error).name === 'AbortError') {
+      throw opts.signal?.aborted
+        ? new UserError('err.cancelled', 'Update cancelled')
+        : new UserError('err.wifi.uploadTimeout', 'Upload timed out');
+    }
     throw err;
   } finally {
     t.done();

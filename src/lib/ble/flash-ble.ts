@@ -5,7 +5,7 @@
 import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, packetSizeForMtu, runLegacyDfu } from '../dfu/legacy-dfu.ts';
 import { pickBootloader, type ScannedDevice } from './candidates.ts';
 import { connectNode, scan, stopScan, type NodeConnection } from './native.ts';
-import { errorMessage } from '../util/errors.ts';
+import { UserError, errorMessage } from '../util/errors.ts';
 
 export type BleStage = 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing';
 
@@ -104,7 +104,10 @@ async function connectWithRetry(device: { address: string; name: string }, log: 
       await sleep(1000);
     }
   }
-  throw new Error(`Could not connect to ${device.name}${lastError ? `: ${lastError}` : ''}`);
+  throw new UserError('err.ble.connectFailed', `Could not connect to ${device.name}${lastError ? `: ${lastError}` : ''}`, {
+    params: { name: device.name },
+    detail: lastError,
+  });
 }
 
 export async function flashOverNativeBle(
@@ -162,7 +165,7 @@ export async function flashOverNativeBle(
         const v = await c.readVersion();
         if (v === VERSION_APP_MODE) {
           await c.disconnect();
-          throw new DfuError('transport', 'The node did not switch to the bootloader. Put it into DFU mode manually and scan again.');
+          throw new UserError('err.ble.noBootloader', 'The node did not switch to the bootloader. Put it into DFU mode manually and scan again.');
         }
         log(`Bootloader answers at the same address (DFU version ${v === undefined ? 'unknown' : '0x' + v.toString(16).padStart(4, '0')})`);
         conn = c;

@@ -4,7 +4,7 @@
 import { IDLE_FLASH, SOURCES, selectedBoard, selectedSource, store } from './state.ts';
 import { matchWifiBoard, resolveAlias } from '../lib/catalog/match.ts';
 import { getFirmware } from '../lib/cache/db.ts';
-import { errorMessage } from '../lib/util/errors.ts';
+import { UserError, errorMessage, toErrorInfo } from '../lib/util/errors.ts';
 import { probeNode, uploadFirmware } from '../lib/wifi/ota.ts';
 import { OTA_PROFILES, imageKind, type OtaKind, type OtaProfile } from '../lib/wifi/ota-format.ts';
 import { isNativeApp } from '../lib/platform.ts';
@@ -26,7 +26,7 @@ export async function findWifiNode(): Promise<void> {
   store.set((s) => ({ scan: { ...s.scan, status: 'scanning', error: undefined, errorDetail: undefined } }));
   const r = await probeNode();
   if (!r.ok) {
-    store.set((s) => ({ scan: { ...s.scan, status: 'idle', error: 'unreachable', errorDetail: r.error } }));
+    store.set((s) => ({ scan: { ...s.scan, status: 'idle', error: 'unreachable', errorDetail: { key: 'err.unknown', detail: r.error } } }));
     return;
   }
   const board = selectedBoard();
@@ -65,16 +65,18 @@ export async function startWifiFlash(): Promise<void> {
   store.set({ flash: { phase: 'running', stage: 'preparing', sent: 0, total: 0, log: [], startedAt: undefined } });
   try {
     const fw = await getFirmware(s.firmwareKey);
-    if (!fw) throw new Error('Firmware file not found in the library. Download it again.');
+    if (!fw) throw new UserError('err.fwMissing', 'Firmware file not found in the library. Download it again.');
     const image = new Uint8Array(await fw.blob.arrayBuffer());
     const kind = imageKind(image);
     log(`Firmware ${fw.assetName} (${image.length} bytes, ${kind} image)`);
     log(`Node runs ${profile.label} OTA at ${profile.host}`);
     if (kind !== 'unknown' && kind !== profile.image) {
       const other = Object.values(OTA_PROFILES).find((p) => p.image === kind);
-      throw new Error(
+      throw new UserError(
+        'err.wifi.wrongFamily',
         `This node runs ${profile.label}, but the selected file is a ${other?.label ?? kind} image. ` +
           `Choose a ${profile.label} firmware; switching between them needs a USB flash.`,
+        { params: { node: profile.label, file: other?.label ?? kind } },
       );
     }
     store.set((st) => ({ flash: { ...st.flash, stage: 'uploading', total: image.length, startedAt: Date.now() } }));
@@ -86,7 +88,7 @@ export async function startWifiFlash(): Promise<void> {
   } catch (err) {
     const cancelled = uploadAbort?.signal.aborted ?? false;
     log(cancelled ? 'Cancelled' : `Error: ${errorMessage(err)}`);
-    store.set((st) => ({ flash: { ...st.flash, phase: cancelled ? 'cancelled' : 'error', stage: undefined, error: errorMessage(err) } }));
+    store.set((st) => ({ flash: { ...st.flash, phase: cancelled ? 'cancelled' : 'error', stage: undefined, error: toErrorInfo(err) } }));
   } finally {
     uploadAbort = undefined;
   }

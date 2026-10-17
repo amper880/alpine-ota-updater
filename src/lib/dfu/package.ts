@@ -18,7 +18,12 @@ export interface DfuPackage {
   manifest: unknown;
 }
 
-export class DfuPackageError extends Error {}
+export class DfuPackageError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DfuPackageError';
+  }
+}
 
 interface ManifestImage {
   bin_file?: string;

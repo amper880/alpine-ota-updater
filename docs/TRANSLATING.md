@@ -22,6 +22,16 @@ English (`en.json`) is the reference and the fallback for missing keys.
 
 4. Run `npm test` — it checks that every locale has the same keys and placeholders as English.
 
+## Error messages
+
+Errors are translated too (`err.*` keys). Texts that come from the operating system or a
+native plugin (e.g. *no bluetooth adapters found*) are recognised by the patterns in
+`src/lib/util/errors.ts` (`NATIVE_PATTERNS`) and mapped to an `err.*` key; the original text
+is shown folded under *Technical details*. When users report an untranslated error, add a
+pattern there and a test in `tests/errors.test.ts`.
+
+The update log (*Show log*) stays in English on purpose: it is meant for bug reports.
+
 ## Plurals
 
 Keys ending in `_one`, `_few`, `_many`, `_other` … are chosen with `Intl.PluralRules` when the

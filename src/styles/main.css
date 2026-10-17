@@ -1378,3 +1378,18 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Technical text behind an error (often English, from the OS); folded away by default. */
+.tech-details {
+  margin-top: 4px;
+  font-size: var(--fs-0);
+  color: var(--ink-3);
+}
+.tech-details summary {
+  cursor: pointer;
+  width: fit-content;
+}
+.tech-details p {
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+}

@@ -1,4 +1,5 @@
 import { h, icon, mount } from '../dom.ts';
+import { errorExplanation } from '../error-view.ts';
 import { locale, t } from '../../i18n/index.ts';
 import { selectedBoard, selectedFirmware, sourceById, store, type PickedDevice } from '../../app/state.ts';
 import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
@@ -126,7 +127,7 @@ function bleConnectBody(otaName: string): HTMLElement {
     h('h4', { class: 'field-label' }, t('connect.ble.title')),
     steps('connect.ble.step', 3, { name: otaName }),
     err && err !== 'app-only'
-      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`)), s.scan.errorDetail ? h('p', { class: 'fineprint' }, s.scan.errorDetail) : null))
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`)), ...errorExplanation(s.scan.errorDetail)))
       : null,
     h(
       'div',
@@ -159,7 +160,7 @@ function wifiConnectBody(): HTMLElement {
     steps('connect.wifi.step', 4, { ssid: profile.ssid, url: `${profile.host}/update` }),
     h('p', { class: 'callout info' }, icon('info'), t('connect.wifi.offlineNote')),
     err && err !== 'app-only'
-      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`, { ssid: profile.ssid })), s.scan.errorDetail ? h('p', { class: 'fineprint' }, s.scan.errorDetail) : null))
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`, { ssid: profile.ssid })), ...errorExplanation(s.scan.errorDetail)))
       : null,
     h(
       'div',
@@ -364,7 +365,7 @@ export function flashBody(): HTMLElement {
     { class: 'step-content' },
     summary,
     f.phase === 'error'
-      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t('flash.error')), h('p', { class: 'fineprint' }, f.error ?? '')))
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t('flash.error')), ...errorExplanation(f.error)))
       : null,
     f.phase === 'cancelled' ? h('p', { class: 'callout info' }, icon('info'), t('flash.cancelled')) : null,
     confirmBox,

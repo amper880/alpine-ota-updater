@@ -14,6 +14,7 @@ export class BleError extends Error {
   readonly code: BleErrorCode;
   constructor(code: BleErrorCode, message: string) {
     super(message);
+    this.name = 'BleError';
     this.code = code;
   }
 }

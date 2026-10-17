@@ -55,6 +55,7 @@ export class DfuError extends Error {
   readonly code: 'timeout' | 'status' | 'aborted' | 'transport';
   constructor(code: DfuError['code'], message: string) {
     super(message);
+    this.name = 'DfuError';
     this.code = code;
   }
 }

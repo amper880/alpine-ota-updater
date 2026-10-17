@@ -14,6 +14,7 @@ export class DownloadError extends Error {
   readonly code: DownloadErrorCode;
   constructor(code: DownloadErrorCode, message: string) {
     super(message);
+    this.name = 'DownloadError';
     this.code = code;
   }
 }
