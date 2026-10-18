@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Footer: the *Source code* link is gone; *Changelog* now always points to the project
   repository's `CHANGELOG.md`, followed by *Author: Amper & Claude*.
 - The Windows app starts maximised.
+- The device type list shows one board per row (two columns were hard to scan on tablets).
 
 ### Fixed
 

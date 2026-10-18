@@ -602,7 +602,8 @@ select {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  /* One board per row: easier to scan than a grid, also on tablets. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
 }
 
