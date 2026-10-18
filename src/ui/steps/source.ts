@@ -24,13 +24,14 @@ export function sourceBody(): HTMLElement {
             'aria-checked': String(s.role === role),
             class: s.role === role ? 'on' : '',
             disabled: !available,
-            title: available ? '' : t('source.roleUnavailable'),
+            title: available ? '' : role === 'companion' && board?.platform === 'esp32' ? t('source.companionEsp32') : t('source.roleUnavailable'),
             onclick: () => selectRole(role),
           },
           t(`role.${role}`),
         );
       }),
     ),
+    board?.platform === 'esp32' ? h('p', { class: 'fineprint' }, t('source.companionEsp32')) : null,
     h('h4', { class: 'field-label', id: 'source-label' }, t('source.firmware')),
     h(
       'div',

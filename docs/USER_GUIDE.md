@@ -30,7 +30,7 @@ a cable.
 
 1. **Device type** — search for and select the node's hardware. The badge shows whether it is
    updated over **Bluetooth** (nRF52) or **WiFi** (ESP32).
-2. **Firmware source** — choose the role (*Repeater* / *Room server*) and the firmware family
+2. **Firmware source** — choose the role (*Repeater* / *Room server* / *Companion*) and the firmware family
    (official MeshCore, PowerSaving, ZephCore …).
 3. **Firmware** — pick a version and press **Download**. The file is checked and stored on
    your device; next time it is available immediately, even offline. Already downloaded
@@ -53,6 +53,26 @@ a cable.
 
 If an update is interrupted, the node stays in bootloader mode. Scan again, select it (now
 shown as *Bootloader*) and start the update again.
+
+### Companion update (nRF52, Bluetooth)
+
+The *Companion* role is the Bluetooth companion radio (`companion_radio_ble`). It can only be
+updated over the air on nRF52 boards; ESP32 companion firmware and the USB companion have no
+over-the-air update, use USB for those.
+
+1. Disconnect the MeshCore app from the companion (close the app or turn off Bluetooth on the
+   phone) — the companion accepts one connection at a time.
+2. Pair the companion with this device once. The companion only shows its update service to
+   paired devices. **Windows:** *Settings → Bluetooth & devices → Add device*. **Android:** the
+   PIN is asked at the first update. The PIN is on the node's display; without a display it is
+   `123456` unless you changed it.
+3. Press **Scan** and select `MeshCore-<name>`. Its name does not tell the board, so tick
+   *I understand, update anyway* after checking that you selected the right device type.
+4. Press **Start update**. The app switches the companion into its bootloader
+   (`<BOARD>_DFU` or `AdaDFU`) and sends the firmware, as for repeaters.
+
+If the app reports that the companion has no Bluetooth update service, that firmware version
+lacks it (older MeshCore companions and other firmware families); update it over USB once.
 
 ### WiFi update (ESP32)
 

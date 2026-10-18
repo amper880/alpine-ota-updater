@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- *Companion* role: the Bluetooth companion firmware of nRF52 boards (`companion_radio_ble`;
+  MeshCore and ZephCore) can be updated. The companion's DFU service needs pairing, so the
+  connection guide explains it, and a missing pairing or update service is reported clearly.
+  ESP32 / USB companions have no over-the-air update and are not offered. The board catalog
+  now includes companion-only nRF52 boards (96 boards).
 - macOS app (universal `.dmg` for Apple silicon and Intel, ad-hoc signed) and a Linux
   `.AppImage`, built by CI next to Windows and Android and attached to
   releases. macOS asks for Bluetooth and local network access (`src-tauri/Info.plist`).

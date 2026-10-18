@@ -164,5 +164,15 @@
   "err.dfu.package": "The firmware file is damaged or not an update package. Download it again.",
   "err.wifi.wrongFamily": "This node runs {node}, but the selected file is a {file} firmware. Choose a {node} firmware; switching between the two needs a USB flash.",
   "err.wifi.rejected": "The node rejected the upload (HTTP {status}).",
-  "err.wifi.uploadTimeout": "The upload timed out. Check that this device is still on the node's WiFi."
+  "err.wifi.uploadTimeout": "The upload timed out. Check that this device is still on the node's WiFi.",
+  "role.companion": "Companion",
+  "device.kind.companion": "Companion",
+  "source.companionEsp32": "Companion firmware cannot be updated over WiFi on ESP32 boards (it has no update server); use USB for it.",
+  "connect.companion.title": "Prepare the companion",
+  "connect.companion.step.1": "Disconnect the MeshCore app from the companion (close the app or turn off Bluetooth on the phone), so the node is free to connect.",
+  "connect.companion.step.2": "Pair the companion with this device once. Windows: Settings → Bluetooth & devices → Add device; Android asks for the PIN at the first update. The PIN is shown on the node's display; without a display it is 123456, unless you changed it.",
+  "connect.companion.step.3": "Press Scan and select the node: it appears as MeshCore-<name>. A node already in bootloader (DFU) mode also works.",
+  "err.ble.pairing": "The companion only accepts updates from a paired device. Pair it with this device (PIN on the node's display, or 123456), then try again.",
+  "err.ble.noDfuService": "This companion firmware has no Bluetooth update service (older MeshCore versions and some other firmware lack it). Update it over USB this time.",
+  "flash.errorNotStarted": "The update did not start; nothing was changed on the node."
 }

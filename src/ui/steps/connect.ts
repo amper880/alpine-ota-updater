@@ -26,6 +26,9 @@ function kindChip(kind: string): HTMLElement | null {
   return h('span', { class: 'chip' }, t(`device.kind.${kind}`));
 }
 
+/** Errors raised before anything was written to the node: it is unchanged. */
+const NOT_STARTED = new Set(['err.ble.pairing', 'err.ble.noDfuService', 'err.fwMissing', 'err.dfu.package', 'err.wifi.wrongFamily']);
+
 // ---------------------------------------------------------------- step 4
 
 export function connectBody(): HTMLElement {
@@ -72,8 +75,14 @@ function deviceRow(d: ScannedDevice): HTMLElement {
 function renderDeviceList(): void {
   if (!deviceListEl) return;
   const { scan } = store.get();
-  const relevant = scan.devices.filter((d) => classify(d) !== 'other');
-  const others = scan.showAll ? scan.devices.filter((d) => classify(d) === 'other') : [];
+  // Companions ("MeshCore-…") are only offered by default when a companion firmware is chosen.
+  const companionRole = store.get().role === 'companion';
+  const isRelevant = (d: ScannedDevice) => {
+    const k = classify(d);
+    return k === 'app-ota' || k === 'bootloader' || (k === 'companion' && companionRole);
+  };
+  const relevant = scan.devices.filter(isRelevant);
+  const others = scan.showAll ? scan.devices.filter((d) => !isRelevant(d)) : [];
   const named = others.filter((d) => displayName(d));
   const unnamed = others.filter((d) => !displayName(d));
   const visible = [...relevant, ...named, ...(showUnnamed ? unnamed : [])];
@@ -124,8 +133,9 @@ function bleConnectBody(otaName: string): HTMLElement {
     'div',
     { class: 'step-content' },
     !native ? h('p', { class: 'callout warn' }, icon('alert'), t('connect.appOnly')) : null,
-    h('h4', { class: 'field-label' }, t('connect.ble.title')),
-    steps('connect.ble.step', 3, { name: otaName }),
+    ...(s.role === 'companion'
+      ? [h('h4', { class: 'field-label' }, t('connect.companion.title')), steps('connect.companion.step', 3, { name: otaName })]
+      : [h('h4', { class: 'field-label' }, t('connect.ble.title')), steps('connect.ble.step', 3, { name: otaName })]),
     err && err !== 'app-only'
       ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`)), ...errorExplanation(s.scan.errorDetail)))
       : null,
@@ -365,7 +375,7 @@ export function flashBody(): HTMLElement {
     { class: 'step-content' },
     summary,
     f.phase === 'error'
-      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t('flash.error')), ...errorExplanation(f.error)))
+      ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(f.error && NOT_STARTED.has(f.error.key) ? 'flash.errorNotStarted' : 'flash.error')), ...errorExplanation(f.error)))
       : null,
     f.phase === 'cancelled' ? h('p', { class: 'callout info' }, icon('info'), t('flash.cancelled')) : null,
     confirmBox,

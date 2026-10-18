@@ -16,7 +16,7 @@
 | 0.1 | Initial draft: installable web app (PWA) on GitHub Pages with a Cloudflare download proxy. |
 | 0.2 | Svelte/Vite replaced by plain TypeScript + esbuild. |
 | 0.3 | **Web app replaced by a native app (Tauri 2) for Windows and Android.** Testing showed that Chromium's Web Bluetooth blocklist forbids the Nordic legacy DFU service (`00001530-…`) that the Adafruit / OTAFIX bootloaders use, so nRF52 updates are impossible from any browser. Native Bluetooth has no such restriction, and native HTTP also removes the CORS proxy and the HTTPS→HTTP problem of the ESP32 upload. iOS is postponed (needs a Mac and an Apple developer account). |
-| 0.4 | macOS (universal, ad-hoc signed) and Linux (AppImage) builds added; `tauri-plugin-blec` uses btleplug there too (CoreBluetooth / BlueZ). |
+| 0.4 | Companion role (nRF52 Bluetooth companion via its bonded buttonless DFU service). macOS (universal, ad-hoc signed) and Linux (AppImage) builds added; `tauri-plugin-blec` uses btleplug there too (CoreBluetooth / BlueZ). |
 
 ---
 
@@ -66,7 +66,7 @@ Users install it from the release page (Windows installer, Android APK).
 |---|---|
 | **Board / device type** | A hardware target as named in firmware release assets, e.g. `RAK_4631`, `Heltec_v3`. |
 | **Platform** | `nrf52` (BLE DFU) or `esp32` (WiFi OTA). Other MCUs (RP2040, STM32) have no OTA path and are hidden. |
-| **Role** | Firmware role: `repeater` or `room-server`. |
+| **Role** | Firmware role: `repeater`, `room-server` or `companion` (Bluetooth companion, nRF52 only). |
 | **Source** | A GitHub repository that publishes MeshCore-compatible firmware releases. |
 | **DFU package** | Nordic `.zip` containing `manifest.json`, an init packet (`.dat`) and the application image (`.bin`). |
 | **OTA image** | ESP32 application `.bin` (**not** the `-merged.bin` full-flash image). |
@@ -142,8 +142,12 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 
 - FR-2.1 Sources are defined in `catalog/sources.json` (see §7.1). Adding a source = adding
   one JSON entry, no code change.
-- FR-2.2 Role selector: Repeater / Room server. Roles not published by a source for the
-  board are disabled.
+- FR-2.2 Role selector: Repeater / Room server / Companion. Roles not published for the board
+  are disabled. *Companion* means `companion_radio_ble` on nRF52: the companion registers the
+  buttonless DFU service for bonded clients, so the app connects (the OS pairs with the BLE
+  PIN), jumps to the bootloader and runs the normal DFU. ESP32 companion firmware has no OTA
+  server (`ESP32Board::startOTAUpdate` is built for repeater / room server only), and USB /
+  WiFi companion builds have no BLE, so they are not offered.
 - FR-2.3 Sources that publish nothing for the selected board are shown disabled with a reason.
 
 ### 5.3 Firmware list & download (FR-3)

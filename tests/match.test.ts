@@ -117,8 +117,33 @@ test('every ZephCore alias points to a catalog board', () => {
   for (const id of Object.values(src('zephcore').boardAliases ?? {})) board(id);
 });
 
-test('companion images are never parsed as repeater/room server', () => {
-  assert.equal(parseAsset(src('official'), 'RAK_4631_companion_radio_ble-v1.18.0-81dbae5.zip'), undefined);
+test('companion: only the nRF52 Bluetooth companion is offered', () => {
+  const official = src('official');
+  assert.deepEqual(parseAsset(official, 'RAK_4631_companion_radio_ble-v1.18.0-81dbae5.zip'), { boardKey: 'rak4631', role: 'companion', platform: 'nrf52' });
+  assert.equal(parseAsset(official, 'RAK_4631_companion_radio_usb-v1.18.0-81dbae5.zip'), undefined);
+  assert.equal(parseAsset(official, 'Heltec_v3_companion_radio_ble-v1.18.0-81dbae5.bin'), undefined);
+  assert.equal(parseAsset(official, 'Heltec_v3_companion_radio_wifi-v1.18.0-81dbae5.bin'), undefined);
+  const r = rel('companion-v1.18.0', [
+    'Heltec_t114_companion_radio_usb-v1.18.0-81dbae5.zip',
+    'Heltec_t114_companion_radio_ble-v1.18.0-81dbae5.zip',
+    'Heltec_t114_companion_radio_ble-v1.18.0-81dbae5.uf2',
+  ]);
+  const rep = rel('repeater-v1.18.0', ['Heltec_t114_repeater-v1.18.0-81dbae5.zip']);
+  const out = findFirmware(official, [r, rep], board('heltect114'), 'companion');
+  assert.deepEqual(out.map((o) => o.asset.name), ['Heltec_t114_companion_radio_ble-v1.18.0-81dbae5.zip']);
+  // and the companion release never leaks into the repeater list
+  assert.deepEqual(findFirmware(official, [r, rep], board('heltect114'), 'repeater').map((o) => o.asset.name), ['Heltec_t114_repeater-v1.18.0-81dbae5.zip']);
+});
+
+test('zephcore: companion zip on nRF52, none on ESP32', () => {
+  const z = src('zephcore');
+  assert.equal(parseAsset(z, 'heltec_t114-companion-4f63ee2.zip')?.role, 'companion');
+  assert.equal(parseAsset(z, 'heltec_wifi_lora32_v3-esp32s3-procpu-companion-4f63ee2-update.bin'), undefined);
+});
+
+test('catalog: companion role only on nRF52 boards', () => {
+  assert.deepEqual(boards.filter((b) => b.roles.includes('companion') && b.platform !== 'nrf52').map((b) => b.id), []);
+  assert.ok(board('heltect114').roles.includes('companion'));
 });
 
 test('versionOf falls back to the tag', () => {

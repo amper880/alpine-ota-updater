@@ -222,6 +222,27 @@
     },
     "ikokasticknrf33dbm": {
       "name": "ikoka Stick nRF (33 dBm)"
+    },
+    "gat562meshwatch13": {
+      "name": "GAT562 Mesh Watch 13"
+    },
+    "ikokahandheldnrfe2230dbm096": {
+      "name": "ikoka Handheld nRF (E22, 30 dBm, 0.96\" display)"
+    },
+    "ikokahandheldnrfe2230dbm096rotated": {
+      "name": "ikoka Handheld nRF (E22, 30 dBm, 0.96\" display, rotated)"
+    },
+    "lilygotecholitenonshell": {
+      "name": "LILYGO T-Echo Lite (no shell)"
+    },
+    "muzibaseduosuperio": {
+      "name": "muzi BASE Duo SuperIO"
+    },
+    "muzibaseunosuperio": {
+      "name": "muzi BASE Uno SuperIO"
+    },
+    "wiotrackerl1eink": {
+      "name": "Wio Tracker L1 (e-ink)"
     }
   }
 }

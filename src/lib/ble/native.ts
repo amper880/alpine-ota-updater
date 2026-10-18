@@ -79,6 +79,8 @@ export interface NodeConnection {
   address: string;
   /** DFU Version characteristic; 0x0001 = application (buttonless), otherwise bootloader. */
   readVersion(): Promise<number | undefined>;
+  /** Like readVersion, but also returns the error text when the read fails. */
+  readVersionChecked(): Promise<{ version?: number; error?: string }>;
   /** Negotiated ATT MTU, if the platform reports it. */
   mtu(): Promise<number | undefined>;
   /** Enables control point notifications (the buttonless service rejects writes without). */
@@ -108,17 +110,20 @@ export async function connectNode(address: string): Promise<NodeConnection> {
     throw new Error(errorMessage(err));
   }
   let subscribed = false;
+  const readVersionChecked = async (): Promise<{ version?: number; error?: string }> => {
+    try {
+      const v = await blec.read(DFU_VERSION, DFU_SERVICE);
+      return { version: v.length >= 2 ? v[0] | (v[1] << 8) : v[0] };
+    } catch (err) {
+      return { error: errorMessage(err) };
+    }
+  };
   return {
     address,
     disconnected,
+    readVersionChecked,
     async readVersion() {
-      try {
-        const v = await blec.read(DFU_VERSION, DFU_SERVICE);
-        if (v.length >= 2) return v[0] | (v[1] << 8);
-        return v[0];
-      } catch {
-        return undefined;
-      }
+      return (await readVersionChecked()).version;
     },
     async mtu() {
       try {

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-15",
+  "generated": "2026-10-18",
   "source": "meshcore-dev/MeshCore",
   "boards": [
     {
@@ -11,6 +11,7 @@
         "Nano_G2_Ultra"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -99,6 +100,7 @@
         "ProMicro"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -126,6 +128,7 @@
         "ThinkNode_M1"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -153,6 +156,7 @@
         "ThinkNode_M3"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -167,6 +171,7 @@
         "ThinkNode_M4"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -194,6 +199,7 @@
         "ThinkNode_M6"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -221,6 +227,7 @@
         "ThinkNode_M8"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -235,6 +242,7 @@
         "GAT562_30S_Mesh_Kit"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -263,8 +271,22 @@
         "GAT562_Mesh_Tracker_Pro"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
+      ],
+      "bleOtaName": "GAT562_OTA"
+    },
+    {
+      "id": "gat562meshwatch13",
+      "name": "GAT562 Mesh Watch 13",
+      "vendor": "GAT-IoT",
+      "platform": "nrf52",
+      "aliases": [
+        "GAT562_Mesh_Watch13"
+      ],
+      "roles": [
+        "companion"
       ],
       "bleOtaName": "GAT562_OTA"
     },
@@ -315,6 +337,7 @@
         "Heltec_t096"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -329,6 +352,7 @@
         "Heltec_t114"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -343,6 +367,7 @@
         "Heltec_t114_without_display"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -357,6 +382,7 @@
         "Heltec_mesh_solar"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -397,6 +423,7 @@
         "Heltec_t1"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -411,6 +438,7 @@
         "Heltec_tower_v2"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -559,6 +587,32 @@
       ]
     },
     {
+      "id": "ikokahandheldnrfe2230dbm096rotated",
+      "name": "ikoka Handheld nRF (E22, 30 dBm, 0.96\" display, rotated)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_handheld_nrf_e22_30dbm_096_rotated"
+      ],
+      "roles": [
+        "companion"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
+      "id": "ikokahandheldnrfe2230dbm096",
+      "name": "ikoka Handheld nRF (E22, 30 dBm, 0.96\" display)",
+      "vendor": "ikoka",
+      "platform": "nrf52",
+      "aliases": [
+        "ikoka_handheld_nrf_e22_30dbm_096"
+      ],
+      "roles": [
+        "companion"
+      ],
+      "bleOtaName": "XIAO_NRF52_OTA"
+    },
+    {
       "id": "ikokahandheldnrfe2230dbm",
       "name": "ikoka Handheld nRF (E22, 30 dBm)",
       "vendor": "ikoka",
@@ -581,6 +635,7 @@
         "ikoka_nano_nrf_22dbm"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -595,6 +650,7 @@
         "ikoka_nano_nrf_30dbm"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -609,6 +665,7 @@
         "ikoka_nano_nrf_33dbm"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -623,6 +680,7 @@
         "ikoka_stick_nrf_22dbm"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -637,6 +695,7 @@
         "ikoka_stick_nrf_30dbm"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -651,6 +710,7 @@
         "ikoka_stick_nrf_33dbm"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -729,6 +789,7 @@
         "LilyGo_T-Echo"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -743,6 +804,7 @@
         "LilyGo_T-Echo_Card"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -757,8 +819,22 @@
         "LilyGo_T-Echo-Lite"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
+      ],
+      "bleOtaName": "TECHO_OTA"
+    },
+    {
+      "id": "lilygotecholitenonshell",
+      "name": "LILYGO T-Echo Lite (no shell)",
+      "vendor": "LILYGO",
+      "platform": "nrf52",
+      "aliases": [
+        "LilyGo_T-Echo-Lite_non_shell"
+      ],
+      "roles": [
+        "companion"
       ],
       "bleOtaName": "TECHO_OTA"
     },
@@ -784,6 +860,7 @@
         "LilyGo_T_Impulse_Plus"
       ],
       "roles": [
+        "companion",
         "repeater"
       ],
       "bleOtaName": "T-Impulse-Plus_OTA"
@@ -862,10 +939,37 @@
         "Minewsemi_me25ls01"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
       "bleOtaName": "Minewsemi_OTA"
+    },
+    {
+      "id": "muzibaseduosuperio",
+      "name": "muzi BASE Duo SuperIO",
+      "vendor": "muzi works",
+      "platform": "nrf52",
+      "aliases": [
+        "muzi_base_duo_superIO"
+      ],
+      "roles": [
+        "companion"
+      ],
+      "bleOtaName": "MUZI_BASE_UNO_OTA"
+    },
+    {
+      "id": "muzibaseunosuperio",
+      "name": "muzi BASE Uno SuperIO",
+      "vendor": "muzi works",
+      "platform": "nrf52",
+      "aliases": [
+        "muzi_base_uno_superIO"
+      ],
+      "roles": [
+        "companion"
+      ],
+      "bleOtaName": "MUZI_BASE_UNO_OTA"
     },
     {
       "id": "muzibaseduo",
@@ -876,6 +980,7 @@
         "muzi_base_duo"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -890,6 +995,7 @@
         "muzi_base_uno"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -904,6 +1010,7 @@
         "R1Neo"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -918,6 +1025,7 @@
         "KeepteenLT1"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -932,6 +1040,7 @@
         "Mesh_pocket"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -951,6 +1060,19 @@
       ]
     },
     {
+      "id": "meshtiny",
+      "name": "Meshtiny",
+      "vendor": "Other",
+      "platform": "nrf52",
+      "aliases": [
+        "Meshtiny"
+      ],
+      "roles": [
+        "companion"
+      ],
+      "bleOtaName": "Meshtiny_OTA"
+    },
+    {
       "id": "meshtrackerx1",
       "name": "MeshTracker X1",
       "vendor": "Other",
@@ -959,6 +1081,7 @@
         "MeshTracker_X1"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -986,6 +1109,7 @@
         "RAK_3401"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1000,6 +1124,7 @@
         "RAK_4631"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1014,6 +1139,7 @@
         "RAK_WisMesh_Tag"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1028,6 +1154,7 @@
         "SenseCap_Solar"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1042,6 +1169,7 @@
         "t1000e"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1056,6 +1184,7 @@
         "WioTrackerL1"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1070,8 +1199,22 @@
         "WioTrackerL1-1W"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
+      ],
+      "bleOtaName": "WioTrackerL1_OTA"
+    },
+    {
+      "id": "wiotrackerl1eink",
+      "name": "Wio Tracker L1 (e-ink)",
+      "vendor": "Seeed Studio",
+      "platform": "nrf52",
+      "aliases": [
+        "WioTrackerL1Eink"
+      ],
+      "roles": [
+        "companion"
       ],
       "bleOtaName": "WioTrackerL1_OTA"
     },
@@ -1084,6 +1227,7 @@
         "wio_wm1110"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],
@@ -1137,6 +1281,7 @@
         "Xiao_nrf52"
       ],
       "roles": [
+        "companion",
         "repeater",
         "room-server"
       ],

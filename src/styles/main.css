@@ -1394,3 +1394,19 @@ select {
   margin-top: 2px;
   overflow-wrap: anywhere;
 }
+
+/* Three roles side by side; on narrow phones the buttons share the width evenly. */
+.role-seg button {
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .role-seg {
+    display: flex;
+  }
+  .role-seg button {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+    padding: 0 6px;
+  }
+}

@@ -9,10 +9,11 @@
       "homepage": "https://github.com/meshcore-dev/MeshCore",
       "roleTags": {
         "repeater": "^repeater-v",
-        "room-server": "^room-server-v"
+        "room-server": "^room-server-v",
+        "companion": "^companion-v"
       },
       "versionPattern": "v?(?<version>\\d+(?:\\.\\d+)+[a-z]?)",
-      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server)-v[^-]+-[0-9a-f]+(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server|companion_radio_ble)-v[^-]+-[0-9a-f]+(?<merged>-merged)?\\.(?<ext>zip|bin)$",
       "platforms": [
         "nrf52",
         "esp32"
@@ -27,7 +28,7 @@
       "homepage": "https://github.com/IoTThinks/EasySkyMesh",
       "tagPattern": "^PowerSaving",
       "versionPattern": "PowerSaving(?<version>[0-9][0-9.]*)",
-      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server)-PowerSaving[0-9.]+(?:-(?<variant>upgrade|freshInstall))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server|companion_radio_ble)-PowerSaving[0-9.]+(?:-(?<variant>upgrade|freshInstall))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
       "exclude": [
         "freshInstall"
       ],
@@ -45,7 +46,7 @@
       "homepage": "https://github.com/liquidraver/ZephCore",
       "tagPattern": "-zephcore$",
       "versionPattern": "^(?<version>[0-9][0-9.]*[a-z]?)",
-      "assetPattern": "^(?<board>.+?)(?:-(?:esp32s3-procpu|esp32-procpu|esp32c6-hpcore|esp32c3))?-(?<role>repeater|room_server|roomserver|room-server)(?:-(?<flavor>noscreen))?-[0-9a-f]{6,}(?:-(?<variant>update))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "assetPattern": "^(?<board>.+?)(?:-(?:esp32s3-procpu|esp32-procpu|esp32c6-hpcore|esp32c3))?-(?<role>repeater|room_server|roomserver|room-server|companion)(?:-(?<flavor>noscreen))?-[0-9a-f]{6,}(?:-(?<variant>update))?(?<merged>-merged)?\\.(?<ext>zip|bin)$",
       "platforms": [
         "nrf52",
         "esp32"

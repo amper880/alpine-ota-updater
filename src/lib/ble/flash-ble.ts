@@ -26,7 +26,7 @@ function timeout<T>(p: Promise<T>, ms: number): Promise<T | undefined> {
 }
 
 /** Scans until a bootloader shows up (or the time runs out). */
-async function findBootloader(previous: { address: string; name: string }, ms: number, log: (m: string) => void): Promise<ScannedDevice | undefined> {
+async function findBootloader(previous: { address: string; name: string; bootBase?: string }, ms: number, log: (m: string) => void): Promise<ScannedDevice | undefined> {
   let found: ScannedDevice | undefined;
   let latest: ScannedDevice[] = [];
   const done = scan((devices) => {
@@ -110,8 +110,20 @@ async function connectWithRetry(device: { address: string; name: string }, log: 
   });
 }
 
+/** Pairing / encryption problems reported by the Bluetooth stacks (GATT status 0x05 / 0x0F). */
+const AUTH_ERROR = /authenticat|encrypt|pair|bond|insufficient|0x0?5\b|0x0f\b|access is denied|not permitted|unauthori/i;
+
+export interface BleTarget {
+  address: string;
+  name: string;
+  /** "<BOARD>" of the selected board's "<BOARD>_OTA" name; finds its "<BOARD>_DFU" bootloader. */
+  bootBase?: string;
+  /** MeshCore Bluetooth companion: buttonless DFU behind pairing, always in application mode. */
+  companion?: boolean;
+}
+
 export async function flashOverNativeBle(
-  device: { address: string; name: string },
+  device: BleTarget,
   firmware: Uint8Array,
   initPacket: Uint8Array,
   opts: BleFlashOptions = {},
@@ -125,18 +137,34 @@ export async function flashOverNativeBle(
   stage('connecting');
   let conn: NodeConnection = await connectWithRetry(device, log);
   log('Reading DFU version');
-  const version = await conn.readVersion();
-  log(`Connected; DFU version ${version === undefined ? 'unknown' : '0x' + version.toString(16).padStart(4, '0')}`);
+  const read = await conn.readVersionChecked();
+  const version = read.version;
+  log(`Connected; DFU version ${version === undefined ? `unknown${read.error ? ` (${read.error})` : ''}` : '0x' + version.toString(16).padStart(4, '0')}`);
 
   try {
+    if (device.companion && version === undefined) {
+      // The companion only shows its DFU service to paired clients.
+      await conn.disconnect();
+      if (read.error && AUTH_ERROR.test(read.error)) {
+        throw new UserError('err.ble.pairing', `The companion requires pairing: ${read.error}`, { detail: read.error });
+      }
+      throw new UserError('err.ble.noDfuService', `The companion offers no Bluetooth update service${read.error ? `: ${read.error}` : ''}`, {
+        detail: read.error,
+      });
+    }
     if (version === VERSION_APP_MODE) {
       abortCheck();
       stage('entering-bootloader');
-      log('Node is running the application; switching to the bootloader');
+      log(device.companion ? 'Companion is running; switching to the bootloader' : 'Node is running the application; switching to the bootloader');
       try {
         await conn.enableNotifications();
       } catch (err) {
-        log(`Enabling notifications failed: ${errorMessage(err)}`);
+        const msg = errorMessage(err);
+        log(`Enabling notifications failed: ${msg}`);
+        if (device.companion && AUTH_ERROR.test(msg)) {
+          await conn.disconnect();
+          throw new UserError('err.ble.pairing', `The companion requires pairing: ${msg}`, { detail: msg });
+        }
       }
       try {
         await conn.writeControlRaw(new Uint8Array([Op.StartDfu, IMAGE_APPLICATION]));

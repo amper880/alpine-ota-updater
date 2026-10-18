@@ -11,6 +11,7 @@ test('classifies nodes in update mode', () => {
   assert.equal(classify(dev('AdaDFU', 'a')), 'bootloader');
   assert.equal(classify(dev('', 'a', -60, [DFU_SERVICE])), 'bootloader');
   assert.equal(classify(dev('MyPhone', 'a')), 'other');
+  assert.equal(classify(dev('MeshCore-Amper', 'a')), 'companion');
 });
 
 test('baseName strips the mode suffix', () => {
@@ -25,4 +26,10 @@ test('pickBootloader prefers the same address, then the same board name, then si
   assert.equal(pickBootloader([dev('AdaDFU', 'BB', -40), dev('T114_DFU', 'CC', -80)], prev)?.address, 'CC');
   assert.equal(pickBootloader([dev('AdaDFU', 'BB', -70), dev('AdaDFU', 'DD', -50)], prev)?.address, 'DD');
   assert.equal(pickBootloader([dev('T114_OTA', 'AA'), dev('Phone', 'EE')], prev), undefined);
+});
+
+test('pickBootloader uses the selected board for a companion', () => {
+  const prev = { address: 'AA', name: 'MeshCore-Amper', bootBase: 'T114' };
+  assert.equal(pickBootloader([dev('AdaDFU', 'BB', -40), dev('T114_DFU', 'CC', -80)], prev)?.address, 'CC');
+  assert.equal(pickBootloader([dev('MeshCore-Amper', 'AA')], prev), undefined);
 });

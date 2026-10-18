@@ -1,10 +1,13 @@
 /** Hardware platform; decides the update method. */
 export type Platform = 'nrf52' | 'esp32';
 
-/** Firmware role published for repeater-type nodes. */
-export type Role = 'repeater' | 'room-server';
+/**
+ * Firmware role. "companion" is the Bluetooth companion radio (companion_radio_ble); it is
+ * only updatable over the air on nRF52 (ESP32 companion firmware has no OTA server).
+ */
+export type Role = 'repeater' | 'room-server' | 'companion';
 
-export const ROLES: readonly Role[] = ['repeater', 'room-server'];
+export const ROLES: readonly Role[] = ['repeater', 'room-server', 'companion'];
 
 /** One entry of catalog/boards.json. */
 export interface Board {
@@ -15,7 +18,7 @@ export interface Board {
   platform: Platform;
   /** Spellings of the board name used in release asset file names. */
   aliases: string[];
-  /** Roles the official MeshCore build publishes for this board. */
+  /** Roles the official MeshCore build publishes for this board (companion: nRF52 BLE only). */
   roles: Role[];
   /** BLE name advertised after `start ota` (nRF52 only). */
   bleOtaName?: string;

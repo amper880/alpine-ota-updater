@@ -164,5 +164,15 @@
   "err.dfu.package": "A firmware-fájl sérült, vagy nem frissítőcsomag. Töltsd le újra.",
   "err.wifi.wrongFamily": "Az eszközön {node} fut, de a kiválasztott fájl {file} firmware. Válassz {node} firmware-t; a kettő közötti váltáshoz USB-s flashelés kell.",
   "err.wifi.rejected": "Az eszköz elutasította a feltöltést (HTTP {status}).",
-  "err.wifi.uploadTimeout": "A feltöltés túllépte az időkorlátot. Ellenőrizd, hogy ez a készülék még az eszköz WiFi-hálózatán van-e."
+  "err.wifi.uploadTimeout": "A feltöltés túllépte az időkorlátot. Ellenőrizd, hogy ez a készülék még az eszköz WiFi-hálózatán van-e.",
+  "role.companion": "Companion",
+  "device.kind.companion": "Companion",
+  "source.companionEsp32": "ESP32-es eszközökön a companion firmware nem frissíthető WiFi-n (nincs benne frissítő szerver), ahhoz USB kell.",
+  "connect.companion.title": "A companion előkészítése",
+  "connect.companion.step.1": "Bontsd a MeshCore app kapcsolatát a companionnal (zárd be az appot, vagy kapcsold ki a telefonon a Bluetooth-t), hogy az eszköz szabad legyen.",
+  "connect.companion.step.2": "Párosítsd egyszer a companiont ezzel a készülékkel. Windows: Beállítások → Bluetooth és eszközök → Eszköz hozzáadása; Android az első frissítéskor kéri a PIN-t. A PIN az eszköz kijelzőjén látszik; kijelző nélkül 123456, ha nem változtattad meg.",
+  "connect.companion.step.3": "Nyomd meg a Keresés gombot, és válaszd ki az eszközt: MeshCore-<név> néven jelenik meg. Bootloader (DFU) módban lévő eszköz is jó.",
+  "err.ble.pairing": "A companion csak párosított készülékről fogad frissítést. Párosítsd ezzel a készülékkel (PIN az eszköz kijelzőjén, vagy 123456), majd próbáld újra.",
+  "err.ble.noDfuService": "Ebben a companion firmware-ben nincs Bluetooth-os frissítési szolgáltatás (régebbi MeshCore-verziókból és más firmware-ekből hiányzik). Ezúttal USB-n frissítsd.",
+  "flash.errorNotStarted": "A frissítés nem indult el, az eszközön semmi nem változott."
 }

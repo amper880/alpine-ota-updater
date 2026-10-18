@@ -34,7 +34,9 @@ release assets.
 
 ### How assets are matched
 
-- `role` may be written `repeater`, `room_server`, `roomserver` or `room-server`.
+- `role` may be written `repeater`, `room_server`, `roomserver` or `room-server`; the companion
+  as `companion` or `companion_radio_ble` (only nRF52 `.zip` files are used for it — other
+  companion builds have no over-the-air update).
 - An optional `flavor` group (e.g. `noscreen`) is appended to the board name with `_` before
   the alias lookup, so `heltec_t114-repeater-noscreen-….zip` can map to
   `heltect114withoutdisplay`.

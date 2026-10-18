@@ -8,7 +8,9 @@
  *
  * How it works:
  *   - Every `[env:<Board>_repeater]` / `[env:<Board>_room_server]` section in the PlatformIO
- *     files is a firmware image that MeshCore publishes in its releases.
+ *     files is a firmware image that MeshCore publishes in its releases. nRF52
+ *     `[env:<Board>_companion_radio_ble]` sections add the "companion" role (ESP32 companion
+ *     firmware has no OTA path).
  *   - The `extends` chain tells us the platform (nrf52_base / esp32_base / ...).
  *   - nRF52 boards advertise a BLE name like "RAK4631_OTA" after `start ota`; it is read from
  *     the board class in the variant directory.
@@ -156,13 +158,16 @@ const keyOf = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 const boards = new Map();
 for (const name of sections.keys()) {
-  const env = name.match(/^env:(.+?)_(repeater|room_server)$/i);
+  const env = name.match(/^env:(.+?)_(repeater|room_server|companion_radio_ble)$/i);
   if (!env) continue;
   const [, base, roleRaw] = env;
-  const role = roleRaw.toLowerCase() === 'repeater' ? 'repeater' : 'room-server';
+  const r = roleRaw.toLowerCase();
+  const role = r === 'repeater' ? 'repeater' : r === 'room_server' ? 'room-server' : 'companion';
   const envName = name;
   const platform = platformOf(envName);
   if (platform !== 'nrf52' && platform !== 'esp32') continue;
+  // Companion firmware has no WiFi OTA on ESP32; on nRF52 it offers buttonless BLE DFU.
+  if (role === 'companion' && platform !== 'nrf52') continue;
   const flags = expand(resolve(envName, 'build_flags'));
   if (platform === 'esp32' && /DISABLE_WIFI_OTA/.test(flags)) continue;
 

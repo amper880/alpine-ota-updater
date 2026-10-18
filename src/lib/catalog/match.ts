@@ -14,6 +14,8 @@ export function normaliseRole(raw: string): Role | undefined {
   const r = raw.toLowerCase().replace(/[^a-z]/g, '');
   if (r === 'repeater') return 'repeater';
   if (r === 'roomserver' || r === 'room') return 'room-server';
+  // Only the Bluetooth companion can be updated over the air (not _usb / _wifi builds).
+  if (r === 'companion' || r === 'companionradioble') return 'companion';
   return undefined;
 }
 
@@ -52,6 +54,7 @@ export function parseAsset(source: SourceConfig, assetName: string): ParsedAsset
   const platform = platformForExt(g.ext.toLowerCase());
   if (!role || !platform) return undefined;
   if (!source.platforms.includes(platform)) return undefined;
+  if (role === 'companion' && platform !== 'nrf52') return undefined; // no ESP32 companion OTA
   const requiredVariant = source.otaVariants?.[platform];
   if (requiredVariant && (g.variant ?? '').toLowerCase() !== requiredVariant.toLowerCase()) return undefined;
   const name = g.flavor ? `${g.board}_${g.flavor}` : g.board;

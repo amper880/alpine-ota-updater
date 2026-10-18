@@ -6,7 +6,7 @@ import { matchBleName } from '../lib/catalog/match.ts';
 import { getFirmware } from '../lib/cache/db.ts';
 import { parseDfuPackage } from '../lib/dfu/package.ts';
 import { DfuError } from '../lib/dfu/legacy-dfu.ts';
-import { classify, type ScannedDevice } from '../lib/ble/candidates.ts';
+import { baseName, classify, type ScannedDevice } from '../lib/ble/candidates.ts';
 import { BleError, ensureBluetooth, scan, stopScan } from '../lib/ble/native.ts';
 import { flashOverNativeBle } from '../lib/ble/flash-ble.ts';
 import { isNativeApp } from '../lib/platform.ts';
@@ -76,7 +76,14 @@ export async function startFlash(prn: number, compatPackets = false): Promise<vo
     const pkg = await parseDfuPackage(new Uint8Array(await fw.blob.arrayBuffer()));
     log(`Package: application ${pkg.firmware.length} bytes, init packet ${pkg.initPacket.length} bytes`);
     let lastProgress = 0;
-    await flashOverNativeBle({ address: s.device.id, name: s.device.name }, pkg.firmware, pkg.initPacket, {
+    const bleOtaName = selectedBoard()?.bleOtaName;
+    const target = {
+      address: s.device.id,
+      name: s.device.name,
+      bootBase: bleOtaName ? baseName(bleOtaName) : undefined,
+      companion: s.device.kind === 'companion',
+    };
+    await flashOverNativeBle(target, pkg.firmware, pkg.initPacket, {
       prn,
       compatPackets,
       signal: flashAbort.signal,
