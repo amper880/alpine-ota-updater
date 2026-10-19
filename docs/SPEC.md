@@ -185,6 +185,9 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 - FR-6.3 Installers for Windows (NSIS/MSI) and Android (APK); works offline except for
   listing/downloading firmware.
 - FR-6.4 App version shown in the footer / About dialog, with a link to the changelog.
+- FR-6.5 At start-up the app compares its version with the repository's latest (non
+  pre-release) GitHub release and offers the platform's installer in a dismissible banner;
+  failures are silent.
 
 ---
 

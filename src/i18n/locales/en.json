@@ -174,5 +174,10 @@
   "connect.companion.step.3": "Press Scan and select the node: it appears as MeshCore-<name>. A node already in bootloader (DFU) mode also works.",
   "err.ble.pairing": "The companion only accepts updates from a paired device. Pair it with this device (PIN on the node's display, or 123456), then try again.",
   "err.ble.noDfuService": "This companion firmware has no Bluetooth update service (older MeshCore versions and some other firmware lack it). Update it over USB this time.",
-  "flash.errorNotStarted": "The update did not start; nothing was changed on the node."
+  "flash.errorNotStarted": "The update did not start; nothing was changed on the node.",
+  "update.available": "Alpine OTA Updater {version} is available.",
+  "update.hint": "Download and install it over this version; your settings and firmware library are kept.",
+  "update.download": "Download",
+  "update.whatsNew": "What's new",
+  "update.later": "Later"
 }

@@ -97,6 +97,14 @@ lacks it (older MeshCore companions and other firmware families); update it over
 - **ESP32 (WiFi):** the two families use different OTA servers and image formats; the app
   refuses cross-family uploads. Switch once over USB.
 
+## App updates
+
+At start-up the app checks GitHub for a newer release. If there is one, a banner offers
+**Download** (the installer for your system opens in the browser), **What's new** and
+**Later** (hides the banner until an even newer version comes out). Install the new version
+over the old one; settings and the firmware library are kept. Without internet the check is
+skipped silently.
+
 ## Firmware library
 
 The **Firmware library** button in the header lists all downloaded files with their size.

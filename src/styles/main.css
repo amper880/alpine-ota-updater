@@ -1410,3 +1410,39 @@ select {
     padding: 0 6px;
   }
 }
+
+/* ------------------------------------------------------------------ app update banner */
+
+.update-banner {
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--line);
+}
+.update-banner[hidden] {
+  display: none;
+}
+.update-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: var(--fs-1);
+}
+.update-inner > .icon {
+  color: var(--accent);
+  flex: none;
+}
+.update-inner > p {
+  flex: 1 1 260px;
+  margin: 0;
+}
+.update-inner > p span {
+  color: var(--ink-2);
+}
+.update-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}

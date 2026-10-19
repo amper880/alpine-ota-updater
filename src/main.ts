@@ -4,7 +4,9 @@
 import { detectLocale, setLocale, t } from './i18n/index.ts';
 import { refreshCached, refreshFirmwareList, store, type Theme } from './app/state.ts';
 import { APP_VERSION, REPO_URL } from './lib/config.ts';
-import { extLink, h } from './ui/dom.ts';
+import { extLink, h, icon } from './ui/dom.ts';
+import { checkForAppUpdate, dismissAppUpdate } from './app/app-update.ts';
+import { openExternal } from './lib/net/open.ts';
 import { renderHeader } from './ui/header.ts';
 import { renderSteps } from './ui/steps/index.ts';
 import { renderAside } from './ui/aside.ts';
@@ -35,6 +37,33 @@ function renderFooter(root: HTMLElement): void {
   );
 }
 
+/** "New version available" banner below the header. */
+function renderUpdateBanner(root: HTMLElement): void {
+  store.select(
+    (s) => [s.appUpdate, s.locale],
+    () => {
+      const u = store.get().appUpdate;
+      root.hidden = !u;
+      if (!u) return root.replaceChildren();
+      root.replaceChildren(
+        h(
+          'div',
+          { class: 'update-inner' },
+          icon('download', 18),
+          h('p', null, h('strong', null, t('update.available', { version: u.version })), ' ', h('span', null, t('update.hint'))),
+          h(
+            'div',
+            { class: 'update-actions' },
+            h('button', { type: 'button', class: 'btn small primary', onclick: () => openExternal(u.downloadUrl) }, t('update.download')),
+            extLink(u.releaseUrl, t('update.whatsNew')),
+            h('button', { type: 'button', class: 'link', onclick: dismissAppUpdate }, t('update.later')),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 function start(): void {
   const initial = store.get();
   const loc = detectLocale(initial.locale || undefined);
@@ -46,6 +75,7 @@ function start(): void {
 
   const app = document.getElementById('app')!;
   const header = h('header', { class: 'topbar' });
+  const updateBanner = h('div', { class: 'update-banner', role: 'status', hidden: true });
   const steps = h('div', { class: 'trail' });
   const aside = h('aside', { class: 'side', 'aria-label': t('summary.title') });
   const footer = h('footer', { class: 'footer' });
@@ -53,6 +83,7 @@ function start(): void {
 
   app.replaceChildren(
     header,
+    updateBanner,
     h(
       'main',
       { class: 'layout' },
@@ -78,8 +109,10 @@ function start(): void {
   renderAside(aside);
   renderLibrary(dialog);
   renderFooter(footer);
+  renderUpdateBanner(updateBanner);
 
   void refreshCached();
+  void checkForAppUpdate();
   if (initial.boardId && initial.sourceId) void refreshFirmwareList();
 }
 

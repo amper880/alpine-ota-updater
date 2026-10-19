@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- App update check: at start-up the app asks GitHub for the latest release and, when it is
+  newer than the running version, shows a banner with *Download* (the installer for this
+  platform: `.exe`, `.dmg`, `.AppImage` or `.apk`), *What's new* and *Later* (hides it until a
+  still newer version appears). Offline or failed checks stay silent.
+
 ## [0.5.0] - 2026-10-19
 
 ### Added

@@ -35,6 +35,7 @@ import type { DeviceKind, ScannedDevice } from '../lib/ble/candidates.ts';
 import type { OtaKind } from '../lib/wifi/ota-format.ts';
 import { toErrorInfo, type ErrorInfo } from '../lib/util/errors.ts';
 export type { DeviceMatch };
+import type { AppUpdate } from './app-update.ts';
 
 /** The node picked in step 4 (the BluetoothDevice object itself lives in app/flash.ts). */
 export interface PickedDevice {
@@ -90,6 +91,8 @@ export interface AppState {
   device?: PickedDevice;
   scan: ScanState;
   flash: FlashState;
+  /** A newer app release, offered in a banner (app-update.ts). */
+  appUpdate?: AppUpdate;
 }
 
 export const store = createStore<AppState>({
@@ -108,6 +111,7 @@ export const store = createStore<AppState>({
   device: undefined,
   scan: { status: 'idle', devices: [], showAll: false },
   flash: IDLE_FLASH,
+  appUpdate: undefined,
 });
 
 export const boardById = (id?: string): Board | undefined => BOARDS.find((b) => b.id === id);

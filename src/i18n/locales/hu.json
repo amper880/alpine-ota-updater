@@ -174,5 +174,10 @@
   "connect.companion.step.3": "Nyomd meg a Keresés gombot, és válaszd ki az eszközt: MeshCore-<név> néven jelenik meg. Bootloader (DFU) módban lévő eszköz is jó.",
   "err.ble.pairing": "A companion csak párosított készülékről fogad frissítést. Párosítsd ezzel a készülékkel (PIN az eszköz kijelzőjén, vagy 123456), majd próbáld újra.",
   "err.ble.noDfuService": "Ebben a companion firmware-ben nincs Bluetooth-os frissítési szolgáltatás (régebbi MeshCore-verziókból és más firmware-ekből hiányzik). Ezúttal USB-n frissítsd.",
-  "flash.errorNotStarted": "A frissítés nem indult el, az eszközön semmi nem változott."
+  "flash.errorNotStarted": "A frissítés nem indult el, az eszközön semmi nem változott.",
+  "update.available": "Elérhető az Alpine OTA Updater {version} verziója.",
+  "update.hint": "Töltsd le, és telepítsd a mostani fölé; a beállítások és a firmware-könyvtár megmaradnak.",
+  "update.download": "Letöltés",
+  "update.whatsNew": "Újdonságok",
+  "update.later": "Később"
 }
