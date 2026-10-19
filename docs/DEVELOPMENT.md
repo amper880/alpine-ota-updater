@@ -101,7 +101,9 @@ Other branches can be built on demand with *Actions → Build apps → Run workf
 1. Merge `dev` into `main` and switch to `main`.
 2. Move the *Unreleased* entries in `CHANGELOG.md` under a new version heading with the date.
 3. Bump `version` in `package.json` (used by the app, the installers and the footer), then
-   run `npm install` so `package-lock.json` follows.
+   run `npm install` so `package-lock.json` follows. The tag must match this version
+   (`v0.5.0`, or `v0.5.0-beta` for a pre-release label): the build stops otherwise, because
+   the file names and the Android version are taken from `package.json`, not from the tag.
 4. Commit: `chore(release): vX.Y.Z`, then tag: `git tag vX.Y.Z`.
 5. Push the commit and the tag (GitHub Desktop: *Repository → Push*, tags are pushed with it).
    The *Build apps* workflow then publishes a GitHub Release with the installers.
