@@ -1,6 +1,6 @@
 import { h, icon } from '../dom.ts';
 import { t } from '../../i18n/index.ts';
-import { SOURCES, selectRole, selectSource, selectedBoard, store } from '../../app/state.ts';
+import { LOCAL_SOURCE, SOURCES, selectRole, selectSource, selectedBoard, store } from '../../app/state.ts';
 import { sourceSupportsPlatform } from '../../lib/catalog/match.ts';
 import { ROLES } from '../../lib/catalog/types.ts';
 
@@ -60,6 +60,23 @@ export function sourceBody(): HTMLElement {
           ),
         );
       }),
+      h(
+        'button',
+        {
+          type: 'button',
+          role: 'radio',
+          'aria-checked': String(s.sourceId === LOCAL_SOURCE),
+          class: ['source-card', s.sourceId === LOCAL_SOURCE && 'selected'],
+          onclick: () => selectSource(LOCAL_SOURCE),
+        },
+        h('span', { class: 'radio-dot', 'aria-hidden': 'true' }),
+        h(
+          'span',
+          { class: 'source-text' },
+          h('span', { class: 'source-name' }, t('local.sourceName')),
+          h('span', { class: 'source-desc' }, t('local.sourceDesc')),
+        ),
+      ),
     ),
     h('p', { class: 'fineprint' }, t('source.extend')),
   );

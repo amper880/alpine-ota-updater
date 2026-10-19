@@ -34,6 +34,7 @@ import type { DeviceMatch } from '../lib/catalog/match.ts';
 import type { DeviceKind, ScannedDevice } from '../lib/ble/candidates.ts';
 import type { OtaKind } from '../lib/wifi/ota-format.ts';
 import { toErrorInfo, type ErrorInfo } from '../lib/util/errors.ts';
+import { t } from '../i18n/index.ts';
 export type { DeviceMatch };
 import type { AppUpdate } from './app-update.ts';
 
@@ -93,6 +94,8 @@ export interface AppState {
   flash: FlashState;
   /** A newer app release, offered in a banner (app-update.ts). */
   appUpdate?: AppUpdate;
+  /** Firmware file picked from disk (local-firmware.ts). */
+  localFile: { status: 'idle' | 'checking'; error?: ErrorInfo };
 }
 
 export const store = createStore<AppState>({
@@ -112,6 +115,7 @@ export const store = createStore<AppState>({
   scan: { status: 'idle', devices: [], showAll: false },
   flash: IDLE_FLASH,
   appUpdate: undefined,
+  localFile: { status: 'idle' },
 });
 
 export const boardById = (id?: string): Board | undefined => BOARDS.find((b) => b.id === id);
@@ -128,10 +132,35 @@ export function selectedFirmware(): FirmwareOption | undefined {
   return s.releases.options.find((o) => o.key === s.firmwareKey);
 }
 
+/** Pseudo source id for firmware files picked from disk ("Custom firmware file"). */
+export const LOCAL_SOURCE = 'local';
+
+/** Display name of a firmware source, including the custom-file pseudo source. */
+export function sourceLabel(id: string): string {
+  return id === LOCAL_SOURCE ? t('local.source') : (sourceById(id)?.name ?? id);
+}
+
+/** Step 2 summary: "MeshCore, repeater" or "Custom firmware file". */
+export function sourceSummary(): string | undefined {
+  const s = store.get();
+  if (s.sourceId === LOCAL_SOURCE) return t('local.sourceName');
+  const src = sourceById(s.sourceId);
+  return src ? `${src.name}, ${t(`role.${s.role}`).toLowerCase()}` : undefined;
+}
+
+/** Short label of the chosen firmware: the release version, or the picked file's name. */
+export function firmwareLabel(): string | undefined {
+  const s = store.get();
+  const fw = selectedFirmware();
+  if (fw) return fw.version;
+  const c = s.firmwareKey ? s.cached[s.firmwareKey] : undefined;
+  return c?.sourceId === 'local' ? c.assetName : undefined;
+}
+
 /** First step that still needs input (1-based). */
 export function progressStep(s: AppState): number {
   if (!boardById(s.boardId)) return 1;
-  if (!sourceById(s.sourceId)) return 2;
+  if (!sourceById(s.sourceId) && s.sourceId !== LOCAL_SOURCE) return 2;
   if (!s.firmwareKey || !s.cached[s.firmwareKey]) return 3;
   if (!s.device) return 4;
   return 5;
@@ -165,7 +194,7 @@ export function selectBoard(id: string): void {
   savePref('board', id);
   const s = store.get();
   const src = sourceById(s.sourceId);
-  const keepSource = src && sourceSupportsPlatform(src, board.platform);
+  const keepSource = s.sourceId === LOCAL_SOURCE || (src && sourceSupportsPlatform(src, board.platform));
   const role = board.roles.includes(s.role) ? s.role : board.roles[0] ?? 'repeater';
   store.set({
     boardId: id,
@@ -193,7 +222,7 @@ export function selectSource(id: string): void {
 }
 
 export function useFirmware(key: string): void {
-  store.set({ firmwareKey: key, openStep: undefined, flash: IDLE_FLASH });
+  store.set({ firmwareKey: key, openStep: undefined, flash: IDLE_FLASH, localFile: { status: 'idle' } });
 }
 
 let listAbort: AbortController | undefined;
@@ -202,6 +231,11 @@ export async function refreshFirmwareList(force = false): Promise<void> {
   const s = store.get();
   const board = boardById(s.boardId);
   const source = sourceById(s.sourceId);
+  if (board && s.sourceId === LOCAL_SOURCE) {
+    listAbort?.abort();
+    store.set({ releases: { status: 'ok', requestKey: `${LOCAL_SOURCE}|${board.id}`, options: [] } });
+    return;
+  }
   if (!board || !source) {
     store.set({ releases: { status: 'idle', options: [] } });
     return;

@@ -1446,3 +1446,26 @@ select {
   align-items: center;
   gap: 14px;
 }
+
+/* ------------------------------------------------------------------ own firmware file */
+
+.local-fw {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.local-fw .callout {
+  align-items: center;
+}
+.fw-local-name {
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

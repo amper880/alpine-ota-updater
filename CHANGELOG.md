@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- *Custom firmware file* as the last firmware source: a DFU package (.zip, nRF52) or an OTA
+  image (.bin, ESP32) can be picked from disk. It is checked (.uf2 / merged images / non-DFU
+  zips are refused with an explanation), stored in the firmware library as *Custom file* and
+  used like a downloaded release; for ESP32 its format also picks the WiFi guide (MeshCore or
+  ZephCore).
+
 - App update check: at start-up the app asks GitHub for the latest release and, when it is
   newer than the running version, shows a banner with *Download* (the installer for this
   platform: `.exe`, `.dmg`, `.AppImage` or `.apk`), *What's new* and *Later* (hides it until a

@@ -1,7 +1,7 @@
 import { h, icon, mount } from '../dom.ts';
 import { errorExplanation } from '../error-view.ts';
 import { locale, t } from '../../i18n/index.ts';
-import { selectedBoard, selectedFirmware, sourceById, store, type PickedDevice } from '../../app/state.ts';
+import { selectedBoard, selectedFirmware, sourceLabel, store, type PickedDevice } from '../../app/state.ts';
 import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
 import { cancelWifiFlash, expectedProfile, findWifiNode, startWifiFlash } from '../../app/wifi.ts';
 import { classify, type ScannedDevice } from '../../lib/ble/candidates.ts';
@@ -281,12 +281,12 @@ export function flashBody(): HTMLElement {
   const prn = loadPref<number>('prn', 32);
   const needsConfirm = device.match !== 'match';
   const version = fw?.version ?? cached.version;
-  const sourceName = sourceById(cached.sourceId)?.name ?? cached.sourceId;
+  const sourceName = sourceLabel(cached.sourceId);
 
   const summary = h(
     'dl',
     { class: 'flash-summary' },
-    h('div', null, h('dt', null, t('flash.firmware')), h('dd', null, `${sourceName} ${version}`)),
+    h('div', null, h('dt', null, t('flash.firmware')), h('dd', null, cached.sourceId === 'local' ? `${sourceName}: ${cached.assetName}` : `${sourceName} ${version}`)),
     h('div', null, h('dt', null, t('flash.node')), h('dd', null, device.name, ' ', matchChip(device))),
   );
 

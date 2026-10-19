@@ -179,5 +179,19 @@
   "update.hint": "Download and install it over this version; your settings and firmware library are kept.",
   "update.download": "Download",
   "update.whatsNew": "What's new",
-  "update.later": "Later"
+  "update.later": "Later",
+  "local.source": "Custom file",
+  "local.hint.nrf52": "For Bluetooth updates pick a Nordic DFU package (.zip), e.g. one you built yourself or downloaded elsewhere.",
+  "local.hint.esp32": "For WiFi updates pick an OTA image (.bin): a MeshCore application image or a ZephCore \"-update.bin\". Full-flash \"merged\" images cannot be sent over WiFi.",
+  "local.pick": "Choose file…",
+  "local.warning": "The app cannot check whether a custom file was built for this device. Flashing firmware for different hardware can make the node unusable until it is reflashed over USB.",
+  "library.addedOn": "added {date}",
+  "err.local.empty": "The file is empty.",
+  "err.local.not-zip": "Bluetooth updates need a DFU package (.zip). A .uf2 or .hex file is for USB flashing.",
+  "err.local.not-dfu": "This .zip is not a Nordic DFU package (no manifest.json with an application image).",
+  "err.local.not-bin": "WiFi updates need an OTA image (.bin).",
+  "err.local.merged": "This is a full-flash (\"merged\") image, which can only be written over USB. Pick the non-merged .bin (ZephCore: \"-update.bin\").",
+  "err.local.not-ota-image": "This .bin is not an ESP32 OTA image (neither an ESP-IDF application nor MCUboot).",
+  "local.sourceName": "Custom firmware file",
+  "local.sourceDesc": "A firmware file from this device, e.g. your own build or one from elsewhere."
 }

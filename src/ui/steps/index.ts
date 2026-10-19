@@ -4,7 +4,7 @@
  */
 import { h, icon } from '../dom.ts';
 import { t } from '../../i18n/index.ts';
-import { openStep, progressStep, reopenStep, selectedBoard, selectedFirmware, selectedSource, store } from '../../app/state.ts';
+import { openStep, progressStep, reopenStep, selectedBoard, firmwareLabel, sourceSummary, store } from '../../app/state.ts';
 import { boardBody, platformBadge } from './board.ts';
 import { sourceBody } from './source.ts';
 import { firmwareBody, updateProgressBars } from './firmware.ts';
@@ -33,8 +33,8 @@ function defs(): StepDef[] {
       n: 2,
       title: t('step.source'),
       summary: () => {
-        const src = selectedSource();
-        return src ? [`${src.name}, ${t(`role.${s.role}`).toLowerCase()}`] : null;
+        const label = sourceSummary();
+        return label ? [label] : null;
       },
       body: sourceBody,
     },
@@ -42,8 +42,8 @@ function defs(): StepDef[] {
       n: 3,
       title: t('step.firmware'),
       summary: () => {
-        const fw = selectedFirmware();
-        return fw ? [fw.version] : null;
+        const label = firmwareLabel();
+        return label ? [label] : null;
       },
       body: firmwareBody,
     },
@@ -121,6 +121,7 @@ export function renderSteps(root: HTMLElement): void {
       s.flash.phase,
       s.flash.stage,
       s.flash.log.length,
+      s.localFile,
     ],
     () => renderTrail(root),
   );

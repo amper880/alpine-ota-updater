@@ -1,6 +1,6 @@
 import { h, icon } from './dom.ts';
 import { locale, t } from '../i18n/index.ts';
-import { BOARDS, SOURCES, removeAllCached, removeCached, setLibraryOpen, store } from '../app/state.ts';
+import { BOARDS, sourceLabel, removeAllCached, removeCached, setLibraryOpen, store } from '../app/state.ts';
 import { formatBytes, formatDate } from '../lib/util/format.ts';
 
 let confirmClear = false;
@@ -46,9 +46,9 @@ export function renderLibrary(dialog: HTMLDialogElement): void {
                       h(
                         'span',
                         { class: 'lib-meta' },
-                        `${SOURCES.find((x) => x.id === f.sourceId)?.name ?? f.sourceId} ${f.version}, ${t(`role.${f.role}`).toLowerCase()}`,
+                        f.sourceId === 'local' ? `${sourceLabel(f.sourceId)}: ${f.assetName}` : `${sourceLabel(f.sourceId)} ${f.version}, ${t(`role.${f.role}`).toLowerCase()}`,
                       ),
-                      h('span', { class: 'lib-meta' }, `${formatBytes(f.size, locale())}, ${t('library.downloadedOn', { date: formatDate(f.downloadedAt, locale()) })}`),
+                      h('span', { class: 'lib-meta' }, `${formatBytes(f.size, locale())}, ${t(f.sourceId === 'local' ? 'library.addedOn' : 'library.downloadedOn', { date: formatDate(f.downloadedAt, locale()) })}`),
                     ),
                     h(
                       'button',

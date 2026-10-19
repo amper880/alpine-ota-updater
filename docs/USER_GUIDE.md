@@ -35,6 +35,10 @@ a cable.
 3. **Firmware** — pick a version and press **Download**. The file is checked and stored on
    your device; next time it is available immediately, even offline. Already downloaded
    versions show *Downloaded* and a **Use this** button.
+   To flash a file you built yourself or got elsewhere, choose **Custom firmware file** as the
+   source in step 2, then **Choose file…** here: a DFU package (`.zip`) for Bluetooth, an OTA
+   image (`.bin`, not `-merged`) for WiFi. It is kept in the library as *Custom file*. The app
+   cannot check that such a file matches the hardware, so double-check it.
 4. **Connect to the node** — follow the on-screen guide (details below).
 5. **Update** — the firmware is sent to the node, which restarts with the new version.
 

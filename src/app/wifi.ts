@@ -1,7 +1,7 @@
 /**
  * Actions for steps 4–5 on ESP32 nodes: find the node on its OTA WiFi and upload the image.
  */
-import { IDLE_FLASH, SOURCES, selectedBoard, selectedSource, store } from './state.ts';
+import { IDLE_FLASH, LOCAL_SOURCE, SOURCES, selectedBoard, selectedSource, store } from './state.ts';
 import { matchWifiBoard, resolveAlias } from '../lib/catalog/match.ts';
 import { getFirmware } from '../lib/cache/db.ts';
 import { UserError, errorMessage, toErrorInfo } from '../lib/util/errors.ts';
@@ -13,6 +13,12 @@ let uploadAbort: AbortController | undefined;
 
 /** OTA server variant the selected firmware source runs (for the connection guide). */
 export function expectedProfile(): OtaProfile {
+  const s = store.get();
+  if (s.sourceId === LOCAL_SOURCE) {
+    // A custom file tells by its format which OTA server the node must run.
+    const kind = s.firmwareKey ? s.cached[s.firmwareKey]?.imageKind : undefined;
+    return OTA_PROFILES[kind === 'mcuboot' ? 'zephcore' : 'meshcore'];
+  }
   return OTA_PROFILES[(selectedSource()?.wifiOta ?? 'meshcore') as OtaKind];
 }
 

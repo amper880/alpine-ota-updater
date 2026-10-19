@@ -149,6 +149,11 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
   server (`ESP32Board::startOTAUpdate` is built for repeater / room server only), and USB /
   WiFi companion builds have no BLE, so they are not offered.
 - FR-2.3 Sources that publish nothing for the selected board are shown disabled with a reason.
+- FR-2.4 Custom firmware file: the last entry of the source list; step 3 then offers a file
+  chooser (and earlier custom files for the board) instead of a release list.
+  nRF52: Nordic DFU .zip (validated with the package parser); ESP32: OTA .bin (ESP-IDF app
+  image 0xE9 or MCUboot; merged images — partition table magic 0xAA50 at 0x8000 — refused).
+  Stored in the library with source id `local`.
 
 ### 5.3 Firmware list & download (FR-3)
 

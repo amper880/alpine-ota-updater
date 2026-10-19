@@ -19,6 +19,8 @@ export interface CachedFirmware {
   sha256: string;
   downloadedAt: string;
   blob: Blob;
+  /** ESP32 image type of a custom file ("esp-app" MeshCore / "mcuboot" ZephCore). */
+  imageKind?: 'esp-app' | 'mcuboot' | 'unknown';
 }
 
 export type CachedFirmwareMeta = Omit<CachedFirmware, 'blob'>;

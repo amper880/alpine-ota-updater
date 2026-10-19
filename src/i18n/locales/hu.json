@@ -179,5 +179,19 @@
   "update.hint": "Töltsd le, és telepítsd a mostani fölé; a beállítások és a firmware-könyvtár megmaradnak.",
   "update.download": "Letöltés",
   "update.whatsNew": "Újdonságok",
-  "update.later": "Később"
+  "update.later": "Később",
+  "local.source": "Egyéni fájl",
+  "local.hint.nrf52": "Bluetooth-os frissítéshez Nordic DFU-csomagot (.zip) válassz, pl. saját fordítást vagy máshonnan letöltött fájlt.",
+  "local.hint.esp32": "WiFi-s frissítéshez OTA-képfájlt (.bin) válassz: MeshCore alkalmazás-képfájlt vagy ZephCore „-update.bin” fájlt. A teljes flash-t tartalmazó „merged” fájl WiFi-n nem küldhető.",
+  "local.pick": "Fájl kiválasztása…",
+  "local.warning": "Az app nem tudja ellenőrizni, hogy az egyéni fájl ehhez az eszközhöz készült-e. Más hardverre szánt firmware-rel az eszköz használhatatlanná válhat, amíg USB-n újra nem flasheled.",
+  "library.addedOn": "hozzáadva: {date}",
+  "err.local.empty": "A fájl üres.",
+  "err.local.not-zip": "A Bluetooth-os frissítéshez DFU-csomag (.zip) kell. A .uf2 vagy .hex fájl USB-s flasheléshez való.",
+  "err.local.not-dfu": "Ez a .zip nem Nordic DFU-csomag (nincs benne manifest.json alkalmazás-képfájllal).",
+  "err.local.not-bin": "A WiFi-s frissítéshez OTA-képfájl (.bin) kell.",
+  "err.local.merged": "Ez teljes flash-képfájl („merged”), ami csak USB-n írható. Válaszd a nem merged .bin fájlt (ZephCore-nál: „-update.bin”).",
+  "err.local.not-ota-image": "Ez a .bin nem ESP32 OTA-képfájl (se ESP-IDF alkalmazás, se MCUboot).",
+  "local.sourceName": "Egyéni firmware-fájl",
+  "local.sourceDesc": "Firmware-fájl erről a készülékről, pl. saját fordítás vagy máshonnan letöltött fájl."
 }

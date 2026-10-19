@@ -59,6 +59,7 @@ const ICONS: Record<string, string> = {
   bluetooth: '<path d="M7 7l10 10-5 4V3l5 4L7 17"/>',
   wifi: '<path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>',
   download: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+  file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
   check: '<path d="M4 12.5l5 5L20 6.5"/>',
   trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
   library: '<path d="M4 4h4v16H4zM10 4h4v16h-4zM16.5 4.5l3.8 1 -3.9 15-3.8-1z"/>',

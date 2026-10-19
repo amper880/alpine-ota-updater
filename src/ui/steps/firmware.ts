@@ -4,7 +4,9 @@ import { locale, t } from '../../i18n/index.ts';
 import {
   cancelDownload,
   dismissDownloadError,
+  LOCAL_SOURCE,
   refreshFirmwareList,
+  selectedBoard,
   selectedSource,
   startDownload,
   store,
@@ -13,6 +15,8 @@ import {
 import type { FirmwareOption } from '../../lib/catalog/types.ts';
 import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes, formatDate } from '../../lib/util/format.ts';
+import { addLocalFirmware, clearLocalFileError } from '../../app/local-firmware.ts';
+import { detectPlatform } from '../../lib/update/version.ts';
 
 function progressBar(key: string): HTMLElement {
   return h(
@@ -108,6 +112,7 @@ function row(fw: FirmwareOption, latest: boolean): HTMLElement {
 
 export function firmwareBody(): HTMLElement {
   const s = store.get();
+  if (s.sourceId === LOCAL_SOURCE) return h('div', { class: 'step-content' }, localSection());
   const src = selectedSource();
   const r = s.releases;
   let content: HTMLElement | HTMLElement[];
@@ -135,5 +140,82 @@ export function firmwareBody(): HTMLElement {
     !isNativeApp() ? h('p', { class: 'callout warn' }, icon('alert'), t('firmware.appOnly')) : null,
     content,
     src?.notes ? h('p', { class: 'fineprint' }, src.notes) : null,
+  );
+}
+
+/** "Use your own file": pick a firmware file from disk instead of a listed release. */
+function localSection(): HTMLElement | null {
+  const s = store.get();
+  const board = selectedBoard();
+  if (!board) return null;
+  const files = Object.values(s.cached)
+    .filter((c) => c.sourceId === 'local' && c.boardId === board.id)
+    .sort((a, b) => b.downloadedAt.localeCompare(a.downloadedAt));
+  const checking = s.localFile.status === 'checking';
+  // Android's file picker filters by MIME type and hides ".zip"/".bin" filters it cannot map.
+  const accept = detectPlatform(navigator.userAgent) === 'android' ? undefined : board.platform === 'nrf52' ? '.zip' : '.bin';
+  const input = h('input', {
+    type: 'file',
+    accept,
+    class: 'visually-hidden',
+    tabindex: '-1',
+    onchange: (e: Event) => {
+      const el = e.target as HTMLInputElement;
+      const file = el.files?.[0];
+      el.value = '';
+      if (file) void addLocalFirmware(file);
+    },
+  });
+  return h(
+    'div',
+    { class: 'local-fw' },
+    h('p', { class: 'hint' }, t(`local.hint.${board.platform}`)),
+    files.length
+      ? h(
+          'ul',
+          { class: 'fw-list' },
+          files.map((f) => {
+            const selected = f.key === s.firmwareKey;
+            return h(
+              'li',
+              { class: ['fw-row', selected && 'selected'] },
+              h(
+                'div',
+                { class: 'fw-main' },
+                h('span', { class: 'fw-local-name' }, f.assetName),
+                h('div', { class: 'fw-meta' }, h('span', null, formatBytes(f.size, locale())), h('span', null, t('library.addedOn', { date: formatDate(f.downloadedAt, locale()) }))),
+              ),
+              h(
+                'div',
+                { class: 'fw-action' },
+                selected
+                  ? h('span', { class: 'chip ok' }, icon('check', 16), t('firmware.selected'))
+                  : h('button', { type: 'button', class: 'btn small', onclick: () => useFirmware(f.key) }, t('firmware.use')),
+              ),
+            );
+          }),
+        )
+      : null,
+    s.localFile.error
+      ? h(
+          'div',
+          { class: 'callout error' },
+          icon('alert'),
+          h('div', null, ...errorExplanation(s.localFile.error)),
+          h('button', { type: 'button', class: 'link', onclick: clearLocalFileError }, t('common.dismiss')),
+        )
+      : null,
+    h(
+      'div',
+      { class: 'actions' },
+      input,
+      h(
+        'button',
+        { type: 'button', class: ['btn small', files.length === 0 && 'primary'], disabled: checking || !isNativeApp(), onclick: () => input.click() },
+        checking ? h('span', { class: 'spinner', 'aria-hidden': 'true' }) : icon('file', 16),
+        t('local.pick'),
+      ),
+    ),
+    h('p', { class: 'fineprint' }, t('local.warning')),
   );
 }
