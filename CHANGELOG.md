@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- German translation (*Deutsch* in the language menu; picked automatically on German systems).
+
 - *Custom firmware file* as the last firmware source: a DFU package (.zip, nRF52) or an OTA
   image (.bin, ESP32) can be picked from disk. It is checked (.uf2 / merged images / non-DFU
   zips are refused with an explanation), stored in the firmware library as *Custom file* and

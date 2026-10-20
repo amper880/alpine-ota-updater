@@ -185,7 +185,7 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 ### 5.6 General (FR-6)
 
 - FR-6.1 Theme: Light / Dark / System.
-- FR-6.2 Language: English / Hungarian, auto-detected from the browser, switchable; new
+- FR-6.2 Language: English / Hungarian / German, auto-detected from the browser, switchable; new
   languages added by dropping a JSON file into `src/i18n/locales/` (see §9.3).
 - FR-6.3 Installers for Windows (NSIS/MSI) and Android (APK); works offline except for
   listing/downloading firmware.

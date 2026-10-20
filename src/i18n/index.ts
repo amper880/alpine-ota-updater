@@ -5,6 +5,7 @@
  */
 import en from './locales/en.json';
 import hu from './locales/hu.json';
+import de from './locales/de.json';
 
 type Messages = Record<string, string>;
 
@@ -18,6 +19,7 @@ export interface LocaleInfo {
 export const LOCALES: LocaleInfo[] = [
   { code: 'en', name: 'English', messages: en as Messages },
   { code: 'hu', name: 'Magyar', messages: hu as Messages },
+  { code: 'de', name: 'Deutsch', messages: de as Messages },
 ];
 
 const FALLBACK = 'en';

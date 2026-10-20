@@ -3,20 +3,24 @@
 UI texts live in `src/i18n/locales/<code>.json` — one flat JSON object per language.
 English (`en.json`) is the reference and the fallback for missing keys.
 
+Available languages: English (`en`), Hungarian (`hu`), German (`de`). German uses the
+informal *du*, like the Hungarian texts.
+
 ## Adding a language
 
 1. Copy `src/i18n/locales/en.json` to `<code>.json`, where `<code>` is the two-letter
-   ISO 639-1 code (e.g. `de.json`).
+   ISO 639-1 code (e.g. `fr.json`).
 2. Translate the values. Keep the keys and the `{placeholders}` unchanged.
 3. Register it in `src/i18n/index.ts`:
 
    ```ts
-   import de from './locales/de.json';
+   import fr from './locales/fr.json';
    // …
    export const LOCALES: LocaleInfo[] = [
      { code: 'en', name: 'English', messages: en as Messages },
      { code: 'hu', name: 'Magyar', messages: hu as Messages },
      { code: 'de', name: 'Deutsch', messages: de as Messages },
+     { code: 'fr', name: 'Français', messages: fr as Messages },
    ];
    ```
 

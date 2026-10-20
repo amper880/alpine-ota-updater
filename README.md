@@ -9,7 +9,7 @@ nodes, for
 - Firmware from several sources (official MeshCore, PowerSaving, ZephCore); new sources are
   added in [`catalog/sources.json`](catalog/sources.json)
 - Downloaded firmware is verified, kept on the device and reused, even offline
-- Works on phone, tablet and desktop; light / dark theme; English and Hungarian
+- Works on phone, tablet and desktop; light / dark theme; English, Hungarian and German
 
 > **Status: v0.4.0.** Bluetooth updates of nRF52 nodes are tested on hardware (Windows and
 > Android); WiFi updates of ESP32 nodes are implemented and await hardware testing. The macOS
