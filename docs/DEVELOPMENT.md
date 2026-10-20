@@ -32,24 +32,30 @@ Bluetooth (`tauri-plugin-blec`) and HTTP (`tauri-plugin-http`).
 
 ```
 src/
-├─ main.ts               entry point: theme, language, layout, service worker registration
+├─ main.ts               entry point: theme, language, layout, app-update banner
 ├─ app/
 │  ├─ store.ts           tiny observable store (select + subscribe)
 │  ├─ state.ts           application state and actions (select board, download, …)
-│  └─ flash.ts           Bluetooth scan and update actions
+│  ├─ flash.ts           Bluetooth scan and update actions
+│  ├─ wifi.ts            ESP32: find the node on its OTA WiFi, upload
+│  ├─ local-firmware.ts  custom firmware files picked from disk
+│  └─ app-update.ts      start-up check for a newer app release
 ├─ lib/                  logic without DOM access (unit-tested)
 │  ├─ catalog/           types + matching of release assets to board/role (match.ts)
 │  ├─ github/            release list loading (GitHub API, 10-minute cache, offline copy)
-│  ├─ net/               HTTP through the native plugin
+│  ├─ net/               HTTP and opening links through the native plugins
+│  ├─ wifi/              ESP32 OTA servers (MeshCore ElegantOTA, ZephCore), image checks
 │  ├─ ble/               native BLE (blec), device recognition, the BLE update flow
 │  ├─ cache/             IndexedDB firmware library, download + verification
 │  ├─ dfu/               Nordic legacy DFU protocol, DFU package parser
-│  ├─ util/              formatting, safe localStorage, ZIP reader
+│  ├─ local/             checks for custom firmware files
+│  ├─ update/            app version comparison, installer per platform
+│  ├─ util/              formatting, safe localStorage, ZIP reader, MD5, error texts
 │  ├─ platform.ts        native app or plain browser
 │  └─ config.ts          build-time constants
 ├─ ui/                   DOM rendering
 │  ├─ dom.ts             h() element helper and inline SVG icons
-│  ├─ header.ts, aside.ts, library.ts
+│  ├─ header.ts, aside.ts, library.ts, error-view.ts
 │  └─ steps/             the five steps of the update flow
 ├─ i18n/                 t() + locales/*.json
 └─ styles/main.css       design tokens (light/dark) and all styles

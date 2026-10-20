@@ -60,7 +60,7 @@ export class DfuError extends Error {
   }
 }
 
-/** BLE operations the protocol needs. Implemented with Web Bluetooth in web-bluetooth.ts. */
+/** BLE operations the protocol needs. Implemented with the native plugin in ble/native.ts. */
 export interface DfuTransport {
   /** Subscribe to control point notifications. */
   startNotifications(onNotify: (data: DataView) => void): Promise<void>;

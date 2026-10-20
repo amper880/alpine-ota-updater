@@ -1,5 +1,5 @@
 /**
- * Downloads a firmware file through the proxy, verifies it and stores it in IndexedDB.
+ * Downloads a firmware file over the native HTTP plugin, verifies it and stores it in IndexedDB.
  */
 import type { FirmwareOption } from '../catalog/types.ts';
 import { httpFetch } from '../net/http.ts';
