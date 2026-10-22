@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Bluetooth: if the firmware transfer fails (e.g. *Timed out waiting for packet receipt*), the
+  app reconnects to the bootloader, which stays in DFU mode, and starts over once with 20-byte
+  packets and a receipt every 8 packets. The log shows how many bytes had been sent.
+
 - Factory bootloaders are recognised: the Heltec stock bootloader name (`HT-n5262G-OTA` for the
   T096) is listed as *Bootloader* and matched to the board, and every bootloader is identified
   by its Device Information firmware revision (logged). For factory (non-OTAFIX) bootloaders

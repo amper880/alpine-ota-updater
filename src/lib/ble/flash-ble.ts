@@ -227,14 +227,33 @@ export async function flashOverNativeBle(
     }
     const packetSize = compat ? 20 : await choosePacketSize(conn, log);
     stage('transferring');
-    const t0 = Date.now();
-    await runLegacyDfu(conn.transport(), firmware, initPacket, {
-      prn,
-      packetSize,
-      signal: opts.signal,
-      onProgress: opts.onProgress,
-      onLog: log,
-    });
+    let t0 = Date.now();
+    const transfer = (c: NodeConnection, settings: { prn?: number; packetSize: number }) =>
+      runLegacyDfu(c.transport(), firmware, initPacket, {
+        ...settings,
+        signal: opts.signal,
+        onProgress: opts.onProgress,
+        onLog: log,
+      });
+    try {
+      await transfer(conn, { prn, packetSize });
+    } catch (err) {
+      // The bootloader stays in DFU mode after a failed transfer. Unless the careful settings
+      // were already in use, start over once with them (small packets, frequent receipts).
+      const careful = packetSize <= 20 && prn !== undefined && prn > 0 && prn <= FACTORY_PRN;
+      if (careful || opts.signal?.aborted || (err instanceof DfuError && err.code === 'aborted')) throw err;
+      log(`Transfer failed: ${errorMessage(err)}`);
+      log(`Retrying from the start with 20-byte packets and a receipt every ${FACTORY_PRN} packets`);
+      await conn.disconnect();
+      await sleep(2000);
+      abortCheck();
+      stage('reconnecting');
+      const boot = await findBootloader({ address: conn.address, name: bootName, bootBase: device.bootBase }, 15000, log);
+      conn = await connectWithRetry(boot ? { address: boot.address, name: boot.name } : { address: conn.address, name: bootName }, log);
+      stage('transferring');
+      t0 = Date.now();
+      await transfer(conn, { prn: FACTORY_PRN, packetSize: 20 });
+    }
     const secs = (Date.now() - t0) / 1000;
     log(`Transferred ${firmware.length} bytes in ${secs.toFixed(1)} s (${(firmware.length / 1000 / secs).toFixed(1)} kB/s)`);
   } finally {

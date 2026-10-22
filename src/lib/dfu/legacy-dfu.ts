@@ -212,7 +212,7 @@ export async function runLegacyDfu(
     sent += chunk.length;
     packets++;
     if (prn > 0 && packets % prn === 0 && sent < firmware.length) {
-      const d = await queue.wait((x) => x[0] === Op.PacketReceiptNotif, timeoutMs, signal, 'packet receipt');
+      const d = await queue.wait((x) => x[0] === Op.PacketReceiptNotif, timeoutMs, signal, `packet receipt (${sent} of ${firmware.length} bytes sent)`);
       const confirmed = new DataView(d.buffer).getUint32(1, true);
       if (confirmed !== sent) throw new DfuError('status', `Device confirmed ${confirmed} bytes, ${sent} were sent`);
     }

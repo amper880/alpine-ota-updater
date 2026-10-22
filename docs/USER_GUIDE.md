@@ -56,7 +56,9 @@ a cable.
 5. When *Update complete* appears, the node restarts with the new firmware.
 
 If an update is interrupted, the node stays in bootloader mode. Scan again, select it (now
-shown as *Bootloader*) and start the update again.
+shown as *Bootloader*) and start the update again. If the transfer itself fails, the app
+retries once by itself with small packets; you can also set this up front under **Advanced**
+(*Packets per confirmation* 8, *Compatibility mode*).
 
 **Factory bootloader.** Many boards ship with the vendor's original bootloader (it appears
 e.g. as `AdaDFU` or, on the Heltec T096, `HT-n5262G-OTA` when started with the button). Its
