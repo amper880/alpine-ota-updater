@@ -3,7 +3,7 @@
  * connect → (application mode: buttonless jump, rescan, reconnect to the bootloader) → DFU.
  */
 import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, packetSizeForMtu, runLegacyDfu } from '../dfu/legacy-dfu.ts';
-import { pickBootloader, type ScannedDevice } from './candidates.ts';
+import { isFactoryBootloader, pickBootloader, type ScannedDevice } from './candidates.ts';
 import { connectNode, scan, stopScan, type NodeConnection } from './native.ts';
 import { UserError, errorMessage } from '../util/errors.ts';
 
@@ -17,7 +17,12 @@ export interface BleFlashOptions {
   onStage?: (stage: BleStage) => void;
   onProgress?: (sent: number, total: number) => void;
   onLog?: (message: string) => void;
+  /** Called once the bootloader is known; `factory` = not OTAFIX (slower, careful settings). */
+  onBootloader?: (info: { factory: boolean; firmwareRevision?: string; model?: string }) => void;
 }
+
+/** Settings the OTAFIX project recommends for factory bootloaders: receipt every 8 packets. */
+const FACTORY_PRN = 8;
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
@@ -136,6 +141,8 @@ export async function flashOverNativeBle(
 
   stage('connecting');
   let conn: NodeConnection = await connectWithRetry(device, log);
+  /** Advertised name of the bootloader the image is sent to. */
+  let bootName = device.name;
   log('Reading DFU version');
   const read = await conn.readVersionChecked();
   const version = read.version;
@@ -185,6 +192,7 @@ export async function flashOverNativeBle(
       if (boot) {
         log(`Bootloader found: ${boot.name || '(no name)'} (${boot.address})`);
         conn = await connectWithRetry({ address: boot.address, name: boot.name }, log);
+        bootName = boot.name;
       } else {
         // Some systems keep showing the old name for the same address; try that address and
         // check whether the bootloader answers there.
@@ -201,11 +209,27 @@ export async function flashOverNativeBle(
     }
 
     abortCheck();
-    const packetSize = opts.compatPackets ? 20 : await choosePacketSize(conn, log);
+    // Identify the bootloader: factory bootloaders get small packets and frequent receipts.
+    const info = await conn.readDeviceInfo();
+    const factory = isFactoryBootloader(bootName, info.firmwareRevision);
+    log(
+      `Bootloader: ${info.firmwareRevision ?? 'version unknown'}` +
+        `${info.manufacturer || info.model ? ` (${[info.manufacturer, info.model].filter(Boolean).join(' ')})` : ''}` +
+        ` — ${factory ? 'factory bootloader' : 'OTAFIX'}`,
+    );
+    opts.onBootloader?.({ factory, firmwareRevision: info.firmwareRevision, model: info.model });
+    let prn = opts.prn;
+    let compat = opts.compatPackets;
+    if (factory) {
+      compat = true;
+      if (prn === undefined || prn === 0 || prn > FACTORY_PRN) prn = FACTORY_PRN;
+      log(`Factory bootloader: using 20-byte packets and a receipt every ${prn} packets`);
+    }
+    const packetSize = compat ? 20 : await choosePacketSize(conn, log);
     stage('transferring');
     const t0 = Date.now();
     await runLegacyDfu(conn.transport(), firmware, initPacket, {
-      prn: opts.prn,
+      prn,
       packetSize,
       signal: opts.signal,
       onProgress: opts.onProgress,

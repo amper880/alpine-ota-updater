@@ -58,6 +58,14 @@ a cable.
 If an update is interrupted, the node stays in bootloader mode. Scan again, select it (now
 shown as *Bootloader*) and start the update again.
 
+**Factory bootloader.** Many boards ship with the vendor's original bootloader (it appears
+e.g. as `AdaDFU` or, on the Heltec T096, `HT-n5262G-OTA` when started with the button). Its
+Bluetooth update is unreliable; the app recognises it and sends the firmware in small
+packets with frequent confirmations, which is slower. If the update still fails, install the
+[OTAFIX bootloader](https://github.com/oltaco/Adafruit_nRF52_Bootloader_OTAFIX) once over USB
+(double-press reset, copy its `update-….uf2` to the drive that appears). With OTAFIX the node
+appears as `<BOARD>_DFU` and updates are fast and reliable.
+
 ### Companion update (nRF52, Bluetooth)
 
 The *Companion* role is the Bluetooth companion radio (`companion_radio_ble`). It can only be

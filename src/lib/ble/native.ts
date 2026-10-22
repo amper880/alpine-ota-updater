@@ -75,12 +75,24 @@ export async function stopScan(): Promise<void> {
   await blec.stopScan().catch(() => undefined);
 }
 
+export interface DeviceInfo {
+  manufacturer?: string;
+  model?: string;
+  /** e.g. "0.9.2-OTAFIX2.3-BP1.4 s140 6.1.1" on Adafruit-based bootloaders. */
+  firmwareRevision?: string;
+}
+
+const DIS_SERVICE = '0000180a-0000-1000-8000-00805f9b34fb';
+const DIS_CHAR = (short: string) => `0000${short}-0000-1000-8000-00805f9b34fb`;
+
 export interface NodeConnection {
   address: string;
   /** DFU Version characteristic; 0x0001 = application (buttonless), otherwise bootloader. */
   readVersion(): Promise<number | undefined>;
   /** Like readVersion, but also returns the error text when the read fails. */
   readVersionChecked(): Promise<{ version?: number; error?: string }>;
+  /** Device Information Service strings (bootloaders expose them without pairing). */
+  readDeviceInfo(): Promise<DeviceInfo>;
   /** Negotiated ATT MTU, if the platform reports it. */
   mtu(): Promise<number | undefined>;
   /** Enables control point notifications (the buttonless service rejects writes without). */
@@ -118,10 +130,26 @@ export async function connectNode(address: string): Promise<NodeConnection> {
       return { error: errorMessage(err) };
     }
   };
+  const readString = async (short: string): Promise<string | undefined> => {
+    try {
+      const v = await blec.read(DIS_CHAR(short), DIS_SERVICE);
+      const s = new TextDecoder().decode(Uint8Array.from(v)).replace(/\0+$/, '').trim();
+      return s || undefined;
+    } catch {
+      return undefined;
+    }
+  };
   return {
     address,
     disconnected,
     readVersionChecked,
+    async readDeviceInfo() {
+      return {
+        manufacturer: await readString('2a29'),
+        model: await readString('2a24'),
+        firmwareRevision: await readString('2a26'),
+      };
+    },
     async readVersion() {
       return (await readVersionChecked()).version;
     },

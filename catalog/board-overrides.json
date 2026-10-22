@@ -20,7 +20,10 @@
       "name": "Heltec Mesh Node T114 (no display)"
     },
     "heltect096": {
-      "name": "Heltec Mesh Node T096"
+      "name": "Heltec Mesh Node T096",
+      "bootNames": [
+        "HT-n5262G-OTA"
+      ]
     },
     "heltect1": {
       "name": "Heltec T1"

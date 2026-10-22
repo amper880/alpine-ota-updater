@@ -140,7 +140,19 @@ export type DeviceMatch = 'match' | 'mismatch' | 'unknown';
  * - mismatch: the name belongs to other boards
  * - unknown: e.g. the bootloader ("AdaDFU"), which does not reveal the board
  */
-export function matchBleName(boards: Board[], name: string, expected: string | undefined): { match: DeviceMatch; knownAs: string[] } {
+export function matchBleName(
+  boards: Board[],
+  name: string,
+  expected: string | undefined,
+  expectedBootNames: string[] = [],
+): { match: DeviceMatch; knownAs: string[] } {
+  // Factory bootloaders with a board-specific name (e.g. Heltec "HT-n5262G-OTA").
+  const lower = name.toLowerCase();
+  const bootOwners = boards.filter((b) => b.bootNames?.some((n) => n.toLowerCase() === lower)).map((b) => b.name);
+  if (bootOwners.length > 0) {
+    const own = expectedBootNames.some((n) => n.toLowerCase() === lower);
+    return { match: own ? 'match' : 'mismatch', knownAs: bootOwners };
+  }
   // The OTAFIX bootloader advertises "<BOARD>_DFU" for the app's "<BOARD>_OTA".
   const base = (n: string) => n.replace(/_(OTA|DFU)$/i, '').toLowerCase();
   const isNodeName = /_(OTA|DFU)$/i.test(name);

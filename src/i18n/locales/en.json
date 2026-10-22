@@ -193,5 +193,8 @@
   "err.local.merged": "This is a full-flash (\"merged\") image, which can only be written over USB. Pick the non-merged .bin (ZephCore: \"-update.bin\").",
   "err.local.not-ota-image": "This .bin is not an ESP32 OTA image (neither an ESP-IDF application nor MCUboot).",
   "local.sourceName": "Custom firmware file",
-  "local.sourceDesc": "A firmware file from this device, e.g. your own build or one from elsewhere."
+  "local.sourceDesc": "A firmware file from this device, e.g. your own build or one from elsewhere.",
+  "flash.factoryBootloader": "This looks like the factory bootloader of the node. Its Bluetooth update is often unreliable, so the app sends the firmware in small packets — it takes longer. If it still fails, install the OTAFIX bootloader once over USB.",
+  "flash.factoryBootloaderFailed": "The node runs its factory bootloader, whose Bluetooth update often fails. Try once more; if it keeps failing, install the OTAFIX bootloader over USB (copy its update-….uf2 to the drive that appears after a double reset). After that, Bluetooth updates are fast and reliable.",
+  "flash.otafixLink": "OTAFIX bootloader on GitHub"
 }

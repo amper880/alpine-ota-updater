@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Factory bootloaders are recognised: the Heltec stock bootloader name (`HT-n5262G-OTA` for the
+  T096) is listed as *Bootloader* and matched to the board, and every bootloader is identified
+  by its Device Information firmware revision (logged). For factory (non-OTAFIX) bootloaders
+  the update uses 20-byte packets and a receipt every 8 packets, shows a note before the start
+  and, if it fails, points to the OTAFIX bootloader.
+
 - German translation (*Deutsch* in the language menu; picked automatically on German systems).
 
 - *Custom firmware file* as the last firmware source: a DFU package (.zip, nRF52) or an OTA

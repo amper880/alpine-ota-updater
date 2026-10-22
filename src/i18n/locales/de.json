@@ -193,5 +193,8 @@
   "err.local.merged": "Das ist ein vollständiges Flash-Image („merged“), das sich nur per USB schreiben lässt. Wähle die .bin ohne „merged“ (ZephCore: „-update.bin“).",
   "err.local.not-ota-image": "Diese .bin ist kein ESP32-OTA-Image (weder ESP-IDF-Anwendung noch MCUboot).",
   "local.sourceName": "Eigene Firmware-Datei",
-  "local.sourceDesc": "Eine Firmware-Datei von diesem Gerät, z. B. ein eigener Build oder eine anderswo heruntergeladene Datei."
+  "local.sourceDesc": "Eine Firmware-Datei von diesem Gerät, z. B. ein eigener Build oder eine anderswo heruntergeladene Datei.",
+  "flash.factoryBootloader": "Das sieht nach dem Werks-Bootloader des Knotens aus. Dessen Bluetooth-Update ist oft unzuverlässig, daher sendet die App die Firmware in kleinen Paketen – das dauert länger. Klappt es trotzdem nicht, installiere einmalig per USB den OTAFIX-Bootloader.",
+  "flash.factoryBootloaderFailed": "Auf dem Knoten läuft sein Werks-Bootloader, dessen Bluetooth-Update oft scheitert. Versuche es noch einmal; klappt es weiterhin nicht, installiere per USB den OTAFIX-Bootloader (kopiere dessen update-….uf2 auf das Laufwerk, das nach einem Doppel-Reset erscheint). Danach sind Bluetooth-Updates schnell und zuverlässig.",
+  "flash.otafixLink": "OTAFIX-Bootloader auf GitHub"
 }

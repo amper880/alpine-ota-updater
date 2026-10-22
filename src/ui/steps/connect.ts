@@ -1,10 +1,10 @@
-import { h, icon, mount } from '../dom.ts';
+import { extLink, h, icon, mount } from '../dom.ts';
 import { errorExplanation } from '../error-view.ts';
 import { locale, t } from '../../i18n/index.ts';
 import { selectedBoard, selectedFirmware, sourceLabel, store, type PickedDevice } from '../../app/state.ts';
 import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
 import { cancelWifiFlash, expectedProfile, findWifiNode, startWifiFlash } from '../../app/wifi.ts';
-import { classify, type ScannedDevice } from '../../lib/ble/candidates.ts';
+import { classify, isFactoryBootloader, type ScannedDevice } from '../../lib/ble/candidates.ts';
 import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes } from '../../lib/util/format.ts';
 import { loadPref, savePref } from '../../lib/util/storage.ts';
@@ -25,6 +25,8 @@ function kindChip(kind: string): HTMLElement | null {
   if (kind === 'other') return null;
   return h('span', { class: 'chip' }, t(`device.kind.${kind}`));
 }
+
+const OTAFIX_URL = 'https://github.com/oltaco/Adafruit_nRF52_Bootloader_OTAFIX';
 
 /** Errors raised before anything was written to the node: it is unchanged. */
 const NOT_STARTED = new Set(['err.ble.pairing', 'err.ble.noDfuService', 'err.fwMissing', 'err.dfu.package', 'err.wifi.wrongFamily']);
@@ -380,6 +382,18 @@ export function flashBody(): HTMLElement {
     f.phase === 'cancelled' ? h('p', { class: 'callout info' }, icon('info'), t('flash.cancelled')) : null,
     confirmBox,
     cached.sourceId === 'zephcore' && !isWifi ? h('div', { class: 'callout warn' }, icon('info'), h('p', null, t('flash.zephcoreFirstBoot'))) : null,
+    // Factory bootloader picked directly (e.g. Heltec "HT-n5262G-OTA" or "AdaDFU").
+    !isWifi && f.phase === 'idle' && device.kind === 'bootloader' && isFactoryBootloader(device.name)
+      ? h('div', { class: 'callout info' }, icon('info'), h('p', null, t('flash.factoryBootloader')))
+      : null,
+    !isWifi && f.phase === 'error' && f.factoryBootloader
+      ? h(
+          'div',
+          { class: 'callout warn' },
+          icon('alert'),
+          h('div', null, h('p', null, t('flash.factoryBootloaderFailed')), extLink(OTAFIX_URL, t('flash.otafixLink'), ' ', icon('external', 14))),
+        )
+      : null,
     f.phase === 'idle' ? h('p', { class: 'hint' }, t('flash.before')) : null,
     h(
       'div',

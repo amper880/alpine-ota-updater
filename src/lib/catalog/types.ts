@@ -22,6 +22,11 @@ export interface Board {
   roles: Role[];
   /** BLE name advertised after `start ota` (nRF52 only). */
   bleOtaName?: string;
+  /**
+   * Names the board's factory (non-OTAFIX) bootloader advertises in DFU mode, e.g.
+   * "HT-n5262G-OTA" for the Heltec T096 (curated in catalog/board-overrides.json).
+   */
+  bootNames?: string[];
 }
 
 /** One entry of catalog/sources.json. */

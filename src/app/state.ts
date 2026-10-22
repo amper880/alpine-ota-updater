@@ -71,6 +71,8 @@ export interface FlashState {
   startedAt?: number;
   error?: ErrorInfo;
   log: string[];
+  /** Set once the bootloader was identified: true = factory (non-OTAFIX) bootloader. */
+  factoryBootloader?: boolean;
 }
 
 export const IDLE_FLASH: FlashState = { phase: 'idle', sent: 0, total: 0, log: [] };

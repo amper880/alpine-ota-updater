@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { baseName, classify, pickBootloader, type ScannedDevice } from '../src/lib/ble/candidates.ts';
+import { baseName, classify, isFactoryBootloader, pickBootloader, type ScannedDevice } from '../src/lib/ble/candidates.ts';
 import { DFU_SERVICE } from '../src/lib/dfu/legacy-dfu.ts';
 
 const dev = (name: string, address: string, rssi = -60, services: string[] = []): ScannedDevice => ({ name, address, rssi, services });
@@ -32,4 +32,13 @@ test('pickBootloader uses the selected board for a companion', () => {
   const prev = { address: 'AA', name: 'MeshCore-Amper', bootBase: 'T114' };
   assert.equal(pickBootloader([dev('AdaDFU', 'BB', -40), dev('T114_DFU', 'CC', -80)], prev)?.address, 'CC');
   assert.equal(pickBootloader([dev('MeshCore-Amper', 'AA')], prev), undefined);
+});
+
+test('factory bootloaders: Heltec "<MODEL>-OTA" names and the DIS firmware revision', () => {
+  assert.equal(classify(dev('HT-n5262G-OTA', 'a')), 'bootloader');
+  assert.equal(isFactoryBootloader('HT-n5262G-OTA'), true);
+  assert.equal(isFactoryBootloader('AdaDFU'), true);
+  assert.equal(isFactoryBootloader('T096_DFU'), false);
+  assert.equal(isFactoryBootloader('AdaDFU', '0.9.2-OTAFIX2.3-BP1.4 s140 6.1.1'), false);
+  assert.equal(isFactoryBootloader('T114_DFU', '0.6.2 s140 6.1.1'), true);
 });

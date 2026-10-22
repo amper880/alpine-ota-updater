@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-18",
+  "generated": "2026-10-22",
   "source": "meshcore-dev/MeshCore",
   "boards": [
     {
@@ -341,7 +341,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "T096_OTA"
+      "bleOtaName": "T096_OTA",
+      "bootNames": [
+        "HT-n5262G-OTA"
+      ]
     },
     {
       "id": "heltect114",

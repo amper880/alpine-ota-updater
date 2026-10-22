@@ -193,5 +193,8 @@
   "err.local.merged": "Ez teljes flash-képfájl („merged”), ami csak USB-n írható. Válaszd a nem merged .bin fájlt (ZephCore-nál: „-update.bin”).",
   "err.local.not-ota-image": "Ez a .bin nem ESP32 OTA-képfájl (se ESP-IDF alkalmazás, se MCUboot).",
   "local.sourceName": "Egyéni firmware-fájl",
-  "local.sourceDesc": "Firmware-fájl erről a készülékről, pl. saját fordítás vagy máshonnan letöltött fájl."
+  "local.sourceDesc": "Firmware-fájl erről a készülékről, pl. saját fordítás vagy máshonnan letöltött fájl.",
+  "flash.factoryBootloader": "Ez valószínűleg az eszköz gyári bootloadere. Ennek a Bluetooth-os frissítése gyakran megbízhatatlan, ezért az app kis csomagokban küldi a firmware-t – ez tovább tart. Ha így sem sikerül, egyszer telepítsd USB-n az OTAFIX bootloadert.",
+  "flash.factoryBootloaderFailed": "Az eszközön a gyári bootloader fut, aminek a Bluetooth-os frissítése gyakran elakad. Próbáld meg még egyszer; ha továbbra sem megy, telepítsd USB-n az OTAFIX bootloadert (az update-….uf2 fájlját másold a dupla reset után megjelenő meghajtóra). Utána a Bluetooth-os frissítés gyors és megbízható.",
+  "flash.otafixLink": "Az OTAFIX bootloader a GitHubon"
 }

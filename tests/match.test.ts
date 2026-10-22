@@ -164,6 +164,12 @@ test('BLE name matching', () => {
   assert.equal(matchBleName(boards, 'AdaDFU', t114.bleOtaName).match, 'unknown');
   assert.equal(matchBleName(boards, 'T114_DFU', t114.bleOtaName).match, 'match');
   assert.equal(matchBleName(boards, 'RAK4631_DFU', t114.bleOtaName).match, 'mismatch');
+  // factory bootloader names curated per board
+  const t096 = board('heltect096');
+  assert.equal(matchBleName(boards, 'HT-n5262G-OTA', t096.bleOtaName, t096.bootNames).match, 'match');
+  const other = matchBleName(boards, 'HT-n5262G-OTA', t114.bleOtaName, t114.bootNames);
+  assert.equal(other.match, 'mismatch');
+  assert.deepEqual(other.knownAs, [t096.name]);
 });
 
 test('WiFi board name matching', () => {

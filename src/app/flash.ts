@@ -46,7 +46,8 @@ export function setShowAll(showAll: boolean): void {
 
 export function selectDevice(d: ScannedDevice): void {
   void stopScan();
-  const { match, knownAs } = matchBleName(BOARDS, d.name, selectedBoard()?.bleOtaName);
+  const board = selectedBoard();
+  const { match, knownAs } = matchBleName(BOARDS, d.name, board?.bleOtaName, board?.bootNames);
   const picked: PickedDevice = { id: d.address, name: d.name || d.address, match, knownAs, kind: classify(d) };
   store.set((s) => ({ device: picked, flash: IDLE_FLASH, openStep: undefined, scan: { ...s.scan, status: 'idle' } }));
 }
@@ -89,6 +90,7 @@ export async function startFlash(prn: number, compatPackets = false): Promise<vo
       signal: flashAbort.signal,
       onLog: log,
       onStage: (stage) => setStage(stage),
+      onBootloader: ({ factory }) => store.set((st) => ({ flash: { ...st.flash, factoryBootloader: factory } })),
       onProgress: (sent, total) => {
         const now = performance.now();
         if (now - lastProgress < 120 && sent !== total) return;
