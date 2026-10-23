@@ -7,30 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-23
+
 ### Added
 
 - Bluetooth: if the firmware transfer fails (e.g. *Timed out waiting for packet receipt*), the
   app reconnects to the bootloader, which stays in DFU mode, and starts over once with 20-byte
   packets and a receipt every 8 packets. The log shows how many bytes had been sent.
-
 - Factory bootloaders are recognised: the Heltec stock bootloader name (`HT-n5262G-OTA` for the
   T096) is listed as *Bootloader* and matched to the board, and every bootloader is identified
   by its Device Information firmware revision (logged). For factory (non-OTAFIX) bootloaders
   the update uses 20-byte packets and a receipt every 8 packets, shows a note before the start
   and, if it fails, points to the OTAFIX bootloader.
-
 - German translation (*Deutsch* in the language menu; picked automatically on German systems).
-
 - *Custom firmware file* as the last firmware source: a DFU package (.zip, nRF52) or an OTA
   image (.bin, ESP32) can be picked from disk. It is checked (.uf2 / merged images / non-DFU
   zips are refused with an explanation), stored in the firmware library as *Custom file* and
   used like a downloaded release; for ESP32 its format also picks the WiFi guide (MeshCore or
   ZephCore).
-
 - App update check: at start-up the app asks GitHub for the latest release and, when it is
   newer than the running version, shows a banner with *Download* (the installer for this
   platform: `.exe`, `.dmg`, `.AppImage` or `.apk`), *What's new* and *Later* (hides it until a
   still newer version appears). Offline or failed checks stay silent.
+
+### Changed
+
+- Removed leftovers of the original web-app concept (stale local web build, ignores and
+  comments about the download proxy, Web Bluetooth and the service worker).
 
 ## [0.5.0] - 2026-10-19
 
@@ -168,7 +171,8 @@ Tested on hardware: Heltec T114 updated over Bluetooth from Windows 11 and an An
 - Documentation: specification, user guide, development, deployment, adding a source,
   translating.
 
-[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.4.0-beta...v0.5.0
 [0.4.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.2.0...v0.3.0

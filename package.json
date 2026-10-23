@@ -1,6 +1,6 @@
 {
   "name": "alpine-ota-updater",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Over-the-air firmware updater app for MeshCore repeater and room server nodes (Bluetooth DFU / WiFi OTA).",
   "author": "Amper",
   "license": "MIT",
