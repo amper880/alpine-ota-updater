@@ -2,31 +2,50 @@
   "$comment": "Curated display names and vendors. Keys are lowercase alphanumeric board keys (see boards.json 'id'). Applied by scripts/build-catalog.mjs.",
   "boards": {
     "rak4631": {
-      "name": "RAK WisBlock 4631"
+      "name": "RAK WisBlock 4631",
+      "bootNames": [
+        "4631_DFU"
+      ]
     },
     "rak3401": {
-      "name": "RAK WisBlock 3401 (1W)"
+      "name": "RAK WisBlock 3401 (1W)",
+      "bootNames": [
+        "3401_DFU"
+      ]
     },
     "rak3112": {
       "name": "RAK WisBlock 3112"
     },
     "rakwismeshtag": {
-      "name": "RAK WisMesh Tag"
+      "name": "RAK WisMesh Tag",
+      "bootNames": [
+        "RTAG_DFU"
+      ]
     },
     "heltect114": {
-      "name": "Heltec Mesh Node T114"
+      "name": "Heltec Mesh Node T114",
+      "bootNames": [
+        "T114_DFU"
+      ]
     },
     "heltect114withoutdisplay": {
-      "name": "Heltec Mesh Node T114 (no display)"
+      "name": "Heltec Mesh Node T114 (no display)",
+      "bootNames": [
+        "T114_DFU"
+      ]
     },
     "heltect096": {
       "name": "Heltec Mesh Node T096",
       "bootNames": [
+        "T096_DFU",
         "HT-n5262G-OTA"
       ]
     },
     "heltect1": {
-      "name": "Heltec T1"
+      "name": "Heltec T1",
+      "bootNames": [
+        "T1_DFU"
+      ]
     },
     "heltecmeshsolar": {
       "name": "Heltec MeshSolar"
@@ -71,22 +90,34 @@
       "name": "Heltec RC32 (no display)"
     },
     "t1000e": {
-      "name": "SenseCAP T1000-E"
+      "name": "SenseCAP T1000-E",
+      "bootNames": [
+        "T1KE_DFU"
+      ]
     },
     "sensecapsolar": {
-      "name": "SenseCAP Solar Node P1"
+      "name": "SenseCAP Solar Node P1",
+      "bootNames": [
+        "SCAP_DFU"
+      ]
     },
     "wiowm1110": {
       "name": "Wio WM1110 Dev Kit"
     },
     "wiotrackerl1": {
-      "name": "Wio Tracker L1"
+      "name": "Wio Tracker L1",
+      "bootNames": [
+        "WTL1_DFU"
+      ]
     },
     "wiotrackerl11w": {
       "name": "Wio Tracker L1 (1W)"
     },
     "xiaonrf52": {
-      "name": "XIAO nRF52840"
+      "name": "XIAO nRF52840",
+      "bootNames": [
+        "XIAO_DFU"
+      ]
     },
     "xiaoc3": {
       "name": "XIAO ESP32-C3"
@@ -98,7 +129,10 @@
       "name": "XIAO ESP32-S3 + Wio-SX1262"
     },
     "lilygotecho": {
-      "name": "LILYGO T-Echo"
+      "name": "LILYGO T-Echo",
+      "bootNames": [
+        "LGTE_DFU"
+      ]
     },
     "lilygotechocard": {
       "name": "LILYGO T-Echo Card"
@@ -153,7 +187,10 @@
     },
     "promicro": {
       "name": "ProMicro nRF52840 (DIY)",
-      "vendor": "DIY"
+      "vendor": "DIY",
+      "bootNames": [
+        "PROM_DFU"
+      ]
     },
     "generice22sx1262": {
       "name": "Generic ESP32 + E22 (SX1262)",
@@ -246,6 +283,21 @@
     },
     "wiotrackerl1eink": {
       "name": "Wio Tracker L1 (e-ink)"
+    },
+    "thinknodem1": {
+      "bootNames": [
+        "TNM1_DFU"
+      ]
+    },
+    "thinknodem3": {
+      "bootNames": [
+        "TNM3_DFU"
+      ]
+    },
+    "thinknodem6": {
+      "bootNames": [
+        "TNM6_DFU"
+      ]
     }
   }
 }

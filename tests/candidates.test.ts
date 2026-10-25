@@ -42,3 +42,8 @@ test('factory bootloaders: Heltec "<MODEL>-OTA" names and the DIS firmware revis
   assert.equal(isFactoryBootloader('AdaDFU', '0.9.2-OTAFIX2.3-BP1.4 s140 6.1.1'), false);
   assert.equal(isFactoryBootloader('T114_DFU', '0.6.2 s140 6.1.1'), true);
 });
+
+test('pickBootloader finds the board OTAFIX name after the jump', () => {
+  const prev = { address: 'AA', name: 'SENSECAP_SOLAR_OTA', bootNames: ['SCAP_DFU'] };
+  assert.equal(pickBootloader([dev('AdaDFU', 'BB', -40), dev('SCAP_DFU', 'CC', -80)], prev)?.address, 'CC');
+});

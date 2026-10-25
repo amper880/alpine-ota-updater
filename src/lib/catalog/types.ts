@@ -23,8 +23,9 @@ export interface Board {
   /** BLE name advertised after `start ota` (nRF52 only). */
   bleOtaName?: string;
   /**
-   * Names the board's factory (non-OTAFIX) bootloader advertises in DFU mode, e.g.
-   * "HT-n5262G-OTA" for the Heltec T096 (curated in catalog/board-overrides.json).
+   * Names the board's bootloader advertises in DFU mode, curated in
+   * catalog/board-overrides.json: the OTAFIX name (README "BLE advertising names", e.g.
+   * "SCAP_DFU" for the SenseCAP Solar P1) and factory names (e.g. "HT-n5262G-OTA").
    */
   bootNames?: string[];
 }

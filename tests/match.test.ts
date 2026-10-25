@@ -164,6 +164,13 @@ test('BLE name matching', () => {
   assert.equal(matchBleName(boards, 'AdaDFU', t114.bleOtaName).match, 'unknown');
   assert.equal(matchBleName(boards, 'T114_DFU', t114.bleOtaName).match, 'match');
   assert.equal(matchBleName(boards, 'RAK4631_DFU', t114.bleOtaName).match, 'mismatch');
+  // OTAFIX names that differ from the app's "<BOARD>_OTA" name (README "BLE advertising names")
+  const scap = board('sensecapsolar');
+  assert.equal(matchBleName(boards, 'SCAP_DFU', scap.bleOtaName, scap.bootNames).match, 'match');
+  const rak = board('rak4631');
+  assert.equal(matchBleName(boards, '4631_DFU', rak.bleOtaName, rak.bootNames).match, 'match');
+  assert.equal(matchBleName(boards, '4631_DFU', t114.bleOtaName, t114.bootNames).match, 'mismatch');
+  assert.equal(matchBleName(boards, 'T114_DFU', t114.bleOtaName, t114.bootNames).match, 'match');
   // factory bootloader names curated per board
   const t096 = board('heltect096');
   assert.equal(matchBleName(boards, 'HT-n5262G-OTA', t096.bleOtaName, t096.bootNames).match, 'match');
@@ -178,4 +185,14 @@ test('WiFi board name matching', () => {
   assert.equal(matchWifiBoard('Xiao C3', board('xiaoc3')), 'match');
   assert.equal(matchWifiBoard('Generic ESP32', board('heltecv3')), 'unknown');
   assert.equal(matchWifiBoard('', board('heltecv3')), 'unknown');
+});
+
+test('catalog: OTAFIX advertising names are mapped', () => {
+  const expected: Record<string, string> = {
+    thinknodem1: 'TNM1_DFU', thinknodem3: 'TNM3_DFU', thinknodem6: 'TNM6_DFU', heltect096: 'T096_DFU',
+    heltect1: 'T1_DFU', heltect114: 'T114_DFU', lilygotecho: 'LGTE_DFU', promicro: 'PROM_DFU',
+    rak4631: '4631_DFU', rak3401: '3401_DFU', rakwismeshtag: 'RTAG_DFU', sensecapsolar: 'SCAP_DFU',
+    t1000e: 'T1KE_DFU', wiotrackerl1: 'WTL1_DFU', xiaonrf52: 'XIAO_DFU',
+  };
+  for (const [id, name] of Object.entries(expected)) assert.ok(board(id).bootNames?.includes(name), `${id} → ${name}`);
 });

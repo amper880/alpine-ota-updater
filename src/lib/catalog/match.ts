@@ -146,15 +146,17 @@ export function matchBleName(
   expected: string | undefined,
   expectedBootNames: string[] = [],
 ): { match: DeviceMatch; knownAs: string[] } {
-  // Factory bootloaders with a board-specific name (e.g. Heltec "HT-n5262G-OTA").
+  const base = (n: string) => n.replace(/_(OTA|DFU)$/i, '').toLowerCase();
+  // Curated bootloader names (OTAFIX "SCAP_DFU", factory "HT-n5262G-OTA").
   const lower = name.toLowerCase();
   const bootOwners = boards.filter((b) => b.bootNames?.some((n) => n.toLowerCase() === lower)).map((b) => b.name);
   if (bootOwners.length > 0) {
-    const own = expectedBootNames.some((n) => n.toLowerCase() === lower);
+    const own =
+      expectedBootNames.some((n) => n.toLowerCase() === lower) ||
+      (!!expected && /_DFU$/i.test(name) && base(name) === base(expected));
     return { match: own ? 'match' : 'mismatch', knownAs: bootOwners };
   }
-  // The OTAFIX bootloader advertises "<BOARD>_DFU" for the app's "<BOARD>_OTA".
-  const base = (n: string) => n.replace(/_(OTA|DFU)$/i, '').toLowerCase();
+  // Otherwise OTAFIX builds advertise "<BOARD>_DFU" for the app's "<BOARD>_OTA".
   const isNodeName = /_(OTA|DFU)$/i.test(name);
   const knownAs = isNodeName ? boards.filter((b) => b.bleOtaName && base(b.bleOtaName) === base(name)).map((b) => b.name) : [];
   if (expected && isNodeName && base(name) === base(expected)) return { match: 'match', knownAs };

@@ -31,7 +31,7 @@ function timeout<T>(p: Promise<T>, ms: number): Promise<T | undefined> {
 }
 
 /** Scans until a bootloader shows up (or the time runs out). */
-async function findBootloader(previous: { address: string; name: string; bootBase?: string }, ms: number, log: (m: string) => void): Promise<ScannedDevice | undefined> {
+async function findBootloader(previous: { address: string; name: string; bootBase?: string; bootNames?: string[] }, ms: number, log: (m: string) => void): Promise<ScannedDevice | undefined> {
   let found: ScannedDevice | undefined;
   let latest: ScannedDevice[] = [];
   const done = scan((devices) => {
@@ -123,6 +123,8 @@ export interface BleTarget {
   name: string;
   /** "<BOARD>" of the selected board's "<BOARD>_OTA" name; finds its "<BOARD>_DFU" bootloader. */
   bootBase?: string;
+  /** Bootloader names of the selected board (catalog `bootNames`). */
+  bootNames?: string[];
   /** MeshCore Bluetooth companion: buttonless DFU behind pairing, always in application mode. */
   companion?: boolean;
 }
@@ -248,7 +250,7 @@ export async function flashOverNativeBle(
       await sleep(2000);
       abortCheck();
       stage('reconnecting');
-      const boot = await findBootloader({ address: conn.address, name: bootName, bootBase: device.bootBase }, 15000, log);
+      const boot = await findBootloader({ address: conn.address, name: bootName, bootBase: device.bootBase, bootNames: device.bootNames }, 15000, log);
       conn = await connectWithRetry(boot ? { address: boot.address, name: boot.name } : { address: conn.address, name: bootName }, log);
       stage('transferring');
       t0 = Date.now();

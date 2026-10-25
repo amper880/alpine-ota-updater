@@ -77,11 +77,13 @@ export async function startFlash(prn: number, compatPackets = false): Promise<vo
     const pkg = await parseDfuPackage(new Uint8Array(await fw.blob.arrayBuffer()));
     log(`Package: application ${pkg.firmware.length} bytes, init packet ${pkg.initPacket.length} bytes`);
     let lastProgress = 0;
-    const bleOtaName = selectedBoard()?.bleOtaName;
+    const board = selectedBoard();
+    const bleOtaName = board?.bleOtaName;
     const target = {
       address: s.device.id,
       name: s.device.name,
       bootBase: bleOtaName ? baseName(bleOtaName) : undefined,
+      bootNames: board?.bootNames,
       companion: s.device.kind === 'companion',
     };
     await flashOverNativeBle(target, pkg.firmware, pkg.initPacket, {

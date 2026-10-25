@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-22",
+  "generated": "2026-10-25",
   "source": "meshcore-dev/MeshCore",
   "boards": [
     {
@@ -104,7 +104,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "ProMicro_OTA"
+      "bleOtaName": "ProMicro_OTA",
+      "bootNames": [
+        "PROM_DFU"
+      ]
     },
     {
       "id": "ebyteeoras3",
@@ -132,7 +135,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "THINKNODE_M1_OTA"
+      "bleOtaName": "THINKNODE_M1_OTA",
+      "bootNames": [
+        "TNM1_DFU"
+      ]
     },
     {
       "id": "thinknodem2",
@@ -160,7 +166,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "THINKNODE_M3_OTA"
+      "bleOtaName": "THINKNODE_M3_OTA",
+      "bootNames": [
+        "TNM3_DFU"
+      ]
     },
     {
       "id": "thinknodem4",
@@ -203,7 +212,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "THINKNODE_M6_OTA"
+      "bleOtaName": "THINKNODE_M6_OTA",
+      "bootNames": [
+        "TNM6_DFU"
+      ]
     },
     {
       "id": "thinknodem7",
@@ -343,6 +355,7 @@
       ],
       "bleOtaName": "T096_OTA",
       "bootNames": [
+        "T096_DFU",
         "HT-n5262G-OTA"
       ]
     },
@@ -359,7 +372,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "T114_OTA"
+      "bleOtaName": "T114_OTA",
+      "bootNames": [
+        "T114_DFU"
+      ]
     },
     {
       "id": "heltect114withoutdisplay",
@@ -374,7 +390,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "T114_OTA"
+      "bleOtaName": "T114_OTA",
+      "bootNames": [
+        "T114_DFU"
+      ]
     },
     {
       "id": "heltecmeshsolar",
@@ -430,7 +449,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "T1_OTA"
+      "bleOtaName": "T1_OTA",
+      "bootNames": [
+        "T1_DFU"
+      ]
     },
     {
       "id": "heltectowerv2",
@@ -796,7 +818,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "TECHO_OTA"
+      "bleOtaName": "TECHO_OTA",
+      "bootNames": [
+        "LGTE_DFU"
+      ]
     },
     {
       "id": "lilygotechocard",
@@ -1116,7 +1141,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "RAK3401_OTA"
+      "bleOtaName": "RAK3401_OTA",
+      "bootNames": [
+        "3401_DFU"
+      ]
     },
     {
       "id": "rak4631",
@@ -1131,7 +1159,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "RAK4631_OTA"
+      "bleOtaName": "RAK4631_OTA",
+      "bootNames": [
+        "4631_DFU"
+      ]
     },
     {
       "id": "rakwismeshtag",
@@ -1146,7 +1177,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "WISMESHTAG_OTA"
+      "bleOtaName": "WISMESHTAG_OTA",
+      "bootNames": [
+        "RTAG_DFU"
+      ]
     },
     {
       "id": "sensecapsolar",
@@ -1161,7 +1195,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "SENSECAP_SOLAR_OTA"
+      "bleOtaName": "SENSECAP_SOLAR_OTA",
+      "bootNames": [
+        "SCAP_DFU"
+      ]
     },
     {
       "id": "t1000e",
@@ -1176,7 +1213,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "T1000E_OTA"
+      "bleOtaName": "T1000E_OTA",
+      "bootNames": [
+        "T1KE_DFU"
+      ]
     },
     {
       "id": "wiotrackerl1",
@@ -1191,7 +1231,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "WioTrackerL1_OTA"
+      "bleOtaName": "WioTrackerL1_OTA",
+      "bootNames": [
+        "WTL1_DFU"
+      ]
     },
     {
       "id": "wiotrackerl11w",
@@ -1288,7 +1331,10 @@
         "repeater",
         "room-server"
       ],
-      "bleOtaName": "XIAO_NRF52_OTA"
+      "bleOtaName": "XIAO_NRF52_OTA",
+      "bootNames": [
+        "XIAO_DFU"
+      ]
     },
     {
       "id": "tenstarc3sx1262",

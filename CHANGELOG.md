@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- OTAFIX bootloader names that differ from the board's `<BOARD>_OTA` name (e.g. `SCAP_DFU` for
+  the SenseCAP Solar P1, `4631_DFU`, `TNM1_DFU`, `LGTE_DFU`, `PROM_DFU`, `T1KE_DFU`,
+  `WTL1_DFU`, `XIAO_DFU`) are now recognised as the selected board — no more *Different
+  device* warning — and found again after the node restarts into the bootloader. Names are
+  taken from the OTAFIX README (*BLE advertising names*).
+
 ## [0.5.1] - 2026-10-23
 
 ### Added

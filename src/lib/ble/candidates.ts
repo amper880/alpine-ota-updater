@@ -46,11 +46,15 @@ export function baseName(name: string): string {
  */
 export function pickBootloader(
   devices: ScannedDevice[],
-  previous: { address: string; name: string; bootBase?: string },
+  previous: { address: string; name: string; bootBase?: string; bootNames?: string[] },
 ): ScannedDevice | undefined {
   const boots = devices.filter((d) => classify(d) === 'bootloader');
   const same = boots.find((d) => d.address === previous.address);
   if (same) return same;
+  // Known bootloader names of the selected board (OTAFIX "SCAP_DFU", factory "HT-n5262G-OTA").
+  const known = (previous.bootNames ?? []).map((n) => n.toLowerCase());
+  const byName = boots.find((d) => known.includes(d.name.toLowerCase()));
+  if (byName) return byName;
   // A companion's name ("MeshCore-…") says nothing about the board; use the selected board's.
   const bases = [baseName(previous.name), previous.bootBase].filter(Boolean).map((b) => b!.toLowerCase());
   const named = boots.find((d) => bases.includes(baseName(d.name).toLowerCase()));
