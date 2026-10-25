@@ -45,11 +45,17 @@ a cable.
 ### Bluetooth update (nRF52)
 
 1. Send `start ota` from the companion app. The node appears as `<BOARD>_OTA`
-   (e.g. `T114_OTA`). A node already in bootloader mode (`AdaDFU` or `<BOARD>_DFU`) can be
-   updated directly.
+   (e.g. `T114_OTA`). A node already in bootloader mode can be updated directly. With the
+   OTAFIX bootloader it appears under a short board name, which is not always the same as
+   the `_OTA` name — e.g. `SCAP_DFU` (SenseCAP Solar P1), `4631_DFU` (RAK 4631), `TNM1_DFU`
+   (ThinkNode M1), `LGTE_DFU` (T-Echo); see the
+   [OTAFIX list](https://github.com/oltaco/Adafruit_nRF52_Bootloader_OTAFIX#ble-advertising-names).
+   Other bootloaders appear as `AdaDFU` or a vendor name such as `HT-n5262G-OTA`.
 2. Press **Scan**. Nodes in update mode appear in the list with their signal strength;
    *Show all Bluetooth devices* lists everything nearby.
-3. Select the node. If its name does not match the selected device type, the update only
+3. Select the node. The app knows the bootloader names of the boards in the OTAFIX list; for
+   other boards (e.g. T-Echo Lite, Wio Tracker L1 variants, XIAO-based ikoka boards) the name
+   cannot be checked. If its name does not match the selected device type, the update only
    starts after you tick *I understand, update anyway*.
 4. Press **Start update**. The app restarts the node into its bootloader, reconnects and
    sends the firmware. Keep the device close and the app open.

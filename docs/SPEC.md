@@ -89,14 +89,16 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 ### 4.1 nRF52 (BLE) path
 
 1. The user runs `start ota` on the node; it now advertises as `<BOARD>_OTA`
-   (e.g. `RAK4631_OTA`, `T114_OTA`). A node already in bootloader mode (`AdaDFU` or
-   `<BOARD>_DFU` with the OTAFIX bootloader) works too.
+   (e.g. `RAK4631_OTA`, `T114_OTA`). A node already in bootloader mode works too: `AdaDFU`,
+   the OTAFIX name (`<BOARD>_DFU` or an abbreviation such as `SCAP_DFU`, `4631_DFU`) or a
+   vendor name (`HT-n5262G-OTA`). Known names per board are curated as `bootNames` (§7.2).
 2. **SCAN** → the app scans for 12 s and lists nodes in update mode inside the app
    (application mode or bootloader). "Show all Bluetooth devices" disables the filter.
 3. The user selects a node; the name is checked against the selected device type (§4.3).
 4. **Start update:** if the node runs the application, the app writes the buttonless
    "enter bootloader" command, waits for the disconnect, rescans and connects to the
-   bootloader (same address, else `<BOARD>_DFU`, else the strongest bootloader).
+   bootloader (same address, else one of the board's `bootNames`, else `<BOARD>_DFU`, else
+   the strongest bootloader).
 5. Legacy DFU transfer with progress, speed and ETA.
 6. The bootloader validates and boots the new firmware. The app shows success and a hint to
    check `ver` from the companion app.
@@ -203,7 +205,8 @@ The UI is a single page with these steps as stacked cards (mobile) or a two-colu
 MeshCore's nRF52 firmware (`NRF52Board::startOTAUpdate`) starts BLE advertising under
 `<BOARD>_OTA` and exposes the Adafruit `BLEDfu` service (Nordic **legacy** DFU, buttonless).
 The bootloader is the Adafruit nRF52 bootloader (or the OTAFIX fork), which implements the
-legacy DFU protocol and advertises as `AdaDFU` or `<BOARD>_DFU`.
+legacy DFU protocol and advertises as `AdaDFU` (stock) or a board-specific OTAFIX name
+(README "BLE advertising names": `T114_DFU`, `SCAP_DFU`, `4631_DFU`, …).
 
 | Item | UUID |
 |---|---|

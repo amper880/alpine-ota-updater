@@ -85,6 +85,22 @@ Each region (header, steps, side panel, library dialog) owns a root element and 
 children with `h()` when its selected state changes. Elements that must keep focus while
 typing (the device search box) are created once and reused.
 
+## Board catalog
+
+`catalog/boards.json` is generated (`npm run catalog -- <MeshCore checkout>`, see
+`scripts/build-catalog.mjs`); hand-made additions go into `catalog/board-overrides.json`, keyed
+by board id, and win over the generated values:
+
+- `name`, `vendor`, `aliases` — display name, vendor group, extra file-name spellings.
+- `bootNames` — names the board's bootloader advertises in DFU mode. Add the OTAFIX name when
+  it differs from `<BOARD>_OTA` → `<BOARD>_DFU` (source: the OTAFIX README, *BLE advertising
+  names*, e.g. `SCAP_DFU`) and factory names seen in the field (e.g. `HT-n5262G-OTA`). They
+  make the name check succeed and let the app find the bootloader after the jump.
+
+Not mapped yet (the OTAFIX list does not cover them, or the match is unsure): Minewsemi
+ME25LS01 (OTAFIX lists an *MX25LE01*, `MX25_DFU`), T-Echo Lite / Card, Wio Tracker L1 1W /
+e-ink, XIAO-based ikoka boards. They still update; the user confirms the device.
+
 ## Conventions
 
 - **Language:** code, comments and documentation in English; UI text only in `src/i18n/locales/`.
