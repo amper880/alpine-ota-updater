@@ -4,7 +4,8 @@
 #   - Linux: AppImage (x86_64)
 #   - Android: signed APK (arm64 + armv7)
 # Artifacts are attached to every run (Actions → run → Artifacts). Pushes to "dev" (test
-# builds) and "main" only build; pushing a tag "vX.Y.Z" also creates a GitHub Release.
+# builds) and "main" only build; pushing a tag "vX.Y.Z" also creates a GitHub Release
+# ("vX.Y.Z-beta.N" a pre-release).
 #
 # Android signing (optional but recommended, see docs/BUILDING.md): repository secrets
 #   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS
@@ -193,3 +194,6 @@ jobs:
         with:
           files: artifacts/**/*
           generate_release_notes: true
+          # Tags with a label (v0.6.0-beta.1) are published as pre-releases; the app's
+          # update check ignores those, only testers who download them get them.
+          prerelease: ${{ contains(github.ref_name, '-') }}

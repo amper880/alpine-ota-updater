@@ -130,6 +130,14 @@ Other branches can be built on demand with *Actions → Build apps → Run workf
 5. Push the commit and the tag (GitHub Desktop: *Repository → Push*, tags are pushed with it).
    The *Build apps* workflow then publishes a GitHub Release with the installers.
 
+### Pre-releases
+
+For a test build that testers download from the Releases page, tag the `dev` commit with a
+label: `vX.Y.Z-beta.N` (e.g. `v0.6.0-beta.1`) while `package.json` says `X.Y.Z`. The workflow
+publishes it as a **pre-release**. The app's update check only looks at the latest normal
+release, so pre-releases are never offered automatically. The final `vX.Y.Z` later goes on
+`main` as usual (same `package.json` version).
+
 ## Testing the Bluetooth update without hardware
 
 `tests/dfu.test.ts` runs the DFU protocol against a simulated bootloader. For the full UI
