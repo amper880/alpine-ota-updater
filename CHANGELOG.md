@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New firmware sources: **Wio Tracker L1 Pro** (sosprz; companion `.zip` for the Wio Tracker
+  L1 and L1 e-ink) and **Cairn** (cvhviz; nRF52 companion, compact repeater and Wio L1 room
+  server images, published as `.uf2`).
+- `.uf2` firmware over Bluetooth: Cairn's images and custom `.uf2` files are converted to a DFU
+  application package (SoftDevice taken from the image's start address; bootloader-update
+  UF2s are refused).
+- SoftDevice check before every Bluetooth update: if the bootloader reports another SoftDevice
+  (e.g. S140 7.3.0) than the firmware was built for, the update is not started, so a wrong
+  build can no longer leave the node unable to boot.
+
 - *Buy me a coffee* button in the footer (opens buymeacoffee.com/amper880 in the browser) and
   in the README.
 

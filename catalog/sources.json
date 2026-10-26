@@ -71,6 +71,43 @@
         "xiao_esp32s3": "xiaos3",
         "xiao_nrf52840": "xiaonrf52"
       }
+    },
+    {
+      "id": "wiol1pro",
+      "name": "Wio Tracker L1 Pro",
+      "description": "MeshCore companion builds with an extended UI for the Seeed Wio Tracker L1 (Pro / e-ink), by sosprz.",
+      "repo": "sosprz/Meshcore-Wio-Tracker-L1-Pro",
+      "homepage": "https://github.com/sosprz/Meshcore-Wio-Tracker-L1-Pro",
+      "tagPattern": "^v\\d",
+      "versionPattern": "v?(?<version>\\d+(?:\\.\\d+)+)",
+      "assetPattern": "^(?<board>.+?)_(?<role>repeater|room_server|companion_radio_ble)-v[^-]+-[0-9a-f]+(?<merged>-merged)?\\.(?<ext>zip|bin)$",
+      "platforms": [
+        "nrf52"
+      ]
+    },
+    {
+      "id": "cairn",
+      "name": "Cairn",
+      "description": "MeshCore companion firmware with its own UI and compact repeaters, by cvhviz. nRF52 images are published as .uf2; the app converts them for Bluetooth.",
+      "repo": "cvhviz/CAIRN",
+      "homepage": "https://github.com/cvhviz/CAIRN",
+      "tagPattern": "^cairn-v\\d",
+      "versionPattern": "cairn-v(?<version>\\d+)",
+      "assetPattern": "^MeshCore-(?<board>[A-Za-z0-9]+?)(?<role2>RoomServer)?-Cairn\\d+-\\d{4}-\\d{2}-\\d{2}(?:-(?<role>ble|repeater|usb))?\\.(?<ext>uf2)$",
+      "defaultRole": "companion",
+      "platforms": [
+        "nrf52"
+      ],
+      "boardAliases": {
+        "GAT562MeshKit": "gat56230smeshkit",
+        "GAT562TrackerPro": "gat562meshtrackerpro",
+        "GAT562Watch13": "gat562meshwatch13",
+        "TImpulsePlus": "lilygotimpulseplus",
+        "WioL1": "wiotrackerl1",
+        "WioL1Pro": "wiotrackerl1",
+        "WioL1Eink": "wiotrackerl1eink"
+      },
+      "notes": "Cairn's ESP32 images are left out: they update over WiFi only through Cairn's own updater, and switching from MeshCore needs the -full.bin over USB."
     }
   ]
 }

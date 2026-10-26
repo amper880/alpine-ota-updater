@@ -33,7 +33,8 @@ Users install it from the release page (Windows installer, Android APK).
 ### 1.1 Goals
 
 1. Select the target **device type** (board).
-2. Select a **firmware source** (official MeshCore, PowerSaving, ZephCore, …) and list its
+2. Select a **firmware source** (official MeshCore, PowerSaving, ZephCore, Wio Tracker L1 Pro,
+   Cairn, a custom file, …) and list its
    stable releases for that board.
 3. **Download** the chosen firmware once and **keep it** for later reuse (offline cache).
 4. **Scan** for nodes that are in OTA/DFU mode.
@@ -315,6 +316,20 @@ Notes from the current releases (2026-10):
 - **ZephCore** (Zephyr-based) uses Zephyr board names (`heltec_wifi_lora32_v3`), mapped with
   `boardAliases`; its ESP32 OTA images are the MCUboot-signed `…-update.bin` files, uploaded
   to its own OTA server (§6.3).
+
+### 7.1a UF2 images (nRF52)
+
+Sources that publish nRF52 firmware only as `.uf2` (Cairn) and custom `.uf2` files are
+converted to a legacy DFU application package: the UF2 main-flash blocks (family nRF52840
+`0xADA52840`; bootloader-update UF2s, family `0xD663823C`, are refused) form one image from its
+lowest address; the init packet is built like `adafruit-nrfutil dfu genpkg --dev-type 0x0052`
+with `sd_req` from the start address (`0x26000` → S140 6.1.1 `0xB6`, `0x27000` → S140 7.3.0
+`0x123`) and the Nordic CRC-16 of the image. Verified byte for byte against MeshCore's own
+`.zip`/`.uf2` pairs (T114 S140 6.1.1, Wio Tracker L1 S140 7.3.0).
+
+Before `START_DFU` (which erases the application area) the app compares the package's
+`sd_req` with the SoftDevice in the bootloader's Device Information firmware revision
+(`… s140 6.1.1`) and stops with an explanation if they differ — for `.zip` packages too.
 
 ### 7.2 `catalog/boards.json`
 

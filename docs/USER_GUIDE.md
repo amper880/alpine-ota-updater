@@ -31,7 +31,9 @@ a cable.
 1. **Device type** — search for and select the node's hardware. The badge shows whether it is
    updated over **Bluetooth** (nRF52) or **WiFi** (ESP32).
 2. **Firmware source** — choose the role (*Repeater* / *Room server* / *Companion*) and the firmware family
-   (official MeshCore, PowerSaving, ZephCore …).
+   (official MeshCore, PowerSaving, ZephCore, Wio Tracker L1 Pro, Cairn …). Cairn publishes
+   its nRF52 firmware only as `.uf2`; the app converts it for Bluetooth and refuses it if the
+   node's bootloader runs a different SoftDevice than the file was built for.
 3. **Firmware** — pick a version and press **Download**. The file is checked and stored on
    your device; next time it is available immediately, even offline. Already downloaded
    versions show *Downloaded* and a **Use this** button.

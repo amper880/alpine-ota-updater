@@ -6,6 +6,7 @@
 import { LOCAL_SOURCE, refreshCached, selectedBoard, store, useFirmware } from './state.ts';
 import { putFirmware, type CachedFirmware } from '../lib/cache/db.ts';
 import { parseDfuPackage } from '../lib/dfu/package.ts';
+import { Uf2Error, isUf2, uf2ToDfuPackage } from '../lib/dfu/uf2.ts';
 import { checkLocalFile } from '../lib/local/check.ts';
 import { imageKind } from '../lib/wifi/ota-format.ts';
 import { UserError, toErrorInfo } from '../lib/util/errors.ts';
@@ -20,7 +21,14 @@ export async function addLocalFirmware(file: File): Promise<void> {
     const bytes = new Uint8Array(await file.arrayBuffer());
     const problem = checkLocalFile(file.name, bytes, board.platform);
     if (problem) throw new UserError(`err.local.${problem}`, `${file.name}: ${problem}`);
-    if (board.platform === 'nrf52') {
+    if (board.platform === 'nrf52' && isUf2(bytes)) {
+      try {
+        uf2ToDfuPackage(bytes);
+      } catch (err) {
+        const code = err instanceof Uf2Error ? err.code : 'not-uf2';
+        throw new UserError(`err.uf2.${code}`, `${file.name}: ${(err as Error).message}`);
+      }
+    } else if (board.platform === 'nrf52') {
       try {
         await parseDfuPackage(bytes);
       } catch (err) {

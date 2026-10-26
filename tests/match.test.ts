@@ -196,3 +196,42 @@ test('catalog: OTAFIX advertising names are mapped', () => {
   };
   for (const [id, name] of Object.entries(expected)) assert.ok(board(id).bootNames?.includes(name), `${id} → ${name}`);
 });
+
+test('cairn: .uf2 per board and role, USB and unknown boards ignored', () => {
+  const c = src('cairn');
+  const r = rel('cairn-v123', [
+    'MeshCore-HeltecT096-Cairn123-2026-10-25-repeater.uf2',
+    'MeshCore-HeltecT096-Cairn123-2026-10-25-ble.uf2',
+    'MeshCore-HeltecT096-Cairn123-2026-10-25-usb.uf2',
+    'MeshCore-HeltecV3-Cairn123-2026-10-25-repeater-full.bin',
+    'MeshCore-WioL1Pro-Cairn123-2026-10-25.uf2',
+    'MeshCore-WioL1RoomServer-Cairn123-2026-10-25.uf2',
+    'MeshCore-GAT562MeshKit-Cairn123-2026-10-25-ble.uf2',
+    'MeshCore-DV1-Cairn123-2026-10-25.uf2',
+  ]);
+  const one = (id: string, role: 'repeater' | 'room-server' | 'companion') => findFirmware(c, [r], board(id), role)[0]?.asset.name;
+  assert.equal(one('heltect096', 'repeater'), 'MeshCore-HeltecT096-Cairn123-2026-10-25-repeater.uf2');
+  assert.equal(one('heltect096', 'companion'), 'MeshCore-HeltecT096-Cairn123-2026-10-25-ble.uf2');
+  assert.equal(one('wiotrackerl1', 'companion'), 'MeshCore-WioL1Pro-Cairn123-2026-10-25.uf2');
+  assert.equal(one('wiotrackerl1', 'room-server'), 'MeshCore-WioL1RoomServer-Cairn123-2026-10-25.uf2');
+  assert.equal(one('gat56230smeshkit', 'companion'), 'MeshCore-GAT562MeshKit-Cairn123-2026-10-25-ble.uf2');
+  assert.equal(one('heltecv3', 'repeater'), undefined);
+  assert.equal(findFirmware(c, [r], board('heltect096'), 'repeater')[0]?.version, '123');
+  // pre-release archives / experimental tags are not Cairn releases
+  assert.equal(findFirmware(c, [rel('experimental-meshpager-x2-124', ['MeshCore-HeltecT096-Cairn124-2026-10-26-repeater.uf2'])], board('heltect096'), 'repeater').length, 0);
+});
+
+test('wio l1 pro (sosprz): companion .zip, not the .uf2 / usb / ESP32 builds', () => {
+  const s = src('wiol1pro');
+  const r = rel('v1.17.104', [
+    'M5Stack_Cardputer_ADV_companion_radio_ble-v1.17.104-41992daf.bin',
+    'WioTrackerL1Eink_companion_radio_ble-v1.17.104-41992daf.uf2',
+    'WioTrackerL1Eink_companion_radio_ble-v1.17.104-41992daf.zip',
+    'WioTrackerL1_companion_radio_ble-v1.17.104-41992daf.uf2',
+    'WioTrackerL1_companion_radio_ble-v1.17.104-41992daf.zip',
+    'WioTrackerL1_companion_radio_usb-v1.17.104-41992daf.zip',
+  ]);
+  assert.equal(findFirmware(s, [r], board('wiotrackerl1'), 'companion')[0]?.asset.name, 'WioTrackerL1_companion_radio_ble-v1.17.104-41992daf.zip');
+  assert.equal(findFirmware(s, [r], board('wiotrackerl1eink'), 'companion')[0]?.asset.name, 'WioTrackerL1Eink_companion_radio_ble-v1.17.104-41992daf.zip');
+  assert.equal(findFirmware(s, [r], board('wiotrackerl1'), 'companion')[0]?.version, '1.17.104');
+});

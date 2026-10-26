@@ -29,7 +29,19 @@ function kindChip(kind: string): HTMLElement | null {
 const OTAFIX_URL = 'https://github.com/oltaco/Adafruit_nRF52_Bootloader_OTAFIX';
 
 /** Errors raised before anything was written to the node: it is unchanged. */
-const NOT_STARTED = new Set(['err.ble.pairing', 'err.ble.noDfuService', 'err.fwMissing', 'err.dfu.package', 'err.wifi.wrongFamily']);
+const NOT_STARTED = new Set([
+  'err.ble.pairing',
+  'err.ble.noDfuService',
+  'err.fwMissing',
+  'err.dfu.package',
+  'err.dfu.softdevice',
+  'err.wifi.wrongFamily',
+  'err.uf2.not-uf2',
+  'err.uf2.bootloader',
+  'err.uf2.family',
+  'err.uf2.layout',
+  'err.uf2.softdevice',
+]);
 
 // ---------------------------------------------------------------- step 4
 

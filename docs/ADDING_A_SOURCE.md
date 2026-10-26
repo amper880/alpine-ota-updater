@@ -24,9 +24,10 @@ release assets.
 | `tagPattern` | no | Regex a release tag must match. Use when every release contains all roles. |
 | `roleTags` | no | Per-role tag regexes, e.g. `{ "repeater": "^repeater-v" }`. Use when the source publishes a separate release per role. Takes precedence over `tagPattern`. |
 | `versionPattern` | no | Regex with a named group `version` that extracts the version from the tag. Default: the whole tag. |
-| `assetPattern` | yes | Regex matched against asset file names (case-insensitive). Named groups: `board`, `role`, `ext` (required), `merged` (if present the file is skipped), `variant` (informational). |
+| `assetPattern` | yes | Regex matched against asset file names (case-insensitive). Named groups: `board`, `ext` (required), `role` (or `role2` for a role token in another position, e.g. `WioL1RoomServer`), `merged` (if present the file is skipped), `variant`, `flavor`. `ext` may be `zip` / `uf2` (nRF52) or `bin` (ESP32). |
+| `defaultRole` | no | Role for assets whose name carries none, e.g. `"companion"` for `MeshCore-WioL1Pro-Cairn123-….uf2`. |
 | `exclude` | no | List of regexes; matching asset names are ignored. |
-| `platforms` | yes | Which platforms' OTA images are supported: `"nrf52"` (`.zip` DFU packages), `"esp32"` (`.bin` app images). |
+| `platforms` | yes | Which platforms' OTA images are supported: `"nrf52"` (`.zip` DFU packages, or `.uf2` images that the app converts), `"esp32"` (`.bin` app images). |
 | `otaVariants` | no | Required `variant` group value per platform, e.g. `{ "esp32": "update" }` when only `…-update.bin` files are OTA images. |
 | `boardAliases` | no | Board names in this source's file names that differ from MeshCore's, mapped to `catalog/boards.json` ids, e.g. `{ "heltec_wifi_lora32_v3": "heltecv3" }`. Also used to match the board an ESP32 node reports over WiFi. |
 | `wifiOta` | no | WiFi OTA server the firmware runs on ESP32: `"meshcore"` (ElegantOTA, `MeshCore-OTA`, 192.168.4.1) or `"zephcore"` (`ZephCore-OTA`, 192.168.100.1). Decides the connection guide. Default `"meshcore"`. |
@@ -35,8 +36,12 @@ release assets.
 ### How assets are matched
 
 - `role` may be written `repeater`, `room_server`, `roomserver` or `room-server`; the companion
-  as `companion` or `companion_radio_ble` (only nRF52 `.zip` files are used for it — other
-  companion builds have no over-the-air update).
+  as `companion`, `companion_radio_ble` or `ble` (only nRF52 files are used for it — other
+  companion builds have no over-the-air update). Unknown role tokens (e.g. `usb`) are skipped.
+- `.uf2` files: only match them when the source publishes no `.zip` (the pattern decides). The
+  app turns the UF2 into a DFU application package and derives the SoftDevice from its start
+  address (`0x26000` = S140 6.1.1, `0x27000` = S140 7.3.0); a node whose bootloader reports
+  another SoftDevice is refused before anything is written. Bootloader-update UF2s are refused.
 - An optional `flavor` group (e.g. `noscreen`) is appended to the board name with `_` before
   the alias lookup, so `heltec_t114-repeater-noscreen-….zip` can map to
   `heltect114withoutdisplay`.

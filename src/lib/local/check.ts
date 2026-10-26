@@ -4,6 +4,7 @@
  */
 import type { Platform } from '../catalog/types.ts';
 import { imageKind } from '../wifi/ota-format.ts';
+import { isUf2 } from '../dfu/uf2.ts';
 
 export type LocalFileProblem = 'not-zip' | 'not-dfu' | 'not-bin' | 'merged' | 'not-ota-image' | 'empty';
 
@@ -15,7 +16,8 @@ export function isMergedEsp32Image(bytes: Uint8Array): boolean {
 }
 
 /**
- * nRF52: a Nordic DFU package (.zip; its content is checked separately by parseDfuPackage).
+ * nRF52: a Nordic DFU package (.zip; checked separately by parseDfuPackage) or a .uf2
+ * application image (converted and checked by uf2ToDfuPackage).
  * ESP32: an OTA application image (.bin) — ESP-IDF app (MeshCore, PowerSaving) or MCUboot
  * (ZephCore "-update.bin"); full-flash "merged" images are refused, OTA cannot write them.
  */
@@ -23,7 +25,7 @@ export function checkLocalFile(name: string, bytes: Uint8Array, platform: Platfo
   if (bytes.length === 0) return 'empty';
   if (platform === 'nrf52') {
     const zip = bytes.length >= 4 && bytes[0] === 0x50 && bytes[1] === 0x4b; // "PK"
-    if (zip) return undefined;
+    if (zip || isUf2(bytes)) return undefined;
     return /\.zip$/i.test(name) ? 'not-dfu' : 'not-zip';
   }
   if (!/\.bin$/i.test(name)) return 'not-bin';

@@ -15,13 +15,16 @@ export function normaliseRole(raw: string): Role | undefined {
   if (r === 'repeater') return 'repeater';
   if (r === 'roomserver' || r === 'room') return 'room-server';
   // Only the Bluetooth companion can be updated over the air (not _usb / _wifi builds).
-  if (r === 'companion' || r === 'companionradioble') return 'companion';
+  if (r === 'companion' || r === 'companionradioble' || r === 'ble') return 'companion';
   return undefined;
 }
 
-/** File extension → platform. `.bin` is ESP32 OTA, `.zip` is a Nordic DFU package. */
+/**
+ * File extension → platform. `.bin` is ESP32 OTA, `.zip` is a Nordic DFU package, `.uf2` an
+ * nRF52 image the app converts to a DFU package (only matched by sources that list it).
+ */
 export function platformForExt(ext: string): Platform | undefined {
-  if (ext === 'zip') return 'nrf52';
+  if (ext === 'zip' || ext === 'uf2') return 'nrf52';
   if (ext === 'bin') return 'esp32';
   return undefined;
 }
@@ -48,9 +51,10 @@ export function parseAsset(source: SourceConfig, assetName: string): ParsedAsset
   }
   const m = new RegExp(source.assetPattern, 'i').exec(assetName);
   const g = m?.groups;
-  if (!g?.board || !g.role || !g.ext) return undefined;
+  const rawRole = g?.role ?? g?.role2;
+  if (!g?.board || !g.ext || (!rawRole && !source.defaultRole)) return undefined;
   if (g.merged) return undefined; // full-flash images are never used for OTA
-  const role = normaliseRole(g.role);
+  const role = rawRole ? normaliseRole(rawRole) : source.defaultRole;
   const platform = platformForExt(g.ext.toLowerCase());
   if (!role || !platform) return undefined;
   if (!source.platforms.includes(platform)) return undefined;

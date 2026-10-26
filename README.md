@@ -8,7 +8,8 @@ nodes, for
 
 - **nRF52** nodes are updated over **Bluetooth** (Nordic legacy DFU)
 - **ESP32** nodes are updated over **WiFi** (the node's `MeshCore-OTA` access point)
-- Firmware from several sources (official MeshCore, PowerSaving, ZephCore); new sources are
+- Firmware from several sources (official MeshCore, PowerSaving, ZephCore, Wio Tracker L1 Pro,
+  Cairn, or your own file); new sources are
   added in [`catalog/sources.json`](catalog/sources.json)
 - Downloaded firmware is verified, kept on the device and reused, even offline
 - Works on phone, tablet and desktop; light / dark theme; English, Hungarian and German

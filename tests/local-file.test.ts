@@ -16,7 +16,7 @@ const merged = () => {
 
 test('nRF52 accepts a zip, explains .uf2 / broken zips', () => {
   assert.equal(checkLocalFile('fw.zip', new Uint8Array([0x50, 0x4b, 3, 4]), 'nrf52'), undefined);
-  assert.equal(checkLocalFile('fw.uf2', new Uint8Array([0x55, 0x46, 0x32, 0x0a]), 'nrf52'), 'not-zip');
+  assert.equal(checkLocalFile('fw.hex', new TextEncoder().encode(':020000040000FA'), 'nrf52'), 'not-zip');
   assert.equal(checkLocalFile('fw.zip', new Uint8Array([1, 2, 3, 4]), 'nrf52'), 'not-dfu');
   assert.equal(checkLocalFile('fw.zip', new Uint8Array(), 'nrf52'), 'empty');
 });

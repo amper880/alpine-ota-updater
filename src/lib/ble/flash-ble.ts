@@ -5,6 +5,7 @@
 import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, packetSizeForMtu, runLegacyDfu } from '../dfu/legacy-dfu.ts';
 import { isFactoryBootloader, pickBootloader, type ScannedDevice } from './candidates.ts';
 import { connectNode, scan, stopScan, type NodeConnection } from './native.ts';
+import { SOFTDEVICES, initPacketSdReq, softDeviceOfBootloader } from '../dfu/uf2.ts';
 import { UserError, errorMessage } from '../util/errors.ts';
 
 export type BleStage = 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing';
@@ -220,6 +221,16 @@ export async function flashOverNativeBle(
         ` — ${factory ? 'factory bootloader' : 'OTAFIX'}`,
     );
     opts.onBootloader?.({ factory, firmwareRevision: info.firmwareRevision, model: info.model });
+    // The image must be built for the SoftDevice under this bootloader; checked here, before
+    // START_DFU erases the application area (the bootloader would only refuse it afterwards).
+    const nodeSd = softDeviceOfBootloader(info.firmwareRevision);
+    const sdReq = initPacketSdReq(initPacket);
+    if (nodeSd && sdReq.length > 0 && !sdReq.includes(0xfffe) && !sdReq.includes(nodeSd.fwid)) {
+      const imageSd = sdReq.map((id) => SOFTDEVICES.find((s) => s.fwid === id)?.name ?? `0x${id.toString(16)}`).join(', ');
+      throw new UserError('err.dfu.softdevice', `Image needs ${imageSd}, the node has ${nodeSd.name}`, {
+        params: { image: imageSd, node: nodeSd.name },
+      });
+    }
     let prn = opts.prn;
     let compat = opts.compatPackets;
     if (factory) {

@@ -44,8 +44,14 @@ export interface SourceConfig {
   roleTags?: Partial<Record<Role, string>>;
   /** Regex with a named group `version`, applied to the tag. */
   versionPattern?: string;
-  /** Regex with named groups `board`, `role`, `ext` and optionally `merged`, `variant`. */
+  /**
+   * Regex with named groups `board`, `ext` and optionally `role`, `role2` (a role token in a
+   * second position, e.g. "WioL1RoomServer"), `merged`, `variant`, `flavor`.
+   * `ext`: zip (nRF52 DFU package), uf2 (nRF52, converted to DFU) or bin (ESP32 OTA image).
+   */
   assetPattern: string;
+  /** Role for assets whose name carries none (e.g. Cairn "MeshCore-WioL1Pro-Cairn123-….uf2"). */
+  defaultRole?: Role;
   /** Substrings / regexes; matching asset names are ignored. */
   exclude?: string[];
   /** Platforms whose OTA images from this source are supported. */

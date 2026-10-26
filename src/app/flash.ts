@@ -5,6 +5,7 @@ import { BOARDS, IDLE_FLASH, selectedBoard, store, type FlashStage, type PickedD
 import { matchBleName } from '../lib/catalog/match.ts';
 import { getFirmware } from '../lib/cache/db.ts';
 import { parseDfuPackage } from '../lib/dfu/package.ts';
+import { Uf2Error, isUf2, uf2ToDfuPackage } from '../lib/dfu/uf2.ts';
 import { DfuError } from '../lib/dfu/legacy-dfu.ts';
 import { baseName, classify, type ScannedDevice } from '../lib/ble/candidates.ts';
 import { BleError, ensureBluetooth, scan, stopScan } from '../lib/ble/native.ts';
@@ -74,7 +75,21 @@ export async function startFlash(prn: number, compatPackets = false): Promise<vo
     const fw = await getFirmware(s.firmwareKey);
     if (!fw) throw new UserError('err.fwMissing', 'Firmware file not found in the library. Download it again.');
     log(`Firmware ${fw.assetName} (${fw.size} bytes)`);
-    const pkg = await parseDfuPackage(new Uint8Array(await fw.blob.arrayBuffer()));
+    const bytes = new Uint8Array(await fw.blob.arrayBuffer());
+    let pkg;
+    if (isUf2(bytes)) {
+      // Firmware published only as .uf2 (e.g. Cairn): converted to a DFU application package.
+      try {
+        const u = uf2ToDfuPackage(bytes);
+        log(`UF2 converted: application at 0x${u.appStart.toString(16)} (${u.softDevice})`);
+        pkg = u;
+      } catch (err) {
+        const code = err instanceof Uf2Error ? err.code : 'not-uf2';
+        throw new UserError(`err.uf2.${code}`, errorMessage(err));
+      }
+    } else {
+      pkg = await parseDfuPackage(bytes);
+    }
     log(`Package: application ${pkg.firmware.length} bytes, init packet ${pkg.initPacket.length} bytes`);
     let lastProgress = 0;
     const board = selectedBoard();
