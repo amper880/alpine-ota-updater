@@ -1,5 +1,7 @@
 # Alpine OTA Updater
 
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=amper880&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/amper880)
+
 Over-the-air firmware updater app for **MeshCore** repeater, room server and (nRF52) companion
 nodes, for
 **Windows**, **macOS**, **Linux** and **Android**.
@@ -41,6 +43,12 @@ npm run app:dev    # the native app (needs Rust, see docs/BUILDING.md)
 | [Adding a firmware source](docs/ADDING_A_SOURCE.md) | Extending the source list |
 | [Translating](docs/TRANSLATING.md) | Adding a UI language |
 | [Changelog](CHANGELOG.md) | Release history |
+
+## Support
+
+If the app saves you a trip to the roof, you can buy me a coffee:
+
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=amper880&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/amper880)
 
 ## License
 

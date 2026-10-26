@@ -83,6 +83,7 @@
   "footer.changelog": "Changelog",
   "footer.author": "Author: Amper & Claude",
   "footer.license": "MIT License",
+  "footer.coffee": "Buy me a coffee",
   "connect.showAll": "Show all Bluetooth devices",
   "device.match.match": "Matches",
   "device.match.mismatch": "Different device",

@@ -1353,6 +1353,32 @@ select {
   color: var(--ink-2);
 }
 
+/* Buy Me a Coffee button (their colours: #FFDD00, black text and outline). */
+.footer-inner {
+  align-items: center;
+}
+.footer a.bmc-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: #ffdd00;
+  border: 1px solid #000;
+  color: #000;
+  font-size: var(--fs-1);
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.footer a.bmc-btn:hover {
+  background: #ffe433;
+}
+.footer a.bmc-btn .icon {
+  color: #000;
+}
+
 
 @media (max-width: 640px) {
   .lib-label,

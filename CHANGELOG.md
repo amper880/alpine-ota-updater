@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- *Buy me a coffee* button in the footer (opens buymeacoffee.com/amper880 in the browser) and
+  in the README.
+
 ### Fixed
 
 - OTAFIX bootloader names that differ from the board's `<BOARD>_OTA` name (e.g. `SCAP_DFU` for

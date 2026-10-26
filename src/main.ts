@@ -20,6 +20,8 @@ function applyTheme(theme: Theme): void {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#101a1f' : '#eef2f3');
 }
 
+const DONATE_URL = 'https://www.buymeacoffee.com/amper880';
+
 function renderFooter(root: HTMLElement): void {
   store.select(
     (s) => s.locale,
@@ -32,6 +34,9 @@ function renderFooter(root: HTMLElement): void {
           extLink(`${REPO_URL}/blob/main/CHANGELOG.md`, t('footer.changelog')),
           h('span', null, t('footer.author')),
           h('span', null, t('footer.license')),
+          // Buy Me a Coffee: a plain link styled like their button (their widget script is
+          // blocked by the app's content security policy and needs internet at start-up).
+          Object.assign(extLink(DONATE_URL, icon('coffee', 18), h('span', null, t('footer.coffee'))), { className: 'bmc-btn' }),
         ),
       ),
   );

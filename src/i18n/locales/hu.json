@@ -83,6 +83,7 @@
   "footer.changelog": "Változásnapló",
   "footer.author": "Szerző: Amper & Claude",
   "footer.license": "MIT licenc",
+  "footer.coffee": "Hívj meg egy kávéra",
   "connect.showAll": "Minden Bluetooth-eszköz mutatása",
   "device.match.match": "Egyezik",
   "device.match.mismatch": "Más eszköz",
