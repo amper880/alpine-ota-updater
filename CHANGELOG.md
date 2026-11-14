@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-14
+
+First stable release of the 0.6 line: also contains everything listed under 0.6.0-beta.1.
+
 ### Added
 
 - **Keep MeshCore repeater settings when switching to ZephCore** (nRF52, Bluetooth): for a
@@ -205,7 +209,8 @@ Tested on hardware: Heltec T114 updated over Bluetooth from Windows 11 and an An
 - Documentation: specification, user guide, development, deployment, adding a source,
   translating.
 
-[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.6.0-beta.1...HEAD
+[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.1...v0.6.1
 [0.6.0-beta.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.1...v0.6.0-beta.1
 [0.5.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/amper880/alpine-ota-updater/compare/v0.4.0-beta...v0.5.0
