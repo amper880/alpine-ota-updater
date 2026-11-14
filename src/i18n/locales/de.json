@@ -205,5 +205,18 @@
   "err.uf2.bootloader": "Diese .uf2 aktualisiert den Bootloader, nicht die Firmware. Installiere sie per USB (Doppel-Reset, auf das Laufwerk kopieren), nicht mit dieser App.",
   "err.uf2.family": "Diese .uf2 ist nicht für einen nRF52840.",
   "err.uf2.layout": "Diese .uf2 schreibt in den Bootloader-Bereich und lässt sich nicht per Bluetooth senden.",
-  "err.uf2.softdevice": "Diese .uf2 beginnt an einer Adresse, die zu keinem bekannten SoftDevice (6.1.1 oder 7.3.0) passt, und lässt sich nicht sicher per Bluetooth senden."
+  "err.uf2.softdevice": "Diese .uf2 beginnt an einer Adresse, die zu keinem bekannten SoftDevice (6.1.1 oder 7.3.0) passt, und lässt sich nicht sicher per Bluetooth senden.",
+  "flash.stage.migrating": "Einstellungs-Migrator senden (MCtoZC)",
+  "flash.zephcoreFirstBootMigrate": "Läuft auf diesem Knoten derzeit Arduino-MeshCore (offiziell oder PowerSaving), kann ZephCore beim ersten Start den Speicher neu formatieren und Knotenname, Admin-Passwort, Funkeinstellungen und eventuell die Identität zurücksetzen. Bei einem MeshCore-Repeater aktiviere unten die Option, um sie zu behalten. Ein Update von ZephCore auf eine neuere ZephCore-Version behält die Einstellungen ohnehin.",
+  "migrate.option": "Einstellungen des MeshCore-Repeaters behalten (MCtoZC)",
+  "migrate.hint": "Nur wenn auf dem Knoten jetzt ein MeshCore-Repeater läuft. Zuerst wird die kleine MCtoZC-Firmware gesendet: Sie kopiert Identität, Name, Passwort, Funkeinstellungen, Zugriffsliste und Regionen in den ZephCore-Speicher und startet den Knoten im Update-Modus neu; danach wird ZephCore gesendet. Zwei Übertragungen, für dich ohne zusätzliche Schritte.",
+  "migrate.loading": "MCtoZC wird heruntergeladen…",
+  "migrate.ready": "MCtoZC {version} ist bereit.",
+  "migrate.failed": "MCtoZC konnte nicht heruntergeladen werden.",
+  "migrate.retry": "Erneut versuchen",
+  "err.migrate.download": "Die MCtoZC-Firmware konnte nicht von GitHub geladen werden. Prüfe die Internetverbindung und versuche es erneut.",
+  "err.migrate.notFound": "Keine verwendbare MCtoZC-Version gefunden (eine mit Builds für SoftDevice 6 und 7).",
+  "err.migrate.notReady": "MCtoZC ist noch nicht heruntergeladen. Warte, bis es bereit ist, oder deaktiviere die Option.",
+  "err.migrate.sdUnknown": "Der Bootloader des Knotens meldet seine SoftDevice-Version nicht, daher kann der passende MCtoZC-Build nicht gewählt werden. Es wurde nichts geschrieben. Aktualisiere ohne die Option oder bringe zuerst den Bootloader auf ein aktuelles OTAFIX.",
+  "err.migrate.noBootloader": "MCtoZC wurde gesendet, aber der Knoten ist nicht im Bluetooth-Update-Modus zurückgekommen. Lief darauf kein MeshCore-Repeater, ändert MCtoZC nichts und wechselt stattdessen in den USB-Update-Modus (UF2): Schließe ihn per USB an und kopiere die ZephCore-.uf2 darauf. Ist er doch im Bluetooth-Update-Modus, suche erneut und starte das Update (die Option kann aktiv bleiben)."
 }

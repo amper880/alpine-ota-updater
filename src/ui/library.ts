@@ -42,11 +42,11 @@ export function renderLibrary(dialog: HTMLDialogElement): void {
                     h(
                       'div',
                       { class: 'lib-main' },
-                      h('span', { class: 'lib-board' }, BOARDS.find((b) => b.id === f.boardId)?.name ?? f.boardId),
+                      h('span', { class: 'lib-board' }, BOARDS.find((b) => b.id === f.boardId)?.name ?? (f.boardId || f.assetName)),
                       h(
                         'span',
                         { class: 'lib-meta' },
-                        f.sourceId === 'local' ? `${sourceLabel(f.sourceId)}: ${f.assetName}` : `${sourceLabel(f.sourceId)} ${f.version}, ${t(`role.${f.role}`).toLowerCase()}`,
+                        f.sourceId === 'local' ? `${sourceLabel(f.sourceId)}: ${f.assetName}` : f.sourceId === 'mctozc' ? `${sourceLabel(f.sourceId)} ${f.version}` : `${sourceLabel(f.sourceId)} ${f.version}, ${t(`role.${f.role}`).toLowerCase()}`,
                       ),
                       h('span', { class: 'lib-meta' }, `${formatBytes(f.size, locale())}, ${t(f.sourceId === 'local' ? 'library.addedOn' : 'library.downloadedOn', { date: formatDate(f.downloadedAt, locale()) })}`),
                     ),

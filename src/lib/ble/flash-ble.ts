@@ -5,10 +5,10 @@
 import { DfuError, IMAGE_APPLICATION, Op, VERSION_APP_MODE, packetSizeForMtu, runLegacyDfu } from '../dfu/legacy-dfu.ts';
 import { isFactoryBootloader, pickBootloader, type ScannedDevice } from './candidates.ts';
 import { connectNode, scan, stopScan, type NodeConnection } from './native.ts';
-import { SOFTDEVICES, initPacketSdReq, softDeviceOfBootloader } from '../dfu/uf2.ts';
+import { SOFTDEVICES, initPacketSdReq, softDeviceOfBootloader, type SoftDevice } from '../dfu/uf2.ts';
 import { UserError, errorMessage } from '../util/errors.ts';
 
-export type BleStage = 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing';
+export type BleStage = 'connecting' | 'entering-bootloader' | 'reconnecting' | 'migrating' | 'transferring' | 'finishing';
 
 export interface BleFlashOptions {
   prn?: number;
@@ -18,6 +18,12 @@ export interface BleFlashOptions {
   onStage?: (stage: BleStage) => void;
   onProgress?: (sent: number, total: number) => void;
   onLog?: (message: string) => void;
+  /**
+   * MeshCore → ZephCore settings migration (MCtoZC): returns the migrator image for the
+   * node's SoftDevice. It is sent first; it converts the MeshCore repeater's identity and
+   * settings into ZephCore's volume and restarts into the bootloader for the real image.
+   */
+  migrator?: (softDevice: SoftDevice) => Promise<{ name: string; firmware: Uint8Array; initPacket: Uint8Array }>;
   /** Called once the bootloader is known; `factory` = not OTAFIX (slower, careful settings). */
   onBootloader?: (info: { factory: boolean; firmwareRevision?: string; model?: string }) => void;
 }
@@ -238,7 +244,40 @@ export async function flashOverNativeBle(
       if (prn === undefined || prn === 0 || prn > FACTORY_PRN) prn = FACTORY_PRN;
       log(`Factory bootloader: using 20-byte packets and a receipt every ${prn} packets`);
     }
-    const packetSize = compat ? 20 : await choosePacketSize(conn, log);
+    let packetSize = compat ? 20 : await choosePacketSize(conn, log);
+
+    if (opts.migrator) {
+      // Step 1 of a MeshCore → ZephCore switch: the migrator keeps the repeater's settings.
+      if (!nodeSd) {
+        throw new UserError('err.migrate.sdUnknown', 'The bootloader does not report its SoftDevice; the migrator cannot be chosen');
+      }
+      const mig = await opts.migrator(nodeSd);
+      log(`Sending the settings migrator ${mig.name} (${mig.firmware.length} bytes, ${nodeSd.name})`);
+      stage('migrating');
+      await runLegacyDfu(conn.transport(), mig.firmware, mig.initPacket, {
+        prn,
+        packetSize,
+        signal: opts.signal,
+        onProgress: opts.onProgress,
+        onLog: log,
+      });
+      log('Migrator sent: it copies the MeshCore identity and settings, then restarts into the bootloader');
+      await conn.disconnect();
+      await sleep(4000);
+      abortCheck();
+      stage('reconnecting');
+      const again = await findBootloader({ address: conn.address, name: bootName, bootBase: device.bootBase, bootNames: device.bootNames }, 45000, log);
+      if (!again) {
+        throw new UserError('err.migrate.noBootloader', 'The node did not come back in Bluetooth DFU mode after the migrator');
+      }
+      log(`Bootloader found again: ${again.name || '(no name)'} (${again.address})`);
+      conn = await connectWithRetry({ address: again.address, name: again.name }, log);
+      bootName = again.name;
+      const info2 = await conn.readDeviceInfo();
+      log(`Bootloader: ${info2.firmwareRevision ?? 'version unknown'}`);
+      packetSize = compat ? 20 : await choosePacketSize(conn, log);
+    }
+
     stage('transferring');
     let t0 = Date.now();
     const transfer = (c: NodeConnection, settings: { prn?: number; packetSize: number }) =>

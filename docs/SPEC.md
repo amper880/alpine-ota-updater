@@ -17,6 +17,7 @@
 | 0.2 | Svelte/Vite replaced by plain TypeScript + esbuild. |
 | 0.3 | **Web app replaced by a native app (Tauri 2) for Windows and Android.** Testing showed that Chromium's Web Bluetooth blocklist forbids the Nordic legacy DFU service (`00001530-…`) that the Adafruit / OTAFIX bootloaders use, so nRF52 updates are impossible from any browser. Native Bluetooth has no such restriction, and native HTTP also removes the CORS proxy and the HTTPS→HTTP problem of the ESP32 upload. iOS is postponed (needs a Mac and an Apple developer account). |
 | 0.4 | Companion role (nRF52 Bluetooth companion via its bonded buttonless DFU service). macOS (universal, ad-hoc signed) and Linux (AppImage) builds added; `tauri-plugin-blec` uses btleplug there too (CoreBluetooth / BlueZ). |
+| 0.5 | MeshCore → ZephCore switch keeping repeater settings via recrof/MCtoZC (§6.1a). |
 
 ---
 
@@ -229,6 +230,23 @@ Sequence (`src/lib/dfu/legacy-dfu.ts`, own implementation, transport-agnostic):
 7. `VALIDATE (0x04)` → `ACTIVATE_AND_RESET (0x05)`.
 
 The `.zip` DFU package is unpacked with a small built-in ZIP reader (`DecompressionStream`).
+
+### 6.1a MeshCore → ZephCore with settings kept (MCtoZC)
+
+[recrof/MCtoZC](https://github.com/recrof/MCtoZC) is a one-shot application for the nRF52840.
+It reads MeshCore's littlefs v1 volume (0xED000), writes the repeater identity (`_main.id`),
+prefs, ACL and regions into ZephCore's littlefs v2 volume (0xD4000, `/lfs/repeater/`), then
+sets GPREGRET 0xA8 and resets into the bootloader's BLE DFU mode. Without a MeshCore identity it
+erases nothing and drops to UF2 (USB) DFU; with an existing ZephCore volume it only enters DFU.
+Releases carry `MeshCore_to_ZephCore_SoftDevice_v6.zip` (sd_req 0xB6) and `…_v7.zip`
+(sd_req 0x123).
+
+When the selected image is a ZephCore nRF52 repeater and the user ticks the option
+(`src/app/migration.ts`): the newest stable MCtoZC release with both builds is downloaded into
+the library (source id `mctozc`). In `flashOverNativeBle` the migrator build is chosen after
+the bootloader's SoftDevice is known (and checked against its own sd_req), transferred with
+the same settings (stage `migrating`), and the app waits up to 45 s for the bootloader to
+advertise again before sending ZephCore. `err.migrate.noBootloader` explains the UF2 fallback.
 
 ### 6.2 ESP32 — AsyncElegantOTA over WiFi
 

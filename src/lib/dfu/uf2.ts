@@ -33,6 +33,8 @@ export const SOFTDEVICES = [
   { name: 'S140 7.3.0', appStart: 0x27000, fwid: 0x0123 },
 ] as const;
 
+export type SoftDevice = (typeof SOFTDEVICES)[number];
+
 export class Uf2Error extends Error {
   readonly code: 'not-uf2' | 'bootloader' | 'family' | 'layout' | 'softdevice';
   constructor(code: Uf2Error['code'], message: string) {
@@ -125,7 +127,7 @@ export function initPacketSdReq(initPacket: Uint8Array): number[] {
  * SoftDevice of a bootloader from its Device Information firmware revision, e.g.
  * "0.9.2-OTAFIX2.3-BP1.4 s140 6.1.1". Undefined when not stated or unknown.
  */
-export function softDeviceOfBootloader(firmwareRevision: string | undefined): (typeof SOFTDEVICES)[number] | undefined {
+export function softDeviceOfBootloader(firmwareRevision: string | undefined): SoftDevice | undefined {
   const m = /s140[ _-]?(\d+\.\d+\.\d+)/i.exec(firmwareRevision ?? '');
   return m ? SOFTDEVICES.find((s) => s.name === `S140 ${m[1]}`) : undefined;
 }

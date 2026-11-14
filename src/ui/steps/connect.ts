@@ -3,6 +3,7 @@ import { errorExplanation } from '../error-view.ts';
 import { locale, t } from '../../i18n/index.ts';
 import { selectedBoard, selectedFirmware, sourceLabel, store, type PickedDevice } from '../../app/state.ts';
 import { cancelFlash, forgetDevice, resetFlash, selectDevice, setShowAll, startBleScan, startFlash, stopBleScan } from '../../app/flash.ts';
+import { MIGRATOR_URL, migrationApplies, prepareMigrator, setMigration } from '../../app/migration.ts';
 import { cancelWifiFlash, expectedProfile, findWifiNode, startWifiFlash } from '../../app/wifi.ts';
 import { classify, isFactoryBootloader, type ScannedDevice } from '../../lib/ble/candidates.ts';
 import { isNativeApp } from '../../lib/platform.ts';
@@ -41,6 +42,9 @@ const NOT_STARTED = new Set([
   'err.uf2.family',
   'err.uf2.layout',
   'err.uf2.softdevice',
+  'err.migrate.sdUnknown',
+  'err.migrate.notReady',
+  'err.migrate.notFound',
 ]);
 
 // ---------------------------------------------------------------- step 4
@@ -281,6 +285,47 @@ function logPanel(): HTMLElement | null {
   );
 }
 
+/** MeshCore → ZephCore switch keeping the repeater settings (MCtoZC), BLE only. */
+function migrationBox(): HTMLElement {
+  const m = store.get().migration;
+  const busy = store.get().flash.phase === 'running';
+  let status: HTMLElement | null = null;
+  if (m.enabled && m.status === 'loading') status = h('p', { class: 'fineprint' }, t('migrate.loading'));
+  if (m.enabled && m.status === 'ready') status = h('p', { class: 'fineprint' }, icon('check', 14), ' ', t('migrate.ready', { version: m.version ?? '' }));
+  if (m.enabled && m.status === 'error') {
+    status = h(
+      'div',
+      null,
+      h('p', null, t('migrate.failed')),
+      ...errorExplanation(m.error),
+      h('button', { type: 'button', class: 'link', onclick: () => void prepareMigrator() }, t('migrate.retry')),
+    );
+  }
+  return h(
+    'div',
+    { class: 'callout info' },
+    icon('info'),
+    h(
+      'div',
+      null,
+      h(
+        'label',
+        { class: 'check' },
+        h('input', {
+          type: 'checkbox',
+          checked: m.enabled,
+          disabled: busy,
+          onchange: (e: Event) => void setMigration((e.target as HTMLInputElement).checked),
+        }),
+        t('migrate.option'),
+      ),
+      h('p', null, t('migrate.hint')),
+      status,
+      extLink(MIGRATOR_URL, 'recrof/MCtoZC', ' ', icon('external', 14)),
+    ),
+  );
+}
+
 export function flashBody(): HTMLElement {
   const s = store.get();
   const board = selectedBoard();
@@ -296,6 +341,8 @@ export function flashBody(): HTMLElement {
   const needsConfirm = device.match !== 'match';
   const version = fw?.version ?? cached.version;
   const sourceName = sourceLabel(cached.sourceId);
+  const migrating = s.migration.enabled;
+  const migrationPending = !isWifi && migrating && migrationApplies(cached) && s.migration.status !== 'ready';
 
   const summary = h(
     'dl',
@@ -375,7 +422,7 @@ export function flashBody(): HTMLElement {
               onchange: (e: Event) => {
                 confirmedFor = (e.target as HTMLInputElement).checked ? device.id : undefined;
                 const btn = document.querySelector<HTMLButtonElement>('.start-flash');
-                if (btn) btn.disabled = !confirmedFor;
+                if (btn) btn.disabled = !confirmedFor || migrationPending;
               },
             }),
             t('flash.confirm'),
@@ -393,7 +440,10 @@ export function flashBody(): HTMLElement {
       : null,
     f.phase === 'cancelled' ? h('p', { class: 'callout info' }, icon('info'), t('flash.cancelled')) : null,
     confirmBox,
-    cached.sourceId === 'zephcore' && !isWifi ? h('div', { class: 'callout warn' }, icon('info'), h('p', null, t('flash.zephcoreFirstBoot'))) : null,
+    cached.sourceId === 'zephcore' && !isWifi && !(migrating && migrationApplies(cached))
+      ? h('div', { class: 'callout warn' }, icon('info'), h('p', null, t(migrationApplies(cached) ? 'flash.zephcoreFirstBootMigrate' : 'flash.zephcoreFirstBoot')))
+      : null,
+    !isWifi && migrationApplies(cached) ? migrationBox() : null,
     // Factory bootloader picked directly (e.g. Heltec "HT-n5262G-OTA" or "AdaDFU").
     !isWifi && f.phase === 'idle' && device.kind === 'bootloader' && isFactoryBootloader(device.name)
       ? h('div', { class: 'callout info' }, icon('info'), h('p', null, t('flash.factoryBootloader')))
@@ -415,7 +465,7 @@ export function flashBody(): HTMLElement {
         {
           type: 'button',
           class: 'btn primary start-flash',
-          disabled: needsConfirm && confirmedFor !== device.id,
+          disabled: (needsConfirm && confirmedFor !== device.id) || migrationPending,
           onclick: () => void (isWifi ? startWifiFlash() : startFlash(loadPref<number>('prn', 32), loadPref<boolean>('compatPackets', false))),
         },
         icon('download', 18),

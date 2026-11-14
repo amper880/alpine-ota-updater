@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Keep MeshCore repeater settings when switching to ZephCore** (nRF52, Bluetooth): for a
+  ZephCore repeater image, step 5 offers an option that first sends
+  [MCtoZC](https://github.com/recrof/MCtoZC) (recrof). It copies the identity, name, password,
+  radio settings, ACL and regions into ZephCore's storage and restarts into update mode; the
+  app then sends ZephCore. The build matching the bootloader's SoftDevice (6.1.1 / 7.3.0) is
+  chosen automatically and kept in the library.
+
 ## [0.6.0-beta.1] - 2026-10-26 (pre-release)
 
 ### Added

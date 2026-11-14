@@ -61,7 +61,15 @@ export interface ScanState {
 }
 
 export type FlashPhase = 'idle' | 'running' | 'done' | 'error' | 'cancelled';
-export type FlashStage = 'preparing' | 'connecting' | 'entering-bootloader' | 'reconnecting' | 'transferring' | 'finishing' | 'uploading';
+export type FlashStage =
+  | 'preparing'
+  | 'connecting'
+  | 'entering-bootloader'
+  | 'reconnecting'
+  | 'migrating'
+  | 'transferring'
+  | 'finishing'
+  | 'uploading';
 
 export interface FlashState {
   phase: FlashPhase;
@@ -98,6 +106,16 @@ export interface AppState {
   appUpdate?: AppUpdate;
   /** Firmware file picked from disk (local-firmware.ts). */
   localFile: { status: 'idle' | 'checking'; error?: ErrorInfo };
+  /** MeshCore → ZephCore settings migration (migration.ts); off until ticked, not persisted. */
+  migration: MigrationState;
+}
+
+export interface MigrationState {
+  enabled: boolean;
+  status: 'idle' | 'loading' | 'ready' | 'error';
+  /** Release tag of the downloaded MCtoZC builds. */
+  version?: string;
+  error?: ErrorInfo;
 }
 
 export const store = createStore<AppState>({
@@ -118,6 +136,7 @@ export const store = createStore<AppState>({
   flash: IDLE_FLASH,
   appUpdate: undefined,
   localFile: { status: 'idle' },
+  migration: { enabled: false, status: 'idle' },
 });
 
 export const boardById = (id?: string): Board | undefined => BOARDS.find((b) => b.id === id);
@@ -139,7 +158,9 @@ export const LOCAL_SOURCE = 'local';
 
 /** Display name of a firmware source, including the custom-file pseudo source. */
 export function sourceLabel(id: string): string {
-  return id === LOCAL_SOURCE ? t('local.source') : (sourceById(id)?.name ?? id);
+  if (id === LOCAL_SOURCE) return t('local.source');
+  if (id === 'mctozc') return 'MCtoZC';
+  return sourceById(id)?.name ?? id;
 }
 
 /** Step 2 summary: "MeshCore, repeater" or "Custom firmware file". */

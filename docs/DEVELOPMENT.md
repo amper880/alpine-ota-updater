@@ -39,7 +39,8 @@ src/
 │  ├─ flash.ts           Bluetooth scan and update actions
 │  ├─ wifi.ts            ESP32: find the node on its OTA WiFi, upload
 │  ├─ local-firmware.ts  custom firmware files picked from disk
-│  └─ app-update.ts      start-up check for a newer app release
+│  ├─ app-update.ts      start-up check for a newer app release
+│  └─ migration.ts       MeshCore → ZephCore settings migration (MCtoZC)
 ├─ lib/                  logic without DOM access (unit-tested)
 │  ├─ catalog/           types + matching of release assets to board/role (match.ts)
 │  ├─ github/            release list loading (GitHub API, 10-minute cache, offline copy)
@@ -49,6 +50,7 @@ src/
 │  ├─ cache/             IndexedDB firmware library, download + verification
 │  ├─ dfu/               Nordic legacy DFU protocol, DFU package parser
 │  ├─ local/             checks for custom firmware files
+│  ├─ migrate/           MCtoZC release / build selection
 │  ├─ update/            app version comparison, installer per platform
 │  ├─ util/              formatting, safe localStorage, ZIP reader, MD5, error texts
 │  ├─ platform.ts        native app or plain browser

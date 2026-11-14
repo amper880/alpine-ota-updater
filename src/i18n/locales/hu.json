@@ -205,5 +205,18 @@
   "err.uf2.bootloader": "Ez a .uf2 a bootloadert frissíti, nem a firmware-t. USB-n telepítsd (dupla reset, másolás a meghajtóra), ne ezzel az appal.",
   "err.uf2.family": "Ez a .uf2 nem nRF52840-hez készült.",
   "err.uf2.layout": "Ez a .uf2 a bootloader területére is írna, Bluetooth-on nem küldhető.",
-  "err.uf2.softdevice": "Ez a .uf2 olyan címen kezdődik, ami egyik ismert SoftDevice-hoz (6.1.1, 7.3.0) sem illik, ezért Bluetooth-on nem küldhető biztonságosan."
+  "err.uf2.softdevice": "Ez a .uf2 olyan címen kezdődik, ami egyik ismert SoftDevice-hoz (6.1.1, 7.3.0) sem illik, ezért Bluetooth-on nem küldhető biztonságosan.",
+  "flash.stage.migrating": "Beállítás-átemelő küldése (MCtoZC)",
+  "flash.zephcoreFirstBootMigrate": "Ha ezen az eszközön jelenleg Arduino MeshCore fut (hivatalos vagy PowerSaving), a ZephCore az első indításkor újraformázhatja a tárhelyét, és alaphelyzetbe állhat az eszköz neve, az admin jelszó, a rádióbeállítások és akár az azonosítója is. MeshCore repeaternél kapcsold be lent az opciót, hogy ezek megmaradjanak. ZephCore-ról újabb ZephCore-ra frissítve a beállítások egyébként is megmaradnak.",
+  "migrate.option": "MeshCore repeater beállításainak megtartása (MCtoZC)",
+  "migrate.hint": "Csak ha az eszközön most MeshCore repeater fut. Először a kis MCtoZC firmware megy át: átmásolja az azonosítót, a nevet, a jelszót, a rádióbeállításokat, a hozzáférési listát és a régiókat a ZephCore tárhelyére, majd frissítési módban újraindítja az eszközt; utána megy a ZephCore. Két átvitel, neked nincs vele külön teendőd.",
+  "migrate.loading": "MCtoZC letöltése…",
+  "migrate.ready": "Az MCtoZC {version} készen áll.",
+  "migrate.failed": "Az MCtoZC letöltése nem sikerült.",
+  "migrate.retry": "Újra",
+  "err.migrate.download": "Az MCtoZC firmware nem tölthető le a GitHubról. Ellenőrizd az internetkapcsolatot, és próbáld újra.",
+  "err.migrate.notFound": "Nincs használható MCtoZC kiadás (amelyben SoftDevice 6-hoz és 7-hez is van build).",
+  "err.migrate.notReady": "Az MCtoZC még nincs letöltve. Várd meg, amíg elkészül, vagy kapcsold ki az opciót.",
+  "err.migrate.sdUnknown": "Az eszköz bootloadere nem adja meg a SoftDevice verzióját, így nem választható ki a hozzá illő MCtoZC. Semmi nem íródott az eszközre. Frissíts az opció nélkül, vagy előbb frissítsd a bootloadert aktuális OTAFIX-re.",
+  "err.migrate.noBootloader": "Az MCtoZC átment, de az eszköz nem jelent meg újra Bluetooth frissítési módban. Ha nem MeshCore repeater futott rajta, az MCtoZC nem változtat semmit, hanem USB-s (UF2) frissítési módba vált: csatlakoztasd USB-n, és másold rá a ZephCore .uf2 fájlt. Ha mégis Bluetooth frissítési módban van, keresd meg újra és indítsd a frissítést (az opció maradhat bekapcsolva)."
 }

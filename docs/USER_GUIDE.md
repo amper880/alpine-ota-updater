@@ -116,6 +116,19 @@ lacks it (older MeshCore companions and other firmware families); update it over
   recognise them — node name, admin password, radio settings and possibly the identity can be
   reset. Only switch on a node you can reach and reconfigure. The app shows this warning
   whenever a ZephCore firmware is sent over Bluetooth.
+- **Keeping a MeshCore repeater's settings (nRF52):** when a ZephCore *repeater* firmware is
+  selected, step 5 offers **Keep the MeshCore repeater settings (MCtoZC)**. Ticking it
+  downloads [MCtoZC](https://github.com/recrof/MCtoZC) (about 75 KB, kept in the library).
+  The update then runs twice in a row: first MCtoZC, which copies the node's identity, name,
+  admin password, radio settings, access list and regions into ZephCore's storage and restarts
+  the node into Bluetooth update mode, then ZephCore itself. The app picks the MCtoZC build
+  that matches the bootloader's SoftDevice (6.1.1 or 7.3.0).
+  - Use it only on a node that runs a **MeshCore repeater** right now. On anything else
+    MCtoZC erases nothing and switches the node to USB (UF2) update mode; the app then reports
+    that the node did not come back, and ZephCore has to be copied over USB.
+  - If the second transfer fails, the node stays in update mode with the settings already
+    copied: scan again and start the update with the option still ticked.
+  - Hardware-tested with the SoftDevice 7.3.0 build; the 6.1.1 build is untested so far.
 - **ESP32 (WiFi):** the two families use different OTA servers and image formats; the app
   refuses cross-family uploads. Switch once over USB.
 

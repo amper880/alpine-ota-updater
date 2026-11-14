@@ -12,6 +12,7 @@ import { BleError, ensureBluetooth, scan, stopScan } from '../lib/ble/native.ts'
 import { flashOverNativeBle } from '../lib/ble/flash-ble.ts';
 import { isNativeApp } from '../lib/platform.ts';
 import { UserError, errorMessage, toErrorInfo } from '../lib/util/errors.ts';
+import { migrationApplies, migratorFor } from './migration.ts';
 
 const SCAN_MS = 12000;
 let flashAbort: AbortController | undefined;
@@ -101,7 +102,14 @@ export async function startFlash(prn: number, compatPackets = false): Promise<vo
       bootNames: board?.bootNames,
       companion: s.device.kind === 'companion',
     };
+    // MeshCore → ZephCore with settings kept: MCtoZC goes first (see migration.ts).
+    const migrate = migrationApplies(fw) && s.migration.enabled;
+    if (migrate && s.migration.status !== 'ready') {
+      throw new UserError('err.migrate.notReady', 'The MCtoZC migrator is not downloaded yet');
+    }
+    if (migrate) log(`Settings migration on: MCtoZC ${s.migration.version ?? ''} runs before ZephCore`);
     await flashOverNativeBle(target, pkg.firmware, pkg.initPacket, {
+      migrator: migrate ? migratorFor : undefined,
       prn,
       compatPackets,
       signal: flashAbort.signal,
