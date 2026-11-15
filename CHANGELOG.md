@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-11-15
+
 ### Fixed
 
 - Android / desktop builds of 0.6.1: firmware lists and downloads failed ("no internet
@@ -219,7 +221,8 @@ Tested on hardware: Heltec T114 updated over Bluetooth from Windows 11 and an An
 - Documentation: specification, user guide, development, deployment, adding a source,
   translating.
 
-[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/amper880/alpine-ota-updater/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/amper880/alpine-ota-updater/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.1...v0.6.1
 [0.6.0-beta.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.1...v0.6.0-beta.1
 [0.5.1]: https://github.com/amper880/alpine-ota-updater/compare/v0.5.0...v0.5.1
