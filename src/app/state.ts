@@ -22,6 +22,8 @@ export interface ReleaseState {
   options: FirmwareOption[];
   error?: ErrorInfo;
   offlineSince?: string;
+  /** Why the offline copy is shown (rate limit, network, HTTP error). */
+  staleReason?: ErrorInfo;
 }
 
 export interface DownloadState {
@@ -269,10 +271,10 @@ export async function refreshFirmwareList(force = false): Promise<void> {
   listAbort = ctrl;
   store.set({ releases: { status: 'loading', requestKey, options: [] } });
   try {
-    const { releases, offlineSince } = await loadReleases(source.repo, { signal: ctrl.signal, force });
+    const { releases, offlineSince, staleReason } = await loadReleases(source.repo, { signal: ctrl.signal, force });
     if (ctrl.signal.aborted) return;
     const options = findFirmware(source, releases, board, s.role);
-    store.set({ releases: { status: 'ok', requestKey, options, offlineSince } });
+    store.set({ releases: { status: 'ok', requestKey, options, offlineSince, staleReason } });
   } catch (err) {
     if (ctrl.signal.aborted) return;
     store.set({ releases: { status: 'error', requestKey, options: [], error: toErrorInfo(err, 'err.unknown') } });

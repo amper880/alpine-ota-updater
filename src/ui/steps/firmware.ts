@@ -13,6 +13,7 @@ import {
   useFirmware,
 } from '../../app/state.ts';
 import type { FirmwareOption } from '../../lib/catalog/types.ts';
+import type { ErrorInfo } from '../../lib/util/errors.ts';
 import { isNativeApp } from '../../lib/platform.ts';
 import { formatBytes, formatDate } from '../../lib/util/format.ts';
 import { addLocalFirmware, clearLocalFileError } from '../../app/local-firmware.ts';
@@ -27,6 +28,24 @@ function progressBar(key: string): HTMLElement {
 }
 
 /** Updates progress bars in place (called often; avoids re-rendering the list). */
+/**
+ * The saved list is shown because the fresh one could not be loaded. Says why: no network,
+ * GitHub's hourly limit (60 requests per public IP, shared by every device on the network), or
+ * another error with its technical text.
+ */
+function staleNotice(since: string, reason: ErrorInfo | undefined): HTMLElement {
+  const date = formatDate(since, locale());
+  const key = reason?.key ?? 'err.network';
+  const head =
+    key === 'err.network' ? t('firmware.offline', { date }) : key.startsWith('err.github.rateLimit') ? t('firmware.staleRateLimit', { date }) : t('firmware.stale', { date });
+  return h(
+    'div',
+    { class: 'callout info' },
+    icon('info'),
+    h('div', null, h('p', null, head), ...errorExplanation(key === 'err.network' && reason ? { key: 'err.unknown', detail: reason.detail } : reason)),
+  );
+}
+
 export function updateProgressBars(): void {
   const { downloads } = store.get();
   for (const el of document.querySelectorAll<HTMLElement>('[data-progress-key]')) {
@@ -134,9 +153,7 @@ export function firmwareBody(): HTMLElement {
   return h(
     'div',
     { class: 'step-content' },
-    r.offlineSince
-      ? h('p', { class: 'callout info' }, icon('info'), t('firmware.offline', { date: formatDate(r.offlineSince, locale()) }))
-      : null,
+    r.offlineSince ? staleNotice(r.offlineSince, r.staleReason) : null,
     !isNativeApp() ? h('p', { class: 'callout warn' }, icon('alert'), t('firmware.appOnly')) : null,
     content,
     src?.notes ? h('p', { class: 'fineprint' }, src.notes) : null,

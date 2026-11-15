@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- When the fresh firmware list cannot be loaded, the notice no longer always says "no internet
+  connection": GitHub's hourly request limit (60 per internet connection, shared by every
+  device on the network) is named as such with the time until it is lifted, and other errors
+  show their technical details.
+
 ## [0.6.1] - 2026-11-14
 
 First stable release of the 0.6 line: also contains everything listed under 0.6.0-beta.1.

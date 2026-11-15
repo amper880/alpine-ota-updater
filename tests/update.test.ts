@@ -33,3 +33,13 @@ test('platform and installer selection', () => {
   assert.equal(pickInstaller(assets, detectPlatform(ua.linux)), 'https://x/Alpine.OTA.Updater_0.6.0_amd64.AppImage');
   assert.equal(pickInstaller([], 'windows'), undefined);
 });
+
+import { rateLimitMinutes } from '../src/lib/github/rate-limit.ts';
+
+test('rate limit reset header is turned into minutes', () => {
+  const now = Date.UTC(2026, 10, 15, 18, 0, 0);
+  assert.equal(rateLimitMinutes(String(now / 1000 + 1500), now), 25);
+  assert.equal(rateLimitMinutes(String(now / 1000 - 10), now), 1);
+  assert.equal(rateLimitMinutes(null, now), undefined);
+  assert.equal(rateLimitMinutes('x', now), undefined);
+});

@@ -218,5 +218,8 @@
   "err.migrate.notFound": "Nincs használható MCtoZC kiadás (amelyben SoftDevice 6-hoz és 7-hez is van build).",
   "err.migrate.notReady": "Az MCtoZC még nincs letöltve. Várd meg, amíg elkészül, vagy kapcsold ki az opciót.",
   "err.migrate.sdUnknown": "Az eszköz bootloadere nem adja meg a SoftDevice verzióját, így nem választható ki a hozzá illő MCtoZC. Semmi nem íródott az eszközre. Frissíts az opció nélkül, vagy előbb frissítsd a bootloadert aktuális OTAFIX-re.",
-  "err.migrate.noBootloader": "Az MCtoZC átment, de az eszköz nem jelent meg újra Bluetooth frissítési módban. Ha nem MeshCore repeater futott rajta, az MCtoZC nem változtat semmit, hanem USB-s (UF2) frissítési módba vált: csatlakoztasd USB-n, és másold rá a ZephCore .uf2 fájlt. Ha mégis Bluetooth frissítési módban van, keresd meg újra és indítsd a frissítést (az opció maradhat bekapcsolva)."
+  "err.migrate.noBootloader": "Az MCtoZC átment, de az eszköz nem jelent meg újra Bluetooth frissítési módban. Ha nem MeshCore repeater futott rajta, az MCtoZC nem változtat semmit, hanem USB-s (UF2) frissítési módba vált: csatlakoztasd USB-n, és másold rá a ZephCore .uf2 fájlt. Ha mégis Bluetooth frissítési módban van, keresd meg újra és indítsd a frissítést (az opció maradhat bekapcsolva).",
+  "firmware.stale": "A friss lista nem tölthető le; a(z) {date} napi lista látható.",
+  "firmware.staleRateLimit": "A GitHub most korlátozza a lekérdezéseket (internetkapcsolatonként óránként 60, az azonos hálózaton lévő eszközök együtt). A(z) {date} napi lista látható.",
+  "err.github.rateLimitFor": "A korlátozás kb. {minutes} perc múlva szűnik meg; utána a lista újranyitáskor frissül."
 }

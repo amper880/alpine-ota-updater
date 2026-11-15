@@ -218,5 +218,8 @@
   "err.migrate.notFound": "No usable MCtoZC release was found (one with builds for both SoftDevice 6 and 7).",
   "err.migrate.notReady": "MCtoZC is not downloaded yet. Wait until it is ready, or untick the option.",
   "err.migrate.sdUnknown": "The node's bootloader does not report its SoftDevice version, so the matching MCtoZC build cannot be chosen. Nothing was written. Update without the option, or update the bootloader to a current OTAFIX first.",
-  "err.migrate.noBootloader": "MCtoZC was sent, but the node did not come back in Bluetooth update mode. If it was not running a MeshCore repeater, MCtoZC changes nothing and switches to USB (UF2) update mode instead: connect it by USB and copy the ZephCore .uf2 onto it. If it is in Bluetooth update mode after all, scan again and start the update (the option can stay on)."
+  "err.migrate.noBootloader": "MCtoZC was sent, but the node did not come back in Bluetooth update mode. If it was not running a MeshCore repeater, MCtoZC changes nothing and switches to USB (UF2) update mode instead: connect it by USB and copy the ZephCore .uf2 onto it. If it is in Bluetooth update mode after all, scan again and start the update (the option can stay on).",
+  "firmware.stale": "The current list could not be loaded; the list of {date} is shown.",
+  "firmware.staleRateLimit": "GitHub is limiting requests right now (60 per hour for each internet connection, shared by all devices on the same network). The list of {date} is shown.",
+  "err.github.rateLimitFor": "The limit is lifted in about {minutes} min; after that the list refreshes when you open it again."
 }

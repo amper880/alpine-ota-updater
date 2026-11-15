@@ -218,5 +218,8 @@
   "err.migrate.notFound": "Keine verwendbare MCtoZC-Version gefunden (eine mit Builds für SoftDevice 6 und 7).",
   "err.migrate.notReady": "MCtoZC ist noch nicht heruntergeladen. Warte, bis es bereit ist, oder deaktiviere die Option.",
   "err.migrate.sdUnknown": "Der Bootloader des Knotens meldet seine SoftDevice-Version nicht, daher kann der passende MCtoZC-Build nicht gewählt werden. Es wurde nichts geschrieben. Aktualisiere ohne die Option oder bringe zuerst den Bootloader auf ein aktuelles OTAFIX.",
-  "err.migrate.noBootloader": "MCtoZC wurde gesendet, aber der Knoten ist nicht im Bluetooth-Update-Modus zurückgekommen. Lief darauf kein MeshCore-Repeater, ändert MCtoZC nichts und wechselt stattdessen in den USB-Update-Modus (UF2): Schließe ihn per USB an und kopiere die ZephCore-.uf2 darauf. Ist er doch im Bluetooth-Update-Modus, suche erneut und starte das Update (die Option kann aktiv bleiben)."
+  "err.migrate.noBootloader": "MCtoZC wurde gesendet, aber der Knoten ist nicht im Bluetooth-Update-Modus zurückgekommen. Lief darauf kein MeshCore-Repeater, ändert MCtoZC nichts und wechselt stattdessen in den USB-Update-Modus (UF2): Schließe ihn per USB an und kopiere die ZephCore-.uf2 darauf. Ist er doch im Bluetooth-Update-Modus, suche erneut und starte das Update (die Option kann aktiv bleiben).",
+  "firmware.stale": "Die aktuelle Liste konnte nicht geladen werden; die Liste vom {date} wird angezeigt.",
+  "firmware.staleRateLimit": "GitHub begrenzt gerade die Anfragen (60 pro Stunde je Internetanschluss, geteilt von allen Geräten im selben Netz). Die Liste vom {date} wird angezeigt.",
+  "err.github.rateLimitFor": "Die Begrenzung endet in etwa {minutes} Min.; danach wird die Liste beim erneuten Öffnen aktualisiert."
 }
