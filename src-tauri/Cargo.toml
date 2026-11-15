@@ -17,7 +17,10 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
-tauri-plugin-http = "2"
+# Pinned to the version of @tauri-apps/plugin-http in package-lock.json: the Rust and JS halves
+# must match. Without a Cargo.lock CI took 2.9.0, which rejects requests from the 2.8.3 JS
+# side ("missing client-config header"), so every download failed. Bump both together.
+tauri-plugin-http = "=2.8.3"
 tauri-plugin-blec = ">=0.17, <0.19"
 tauri-plugin-log = "2"
 tauri-plugin-opener = "2"

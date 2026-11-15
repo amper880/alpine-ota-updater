@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Android / desktop builds of 0.6.1: firmware lists and downloads failed ("no internet
+  connection"; technical text "missing client-config header") because the build picked up a
+  newer native HTTP plugin than the app's JavaScript side. The plugin version is now pinned.
 - When the fresh firmware list cannot be loaded, the notice no longer always says "no internet
   connection": GitHub's hourly request limit (60 per internet connection, shared by every
   device on the network) is named as such with the time until it is lifted, and other errors
