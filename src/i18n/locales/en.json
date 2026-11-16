@@ -64,7 +64,7 @@
   "connect.wifi.step.2": "Open the WiFi settings of this device and join the open network {ssid}.",
   "connect.wifi.step.3": "If the device warns that the network has no internet, choose to stay connected.",
   "connect.wifi.step.4": "Come back to this app and press Scan.",
-  "connect.wifi.offlineNote": "The node's WiFi has no internet. Download the firmware before you switch networks; this app works offline. On a phone, turn off mobile data during the update so the app talks to the node's WiFi.",
+  "connect.wifi.offlineNote": "The node's WiFi has no internet. Download the firmware before you switch networks; this app works offline. On Android the app sends its requests over WiFi by itself; if the node still cannot be found, turn off mobile data during the update.",
   "connect.scan": "Scan",
   "summary.title": "Your selection",
   "summary.method": "Update method",
@@ -221,5 +221,6 @@
   "err.migrate.noBootloader": "MCtoZC was sent, but the node did not come back in Bluetooth update mode. If it was not running a MeshCore repeater, MCtoZC changes nothing and switches to USB (UF2) update mode instead: connect it by USB and copy the ZephCore .uf2 onto it. If it is in Bluetooth update mode after all, scan again and start the update (the option can stay on).",
   "firmware.stale": "The current list could not be loaded; the list of {date} is shown.",
   "firmware.staleRateLimit": "GitHub is limiting requests right now (60 per hour for each internet connection, shared by all devices on the same network). The list of {date} is shown.",
-  "err.github.rateLimitFor": "The limit is lifted in about {minutes} min; after that the list refreshes when you open it again."
+  "err.github.rateLimitFor": "The limit is lifted in about {minutes} min; after that the list refreshes when you open it again.",
+  "connect.wifi.zephcoreFromMeshcore": "WiFi update to ZephCore works only on a node that already runs ZephCore (its WiFi is called ZephCore-OTA). A node still running MeshCore (MeshCore-OTA, 192.168.4.1) has to be switched to ZephCore over USB once, as described in the ZephCore release (full image or web flasher)."
 }

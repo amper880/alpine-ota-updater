@@ -64,7 +64,7 @@
   "connect.wifi.step.2": "Nyisd meg ennek az eszköznek a WiFi-beállításait, és csatlakozz a jelszó nélküli {ssid} hálózathoz.",
   "connect.wifi.step.3": "Ha a készülék jelzi, hogy a hálózaton nincs internet, válaszd a csatlakozva maradást.",
   "connect.wifi.step.4": "Térj vissza ebbe az alkalmazásba, és nyomd meg a Keresés gombot.",
-  "connect.wifi.offlineNote": "Az eszköz WiFi-hálózatán nincs internet. A firmware-t a hálózatváltás előtt töltsd le; az alkalmazás internet nélkül is működik. Telefonon a frissítés idejére kapcsold ki a mobilnetet, hogy az alkalmazás az eszköz WiFi-jén keresztül kommunikáljon.",
+  "connect.wifi.offlineNote": "Az eszköz WiFi-jén nincs internet. A firmware-t a hálózatváltás előtt töltsd le; az app internet nélkül is működik. Androidon az app magától a WiFi-n küldi a kéréseit; ha mégsem találja az eszközt, a frissítés idejére kapcsold ki a mobilnetet.",
   "connect.scan": "Keresés",
   "summary.title": "A választásod",
   "summary.method": "Frissítés módja",
@@ -221,5 +221,6 @@
   "err.migrate.noBootloader": "Az MCtoZC átment, de az eszköz nem jelent meg újra Bluetooth frissítési módban. Ha nem MeshCore repeater futott rajta, az MCtoZC nem változtat semmit, hanem USB-s (UF2) frissítési módba vált: csatlakoztasd USB-n, és másold rá a ZephCore .uf2 fájlt. Ha mégis Bluetooth frissítési módban van, keresd meg újra és indítsd a frissítést (az opció maradhat bekapcsolva).",
   "firmware.stale": "A friss lista nem tölthető le; a(z) {date} napi lista látható.",
   "firmware.staleRateLimit": "A GitHub most korlátozza a lekérdezéseket (internetkapcsolatonként óránként 60, az azonos hálózaton lévő eszközök együtt). A(z) {date} napi lista látható.",
-  "err.github.rateLimitFor": "A korlátozás kb. {minutes} perc múlva szűnik meg; utána a lista újranyitáskor frissül."
+  "err.github.rateLimitFor": "A korlátozás kb. {minutes} perc múlva szűnik meg; utána a lista újranyitáskor frissül.",
+  "connect.wifi.zephcoreFromMeshcore": "WiFi-n csak olyan eszközre tehető ZephCore, amin már ZephCore fut (a WiFi neve ZephCore-OTA). Ha még MeshCore fut rajta (MeshCore-OTA, 192.168.4.1), egyszer USB-n kell ZephCore-ra váltani, a ZephCore kiadásnál leírt módon (teljes képfájl vagy web flasher)."
 }

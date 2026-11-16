@@ -62,6 +62,7 @@ src/
 ├─ i18n/                 t() + locales/*.json
 └─ styles/main.css       design tokens (light/dark) and all styles
 src-tauri/               Rust shell: plugins, tauri.conf.json, capabilities, icon source
+  android/               Kotlin plugin (WiFi binding) copied into the generated Android project by CI
 catalog/                 boards.json (generated), board-overrides.json, sources.json
 scripts/                 front-end build, dev server, catalog generator
 tests/                   unit tests

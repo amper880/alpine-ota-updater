@@ -64,7 +64,7 @@
   "connect.wifi.step.2": "Öffne die WLAN-Einstellungen dieses Geräts und verbinde dich mit dem offenen Netz {ssid}.",
   "connect.wifi.step.3": "Wenn das Gerät meldet, dass das Netz kein Internet hat, wähle „Verbunden bleiben“.",
   "connect.wifi.step.4": "Kehre zu dieser App zurück und tippe auf Suchen.",
-  "connect.wifi.offlineNote": "Das WLAN des Knotens hat kein Internet. Lade die Firmware herunter, bevor du das Netz wechselst; die App funktioniert offline. Schalte am Handy während des Updates die mobilen Daten aus, damit die App mit dem WLAN des Knotens spricht.",
+  "connect.wifi.offlineNote": "Das WLAN des Knotens hat kein Internet. Lade die Firmware vor dem Netzwechsel herunter; die App funktioniert offline. Unter Android sendet die App ihre Anfragen selbst über WLAN; wird der Knoten trotzdem nicht gefunden, schalte die mobilen Daten während des Updates aus.",
   "connect.scan": "Suchen",
   "summary.title": "Deine Auswahl",
   "summary.method": "Update-Methode",
@@ -221,5 +221,6 @@
   "err.migrate.noBootloader": "MCtoZC wurde gesendet, aber der Knoten ist nicht im Bluetooth-Update-Modus zurückgekommen. Lief darauf kein MeshCore-Repeater, ändert MCtoZC nichts und wechselt stattdessen in den USB-Update-Modus (UF2): Schließe ihn per USB an und kopiere die ZephCore-.uf2 darauf. Ist er doch im Bluetooth-Update-Modus, suche erneut und starte das Update (die Option kann aktiv bleiben).",
   "firmware.stale": "Die aktuelle Liste konnte nicht geladen werden; die Liste vom {date} wird angezeigt.",
   "firmware.staleRateLimit": "GitHub begrenzt gerade die Anfragen (60 pro Stunde je Internetanschluss, geteilt von allen Geräten im selben Netz). Die Liste vom {date} wird angezeigt.",
-  "err.github.rateLimitFor": "Die Begrenzung endet in etwa {minutes} Min.; danach wird die Liste beim erneuten Öffnen aktualisiert."
+  "err.github.rateLimitFor": "Die Begrenzung endet in etwa {minutes} Min.; danach wird die Liste beim erneuten Öffnen aktualisiert.",
+  "connect.wifi.zephcoreFromMeshcore": "Ein WiFi-Update auf ZephCore geht nur bei einem Knoten, auf dem schon ZephCore läuft (sein WLAN heißt ZephCore-OTA). Ein Knoten mit MeshCore (MeshCore-OTA, 192.168.4.1) muss einmal per USB auf ZephCore umgestellt werden, wie im ZephCore-Release beschrieben (vollständiges Image oder Web-Flasher)."
 }

@@ -58,7 +58,7 @@ Users install it from the release page (Windows installer, Android APK).
 |---|---|---|
 | C1 | Chromium's Web Bluetooth **blocklist** contains the Nordic legacy DFU service `00001530-1212-efde-1523-785feabcd123`. | No browser can update nRF52 nodes → native app (Tauri) with native Bluetooth (`tauri-plugin-blec`: btleplug on Windows, macOS and Linux, Kotlin backend on Android). |
 | C2 | Apps cannot join a WiFi network without extra platform permissions; joining the node's AP manually is simple and reliable. | For ESP32 the app shows a step-by-step guide for joining `MeshCore-OTA`, then checks reachability itself. |
-| C3 | On the node's OTA WiFi there is no internet. Android may route traffic over mobile data instead of a WiFi without internet. | Firmware is downloaded **before** switching networks. Android: bind requests to the WiFi network (verified in M4). |
+| C3 | On the node's OTA WiFi there is no internet. Android may route traffic over mobile data instead of a WiFi without internet. | Firmware is downloaded **before** switching networks. Android: requests are bound to the WiFi network during scan and upload (`bind_wifi`, `src-tauri/android/WifiBindPlugin.kt`). |
 | C4 | Phones turn off the screen during long transfers. | Keep the screen on during an update (M5); warn the user not to leave the app. |
 | C5 | Unauthenticated GitHub API: 60 requests per hour per IP. | Release lists are cached for 10 minutes and kept for offline use. |
 

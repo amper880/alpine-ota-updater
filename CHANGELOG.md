@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- WiFi update on Android: the node was not found ("No node answers", "Request canceled")
+  while mobile data was on, because Android sent the app's requests over mobile data instead
+  of the node's WiFi, which has no internet. The app now binds its requests to the WiFi
+  network while it looks for the node and uploads.
+- The ZephCore WiFi guide now says that a node still running MeshCore has to be switched to
+  ZephCore over USB once (the WiFi update only works ZephCore → ZephCore).
+
 ## [0.6.2] - 2026-11-15
 
 ### Fixed

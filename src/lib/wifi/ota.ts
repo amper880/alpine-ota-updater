@@ -34,7 +34,9 @@ async function probeProfile(profile: OtaProfile, timeoutMs: number): Promise<Pro
     const home = await httpFetch(`${profile.host}/`, { signal: t.signal });
     return home.ok ? { ok: true, profile } : { ok: false, error: `${profile.host}: HTTP ${home.status}` };
   } catch (err) {
-    return { ok: false, error: `${profile.host}: ${(err as Error).name === 'AbortError' ? 'timeout' : errorMessage(err)}` };
+    // The HTTP plugin reports its own abort as "Request canceled": that is our timeout.
+    const timedOut = (err as Error).name === 'AbortError' || t.signal.aborted;
+    return { ok: false, error: `${profile.host}: ${timedOut ? `no answer within ${timeoutMs / 1000} s` : errorMessage(err)}` };
   } finally {
     t.done();
   }

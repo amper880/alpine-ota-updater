@@ -8,6 +8,7 @@ import { UserError, errorMessage, toErrorInfo } from '../lib/util/errors.ts';
 import { probeNode, uploadFirmware } from '../lib/wifi/ota.ts';
 import { OTA_PROFILES, imageKind, type OtaKind, type OtaProfile } from '../lib/wifi/ota-format.ts';
 import { isNativeApp } from '../lib/platform.ts';
+import { withWifiBinding } from '../lib/net/wifi-bind.ts';
 
 let uploadAbort: AbortController | undefined;
 
@@ -30,9 +31,10 @@ export async function findWifiNode(): Promise<void> {
     return;
   }
   store.set((s) => ({ scan: { ...s.scan, status: 'scanning', error: undefined, errorDetail: undefined } }));
-  const r = await probeNode();
+  const { r, bound } = await withWifiBinding(async (bound) => ({ r: await probeNode(), bound }));
   if (!r.ok) {
-    store.set((s) => ({ scan: { ...s.scan, status: 'idle', error: 'unreachable', errorDetail: { key: 'err.unknown', detail: r.error } } }));
+    const detail = bound === false ? `${r.error} (Android: no WiFi network to bind to)` : r.error;
+    store.set((s) => ({ scan: { ...s.scan, status: 'idle', error: 'unreachable', errorDetail: { key: 'err.unknown', detail } } }));
     return;
   }
   const board = selectedBoard();
@@ -87,7 +89,11 @@ export async function startWifiFlash(): Promise<void> {
     }
     store.set((st) => ({ flash: { ...st.flash, stage: 'uploading', total: image.length, startedAt: Date.now() } }));
     const t0 = Date.now();
-    await uploadFirmware(profile, image, { signal: uploadAbort.signal, onLog: log });
+    const signal = uploadAbort.signal;
+    await withWifiBinding(async (bound) => {
+      if (bound) log('Requests bound to the WiFi network');
+      await uploadFirmware(profile, image, { signal, onLog: log });
+    });
     const secs = (Date.now() - t0) / 1000;
     log(`Node answered OK after ${secs.toFixed(1)} s (${(image.length / 1000 / secs).toFixed(1)} kB/s); it restarts now`);
     store.set((st) => ({ flash: { ...st.flash, phase: 'done', stage: undefined, sent: image.length } }));

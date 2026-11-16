@@ -144,6 +144,17 @@ jobs:
           workspaces: src-tauri -> target
       - run: npm install --no-audit --no-fund
       - run: npx tauri android init --ci
+      # WiFi OTA: the Kotlin plugin that binds requests to the node's WiFi (src-tauri/src/lib.rs,
+      # wifi_bind) and the permission it needs to look up the WiFi network.
+      - name: Add the WiFi bind plugin to the Android project
+        run: |
+          set -euo pipefail
+          GEN=src-tauri/gen/android/app/src/main
+          cp src-tauri/android/WifiBindPlugin.kt "$GEN/java/com/ampersworld/alpineota/"
+          grep -q ACCESS_NETWORK_STATE "$GEN/AndroidManifest.xml" || \
+            sed -i 's#<application#<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n    <application#' "$GEN/AndroidManifest.xml"
+          grep -n "uses-permission" "$GEN/AndroidManifest.xml"
+          ls "$GEN/java/com/ampersworld/alpineota/"
       # After init, so the launcher icons are written into the generated Android project.
       - run: npm run icons
       - run: npx tauri android build --apk --ci --target aarch64 --target armv7

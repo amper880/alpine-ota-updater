@@ -187,6 +187,8 @@ function wifiConnectBody(): HTMLElement {
     h('h4', { class: 'field-label' }, t('connect.wifi.title')),
     steps('connect.wifi.step', 4, { ssid: profile.ssid, url: `${profile.host}/update` }),
     h('p', { class: 'callout info' }, icon('info'), t('connect.wifi.offlineNote')),
+    // ZephCore's OTA server exists only once ZephCore runs; MeshCore → ZephCore needs USB.
+    profile.kind === 'zephcore' ? h('p', { class: 'callout warn' }, icon('alert'), t('connect.wifi.zephcoreFromMeshcore')) : null,
     err && err !== 'app-only'
       ? h('div', { class: 'callout error' }, icon('alert'), h('div', null, h('p', null, t(`connect.error.${err}`, { ssid: profile.ssid })), ...errorExplanation(s.scan.errorDetail)))
       : null,
