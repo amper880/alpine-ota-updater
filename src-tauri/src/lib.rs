@@ -21,7 +21,7 @@ mod wifi_bind {
 
     pub struct WifiBind<R: Runtime>(
         #[cfg(target_os = "android")] tauri::plugin::PluginHandle<R>,
-        #[cfg(not(target_os = "android"))] std::marker::PhantomData<R>,
+        #[cfg(not(target_os = "android"))] std::marker::PhantomData<fn() -> R>,
     );
 
     #[cfg(target_os = "android")]
